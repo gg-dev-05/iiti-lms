@@ -1,12 +1,18 @@
-from flask import Flask
+from flask import Flask, render_template, redirect, url_for, session
 from flask_mysqldb import MySQL
 # import MySQLdb
 import yaml
 from functions.dbConfig import database_config
+from authlib.integrations.flask_client import OAuth
+import os
+from datetime import timedelta
 
 
 app = Flask(__name__)
-
+# Session config
+app.secret_key = ""
+app.config['SESSION_COOKIE_NAME'] = 'google-login-session'
+app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(minutes=5)
 
 env = "dev"
 DATABASE_URL = ""
@@ -27,13 +33,52 @@ app.config['MYSQL_DB'] = db
 
 # mysql = MySQL(app)
 
+oauth = OAuth(app)
+google = oauth.register(
+    name='google',
+    client_id="",
+    client_secret="",
+    access_token_url='https://accounts.google.com/o/oauth2/token',
+    access_token_params=None,
+    authorize_url='https://accounts.google.com/o/oauth2/auth',
+    authorize_params=None,
+    api_base_url='https://www.googleapis.com/oauth2/v1/',
+    userinfo_endpoint='https://openidconnect.googleapis.com/v1/userinfo',  # This is only needed if using openId to fetch user info
+    client_kwargs={'scope': 'openid email profile'},
+)
+
+
 @app.route("/")
 def home():
-	return "HELLO WORLD"
+	return render_template('index.html')
+
+@app.route("/dashboard")
+def dashboard():
+	return render_template('dashboard.html')  
+
+@app.route('/login')
+def login():
+    google = oauth.create_client('google')  # create the google oauth client
+    redirect_uri = url_for('authorize', _external=True)
+    return google.authorize_redirect(redirect_uri) 
+
+@app.route('/authorize')
+def authorize():
+    google = oauth.create_client('google') 
+    token = google.authorize_access_token()  # Access token from google (needed to get user info)
+    resp = google.get('userinfo')  # userinfo contains stuff u specificed in the scrope
+    user_info = resp.json()
+    user = oauth.google.userinfo()  
+
+    session['profile'] = user_info
+    session.permanent = True  # make the session permanant so it keeps existing after browser gets closed
+    return redirect('/')
+
+           
 
 @app.errorhandler(404)
 def page_not_found(e):
-    print("Page Not Found")
+    # print("Page Not Found")
     return render_template('error.html')
 
 
