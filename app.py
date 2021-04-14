@@ -1,4 +1,4 @@
-from flask import Flask, render_template, redirect, url_for, session
+from flask import Flask,flash, render_template, redirect, url_for, session
 from flask_mysqldb import MySQL
 # import MySQLdb
 import yaml
@@ -58,9 +58,29 @@ def home():
     # print(cur.fetchall())
     return render_template('index.html')
 
+@app.route("/updateBooks")
+def updateBooks():
+    # cur = mysql.connection.cursor()
+    # cur.execute(
+    #     "SELECT * FROM librarian;"
+    # )
+    # print(cur.fetchall())
+    return render_template('updateBooks.html')
+
+
+@app.route("/updateBooks/addBooks")
+def addBooks():
+    # cur = mysql.connection.cursor()
+    # cur.execute(
+    #     "SELECT * FROM librarian;"
+    # )
+    # print(cur.fetchall())
+    return render_template('addBooks.html')
+
+
 @app.route("/dashboard")
 def dashboard():
-	return render_template('dashboard.html')  
+	return render_template('dashboard.html')    
 
 @app.route('/login')
 def login():
@@ -70,14 +90,20 @@ def login():
 
 @app.route('/authorize')
 def authorize():
+    message = None
     google = oauth.create_client('google') 
     token = google.authorize_access_token()  # Access token from google (needed to get user info)
     resp = google.get('userinfo')  # userinfo contains stuff u specificed in the scrope
     user_info = resp.json()
     user = oauth.google.userinfo()  
-
     session['profile'] = user_info
     session.permanent = True  # make the session permanant so it keeps existing after browser gets closed
+    signedIn = dict(session).get("signedIn", None)
+    if token!='':  
+        message = 'You were successfully logged in';
+    else:
+        message = 'You Please Try Again';
+    # return render_template('index.html', message=message)    
     return redirect('/')
 
 
