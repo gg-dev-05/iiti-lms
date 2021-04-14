@@ -9,10 +9,6 @@ from datetime import timedelta
 
 
 app = Flask(__name__)
-# Session config
-app.secret_key = ""
-app.config['SESSION_COOKIE_NAME'] = 'google-login-session'
-app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(minutes=5)
 
 env = "dev"
 DATABASE_URL = ""
@@ -30,14 +26,19 @@ app.config['MYSQL_HOST'] = host
 app.config['MYSQL_USER'] = user
 app.config['MYSQL_PASSWORD'] = password
 app.config['MYSQL_DB'] = db
+print(host, user, password, db)
+# Session config
+app.secret_key = dev['client_secret']
+app.config['SESSION_COOKIE_NAME'] = 'google-login-session'
+app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(minutes=5)
 
-# mysql = MySQL(app)
+mysql = MySQL(app)
 
 oauth = OAuth(app)
 google = oauth.register(
     name='google',
-    client_id="",
-    client_secret="",
+    client_id=dev['client_id'],
+    client_secret=dev['client_secret'],
     access_token_url='https://accounts.google.com/o/oauth2/token',
     access_token_params=None,
     authorize_url='https://accounts.google.com/o/oauth2/auth',
@@ -50,7 +51,12 @@ google = oauth.register(
 
 @app.route("/")
 def home():
-	return render_template('index.html')
+    # cur = mysql.connection.cursor()
+    # cur.execute(
+    #     "SELECT * FROM librarian;"
+    # )
+    # print(cur.fetchall())
+    return render_template('index.html')
 
 @app.route("/dashboard")
 def dashboard():
@@ -74,7 +80,6 @@ def authorize():
     session.permanent = True  # make the session permanant so it keeps existing after browser gets closed
     return redirect('/')
 
-           
 
 @app.errorhandler(404)
 def page_not_found(e):
