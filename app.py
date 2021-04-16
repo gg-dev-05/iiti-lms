@@ -58,6 +58,72 @@ def home():
     # print(cur.fetchall())
     return render_template('dashboard.html')
 
+@app.route("/user")
+def userDashboard():
+    # cur = mysql.connection.cursor()
+    # cur.execute(
+    #     "SELECT * FROM librarian;"
+    # )
+    # print(cur.fetchall())
+    return render_template('user.html')
+
+
+@app.route("/allBooks")
+def user_allBooks():
+    # cur = mysql.connection.cursor()
+    # cur.execute(
+    #     "SELECT * FROM librarian;"
+    # )
+    # print(cur.fetchall())
+    return render_template('allBooks.html')
+
+@app.route("/recommendedBooks")
+def user_BookRecommedation():
+    # cur = mysql.connection.cursor()
+    # cur.execute(
+    #     "SELECT * FROM librarian;"
+    # )
+    # print(cur.fetchall())
+    return render_template('user_BookRecommedation.html')
+
+@app.route("/booksWithTags")
+def user_booksWithTags():
+    # cur = mysql.connection.cursor()
+    # cur.execute(
+    #     "SELECT * FROM librarian;"
+    # )
+    # print(cur.fetchall())
+    return render_template('booksWithTags.html')
+
+@app.route("/friends")
+def friends():
+    # cur = mysql.connection.cursor()
+    # cur.execute(
+    #     "SELECT * FROM librarian;"
+    # )
+    # print(cur.fetchall())
+    return render_template('allFriends.html')
+
+@app.route("/feedback")
+def feedback():
+    # cur = mysql.connection.cursor()
+    # cur.execute(
+    #     "SELECT * FROM librarian;"
+    # )
+    # print(cur.fetchall())
+    return render_template('userFeedback.html')
+
+@app.route("/history")
+def user_History():
+    # cur = mysql.connection.cursor()
+    # cur.execute(
+    #     "SELECT * FROM librarian;"
+    # )
+    # print(cur.fetchall())
+    return render_template('userHistory.html')
+
+
+
 @app.route("/test")
 def updateBooks():
     # cur = mysql.connection.cursor()
