@@ -56,9 +56,9 @@ def home():
     #     "SELECT * FROM librarian;"
     # )
     # print(cur.fetchall())
-    return render_template('index.html')
+    return render_template('dashboard.html')
 
-@app.route("/updateBooks")
+@app.route("/test")
 def updateBooks():
     # cur = mysql.connection.cursor()
     # cur.execute(
@@ -68,14 +68,14 @@ def updateBooks():
     return render_template('updateBooks.html')
 
 
-@app.route("/updateBooks/addBooks")
+@app.route("/tables")
 def addBooks():
     # cur = mysql.connection.cursor()
     # cur.execute(
     #     "SELECT * FROM librarian;"
     # )
     # print(cur.fetchall())
-    return render_template('addBooks.html')
+    return render_template('tables.html')
 
 
 @app.route("/dashboard")
