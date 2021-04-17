@@ -30,7 +30,6 @@ print(host, user, password, db)
 # Session config
 app.secret_key = dev['client_secret']
 app.config['SESSION_COOKIE_NAME'] = 'google-login-session'
-app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(minutes=5)
 
 mysql = MySQL(app)
 
@@ -51,96 +50,56 @@ google = oauth.register(
 
 @app.route("/")
 def home():
-    # cur = mysql.connection.cursor()
-    # cur.execute(
-    #     "SELECT * FROM librarian;"
-    # )
-    # print(cur.fetchall())
+    if "profile" in session:
+        print(session["profile"])
+        # check is this email belongs to admin to normal user
+        # if email is of admin (librarian)
+        # session["isAdmin"] = True
+
+        
+    else:
+        # add page for sign in
+        return "Not signed in <a href='/login'>LOGIN</a>>"
     return render_template('dashboard.html')
 
 @app.route("/user")
 def userDashboard():
-    # cur = mysql.connection.cursor()
-    # cur.execute(
-    #     "SELECT * FROM librarian;"
-    # )
-    # print(cur.fetchall())
     return render_template('user.html')
 
 
 @app.route("/allBooks")
 def user_allBooks():
-    # cur = mysql.connection.cursor()
-    # cur.execute(
-    #     "SELECT * FROM librarian;"
-    # )
-    # print(cur.fetchall())
     return render_template('allBooks.html')
 
 @app.route("/recommendedBooks")
 def user_BookRecommedation():
-    # cur = mysql.connection.cursor()
-    # cur.execute(
-    #     "SELECT * FROM librarian;"
-    # )
-    # print(cur.fetchall())
     return render_template('user_BookRecommedation.html')
 
 @app.route("/booksWithTags")
 def user_booksWithTags():
-    # cur = mysql.connection.cursor()
-    # cur.execute(
-    #     "SELECT * FROM librarian;"
-    # )
-    # print(cur.fetchall())
     return render_template('booksWithTags.html')
 
 @app.route("/friends")
 def friends():
-    # cur = mysql.connection.cursor()
-    # cur.execute(
-    #     "SELECT * FROM librarian;"
-    # )
-    # print(cur.fetchall())
     return render_template('allFriends.html')
 
 @app.route("/feedback")
 def feedback():
-    # cur = mysql.connection.cursor()
-    # cur.execute(
-    #     "SELECT * FROM librarian;"
-    # )
-    # print(cur.fetchall())
     return render_template('userFeedback.html')
 
 @app.route("/history")
 def user_History():
-    # cur = mysql.connection.cursor()
-    # cur.execute(
-    #     "SELECT * FROM librarian;"
-    # )
-    # print(cur.fetchall())
     return render_template('userHistory.html')
 
 
 
 @app.route("/test")
 def updateBooks():
-    # cur = mysql.connection.cursor()
-    # cur.execute(
-    #     "SELECT * FROM librarian;"
-    # )
-    # print(cur.fetchall())
     return render_template('updateBooks.html')
 
 
 @app.route("/tables")
 def addBooks():
-    # cur = mysql.connection.cursor()
-    # cur.execute(
-    #     "SELECT * FROM librarian;"
-    # )
-    # print(cur.fetchall())
     return render_template('tables.html')
 
 
@@ -164,18 +123,20 @@ def authorize():
     user = oauth.google.userinfo()  
     session['profile'] = user_info
     session.permanent = True  # make the session permanant so it keeps existing after browser gets closed
-    signedIn = dict(session).get("signedIn", None)
     if token!='':  
         message = 'You were successfully logged in';
     else:
         message = 'You Please Try Again';
-    # return render_template('index.html', message=message)    
     return redirect('/')
 
+@app.route("/logout")
+def logout():
+    for key in list(session.keys()):
+        session.pop(key)
+    return redirect("/")
 
 @app.errorhandler(404)
 def page_not_found(e):
-    # print("Page Not Found")
     return render_template('error.html')
 
 
