@@ -111,6 +111,9 @@ def user_allBooks():
     # cur.execute(f")
     return render_template('allBooks.html')
 
+@app.route("/demo")
+def demo():
+    return render_template('form-wizard.html')
 
 @app.route("/recommendedBooks")
 def user_BookRecommedation():
