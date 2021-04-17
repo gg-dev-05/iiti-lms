@@ -1,6 +1,5 @@
 from flask import Flask, flash, render_template, redirect, url_for, session
 from flask_mysqldb import MySQL
-# import MySQLdb
 import yaml
 from functions.dbConfig import database_config
 from authlib.integrations.flask_client import OAuth
@@ -10,7 +9,7 @@ from datetime import timedelta
 
 app = Flask(__name__)
 
-env = "dev"
+env = ""
 DATABASE_URL = ""
 if env == "dev":
     dev = yaml.load(open('db.yaml'), Loader=yaml.FullLoader)
@@ -26,18 +25,21 @@ app.config['MYSQL_HOST'] = host
 app.config['MYSQL_USER'] = user
 app.config['MYSQL_PASSWORD'] = password
 app.config['MYSQL_DB'] = db
-print(host, user, password, db)
+
 # Session config
-app.secret_key = dev['client_secret']
+app.secret_key = os.environ.get("client_secret") if (env != 'dev') else dev['client_secret']
 app.config['SESSION_COOKIE_NAME'] = 'google-login-session'
 
 mysql = MySQL(app)
 
+clientSecret = os.environ.get("client_secret") if (env != 'dev') else dev['client_secret']
+clientId = os.environ.get("client_id") if (env != 'dev') else dev['client_id']
+
 oauth = OAuth(app)
 google = oauth.register(
     name='google',
-    client_id=dev['client_id'],
-    client_secret=dev['client_secret'],
+    client_id=clientId,
+    client_secret=clientSecret,
     access_token_url='https://accounts.google.com/o/oauth2/token',
     access_token_params=None,
     authorize_url='https://accounts.google.com/o/oauth2/auth',
