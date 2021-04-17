@@ -62,6 +62,19 @@ def home():
         return "Not signed in <a href='/login'>LOGIN</a>>"
     return render_template('dashboard.html')
 
+@app.route("/<memberType>")
+def members(memberType):
+    if memberType == 'students':
+        cur = mysql.connection.cursor()
+        cur.execute("SELECT reader_name, reader_email, reader_address, phone_no, books_issued, unpaid_fines FROM reader WHERE is_faculty = 0;")
+        students = cur.fetchall()
+        return render_template("students.html", students=students)
+    if memberType == 'faculties':
+        cur = mysql.connection.cursor()
+        cur.execute("SELECT reader_name, reader_email, reader_address, phone_no, books_issued, unpaid_fines FROM reader WHERE is_faculty = 1;")
+        faculties = cur.fetchall()
+        return render_template("faculties.html", faculties=faculties)
+    return redirect("/")
 
 @app.route("/user")
 def userDashboard():
