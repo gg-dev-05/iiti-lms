@@ -83,7 +83,13 @@ def allBooks():
     books = cur.fetchall()
     return render_template("allBooks.html", books=books)
 
-
+# issue details
+@app.route("/logs")
+def logs():
+    cur = mysql.connection.cursor()
+    cur.execute("SELECT * FROM issue_details;")
+    details = cur.fetchall()
+    return render_template("issueDetails.html", details=details)
 
 @app.route("/user")
 def userDashboard():
