@@ -76,6 +76,15 @@ def members(memberType):
         return render_template("faculties.html", faculties=faculties)
     return redirect("/")
 
+@app.route('/books')
+def allBooks():
+    cur = mysql.connection.cursor()
+    cur.execute("SELECT ISBN, title, shelf_id, current_status, avg_rating, book_language, publisher, publish_date FROM book;")
+    books = cur.fetchall()
+    return render_template("allBooks.html", books=books)
+
+
+
 @app.route("/user")
 def userDashboard():
     return render_template('user.html')
