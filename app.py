@@ -1,4 +1,4 @@
-from flask import Flask,flash, render_template, redirect, url_for, session
+from flask import Flask, flash, render_template, redirect, url_for, session
 from flask_mysqldb import MySQL
 # import MySQLdb
 import yaml
@@ -14,11 +14,11 @@ env = "dev"
 DATABASE_URL = ""
 if env == "dev":
     dev = yaml.load(open('db.yaml'), Loader=yaml.FullLoader)
-    DATABASE_URL  = dev['CLEARDB_DATABASE_URL']
+    DATABASE_URL = dev['CLEARDB_DATABASE_URL']
     print(DATABASE_URL)
 
 else:
-    DATABASE_URL  = os.environ.get("CLEARDB_DATABASE_URL")
+    DATABASE_URL = os.environ.get("CLEARDB_DATABASE_URL")
 
 user, password, host, db = database_config(DATABASE_URL)
 
@@ -43,7 +43,8 @@ google = oauth.register(
     authorize_url='https://accounts.google.com/o/oauth2/auth',
     authorize_params=None,
     api_base_url='https://www.googleapis.com/oauth2/v1/',
-    userinfo_endpoint='https://openidconnect.googleapis.com/v1/userinfo',  # This is only needed if using openId to fetch user info
+    # This is only needed if using openId to fetch user info
+    userinfo_endpoint='https://openidconnect.googleapis.com/v1/userinfo',
     client_kwargs={'scope': 'openid email profile'},
 )
 
@@ -56,11 +57,11 @@ def home():
         # if email is of admin (librarian)
         # session["isAdmin"] = True
 
-        
     else:
         # add page for sign in
         return "Not signed in <a href='/login'>LOGIN</a>>"
     return render_template('dashboard.html')
+
 
 @app.route("/user")
 def userDashboard():
@@ -69,28 +70,40 @@ def userDashboard():
 
 @app.route("/allBooks")
 def user_allBooks():
+    email = session["profile"]["email"]
+    cur = mysql.connection.cursor()
+    cur.execute(f"SELECT ID FROM reader WHERE reader_email='{email}'")
+    person = cur.fetchone()
+    print(cur.fetchall())
+    cur.execute(f"SELECT ISBN FROM issue_details WHERE reader_id='{person}'")
+    books = cur.fetchall()
+    # cur.execute(f")
     return render_template('allBooks.html')
+
 
 @app.route("/recommendedBooks")
 def user_BookRecommedation():
     return render_template('user_BookRecommedation.html')
 
+
 @app.route("/booksWithTags")
 def user_booksWithTags():
     return render_template('booksWithTags.html')
+
 
 @app.route("/friends")
 def friends():
     return render_template('allFriends.html')
 
+
 @app.route("/feedback")
 def feedback():
     return render_template('userFeedback.html')
 
+
 @app.route("/history")
 def user_History():
     return render_template('userHistory.html')
-
 
 
 @app.route("/test")
@@ -105,35 +118,42 @@ def addBooks():
 
 @app.route("/dashboard")
 def dashboard():
-	return render_template('dashboard.html')    
+    return render_template('dashboard.html')
+
 
 @app.route('/login')
 def login():
     google = oauth.create_client('google')  # create the google oauth client
     redirect_uri = url_for('authorize', _external=True)
-    return google.authorize_redirect(redirect_uri) 
+    return google.authorize_redirect(redirect_uri)
+
 
 @app.route('/authorize')
 def authorize():
     message = None
-    google = oauth.create_client('google') 
-    token = google.authorize_access_token()  # Access token from google (needed to get user info)
-    resp = google.get('userinfo')  # userinfo contains stuff u specificed in the scrope
+    google = oauth.create_client('google')
+    # Access token from google (needed to get user info)
+    token = google.authorize_access_token()
+    # userinfo contains stuff u specificed in the scrope
+    resp = google.get('userinfo')
     user_info = resp.json()
-    user = oauth.google.userinfo()  
+    user = oauth.google.userinfo()
     session['profile'] = user_info
-    session.permanent = True  # make the session permanant so it keeps existing after browser gets closed
-    if token!='':  
-        message = 'You were successfully logged in';
+    # make the session permanant so it keeps existing after browser gets closed
+    session.permanent = True
+    if token != '':
+        message = 'You were successfully logged in'
     else:
-        message = 'You Please Try Again';
+        message = 'You Please Try Again'
     return redirect('/')
+
 
 @app.route("/logout")
 def logout():
     for key in list(session.keys()):
         session.pop(key)
     return redirect("/")
+
 
 @app.errorhandler(404)
 def page_not_found(e):
