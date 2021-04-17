@@ -70,7 +70,10 @@ def userDashboard():
 
 @app.route("/allBooks")
 def user_allBooks():
-    email = session["profile"]["email"]
+    if "profile" in session:
+        email = session["profile"]["email"]
+    else:
+        return redirect("/")
     cur = mysql.connection.cursor()
     cur.execute(f"SELECT ID FROM reader WHERE reader_email='{email}'")
     person = cur.fetchone()
