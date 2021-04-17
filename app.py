@@ -91,6 +91,10 @@ def logs():
     details = cur.fetchall()
     return render_template("issueDetails.html", details=details)
 
+@app.route("/addBook")
+def addBook():
+    return render_template("addBook.html")
+
 @app.route("/user")
 def userDashboard():
     return render_template('user.html')
