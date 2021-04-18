@@ -56,11 +56,15 @@ def home():
         # check is this email belongs to admin to normal user
         # if email is of admin (librarian)
         session["isAdmin"] = True
+        if(session=="isAdmin") :
+            return render_template('students.html')
+        else:   
+            return render_template('user.html')
 
     else:
         # add page for sign in
-        return "Not signed in <a href='/login'>LOGIN</a>>"
-    return render_template('dashboard.html')
+        return render_template('login.html')
+    
 
 @app.route("/<memberType>")
 def members(memberType):
