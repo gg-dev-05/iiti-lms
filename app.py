@@ -14,7 +14,6 @@ DATABASE_URL = ""
 if env == "dev":
     dev = yaml.load(open('db.yaml'), Loader=yaml.FullLoader)
     DATABASE_URL = dev['CLEARDB_DATABASE_URL']
-    print(DATABASE_URL)
 
 else:
     DATABASE_URL = os.environ.get("CLEARDB_DATABASE_URL")
@@ -54,7 +53,6 @@ google = oauth.register(
 @app.route("/")
 def home():
     if "profile" in session:
-        print(session["profile"])
         # check is this email belongs to admin to normal user
         # if email is of admin (librarian)
         # session["isAdmin"] = True
