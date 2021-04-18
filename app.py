@@ -9,7 +9,7 @@ from datetime import timedelta
 
 app = Flask(__name__)
 
-env = ""
+env = "dev"
 DATABASE_URL = ""
 if env == "dev":
     dev = yaml.load(open('db.yaml'), Loader=yaml.FullLoader)
@@ -55,7 +55,7 @@ def home():
     if "profile" in session:
         # check is this email belongs to admin to normal user
         # if email is of admin (librarian)
-        # session["isAdmin"] = True
+        session["isAdmin"] = True
 
     else:
         # add page for sign in
