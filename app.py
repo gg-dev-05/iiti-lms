@@ -63,7 +63,7 @@ def home():
 
     else:
         # add page for sign in
-        return render_template('login.html')
+        return render_template('Login.html')
     
 
 @app.route("/<memberType>")
