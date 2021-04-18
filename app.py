@@ -113,7 +113,14 @@ def user_allBooks():
 
 @app.route("/demo")
 def demo():
-    return render_template('form-wizard.html')
+    if "profile" in session:
+        email = session["profile"]["email"]
+        name = session["profile"]["name"]
+    else:
+        return "Not signed in <a href='/login'>LOGIN</a>>"
+    # Only If he/she is a student
+    return render_template("form-wizard.html", email=email,name=name)
+
 
 @app.route("/recommendedBooks")
 def user_BookRecommedation():

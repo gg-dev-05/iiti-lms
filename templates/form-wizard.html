@@ -49,81 +49,73 @@
 						<div>
 							<h3>Account</h3>
 							<section>
-								<label for="userName">User name *</label>
+								
+								<label for="userName">Name *</label>
 								<input
-									id="userName"
-									name="userName"
+									id="Name"
+									name="Name"
 									type="text"
 									class="required form-control"
+									value="{{name}}"
+									disabled
 								/>
-								<label for="password">Password *</label>
+
+								<label for="userName">Email *</label>
 								<input
-									id="password"
-									name="password"
+									id="Email"
+									name="Email"
 									type="text"
 									class="required form-control"
+									value="{{email}}"
+									disabled
 								/>
-								<label for="confirm">Confirm Password *</label>
-								<input
-									id="confirm"
-									name="confirm"
-									type="text"
-									class="required form-control"
-								/>
+
 								<p>(*) Mandatory</p>
 							</section>
 							<h3>Profile</h3>
 							<section>
-								<label for="name">First name *</label>
+								<label for="Number"> Phone Number *</label>
 								<input
-									id="name"
-									name="name"
+									id="Number"
+									name="Number"
 									type="text"
 									class="required form-control"
 								/>
-								<label for="surname">Last name *</label>
+								<label for="Address">Address *</label>
 								<input
-									id="surname"
-									name="surname"
+									id="Address"
+									name="Address"
 									type="text"
 									class="required form-control"
 								/>
-								<label for="email">Email *</label>
+								<label for="CollegeName">College Name </label>
 								<input
-									id="email"
-									name="email"
+									id="CollegeName"
+									name="CollegeName"
 									type="text"
-									class="required email form-control"
+									class="required form-control"
 								/>
-								<label for="address">Address</label>
-								<input
-									id="address"
-									name="address"
-									type="text"
-									class="form-control"
-								/>
+								
 								<p>(*) Mandatory</p>
 							</section>
-							<h3>Hints</h3>
+							<!-- <h3>Hints</h3>
 							<section>
 								<ul>
 									<li>Foo</li>
 									<li>Bar</li>
 									<li>Foobar</li>
 								</ul>
-							</section>
+							</section> -->
 							<h3>Finish</h3>
 							<section>
-								<input
-									id="acceptTerms"
-									name="acceptTerms"
-									type="checkbox"
-									class="required"
-								/>
-								<label for="acceptTerms"
-									>I agree with the Terms and
-									Conditions.</label
-								>
+								<h2>
+									Thank you for your information!!
+								</h2>
+								
+								<h3>
+									Let you visit dashboard.
+								</h3>
+								
 							</section>
 						</div>
 					</form>
