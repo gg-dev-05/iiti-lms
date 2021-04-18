@@ -55,11 +55,18 @@ def home():
     if "profile" in session:
         # check is this email belongs to admin to normal user
         # if email is of admin (librarian)
-        session["isAdmin"] = True
-        if(session=="isAdmin") :
-            return render_template('students.html')
-        else:   
-            return render_template('user.html')
+        email = session["profile"]["email"]
+        cur = mysql.connection.cursor()
+        cur.execute("SELECT * from librarian WHERE librarian_email='{}';".format(email))
+        result = cur.fetchall()
+        print(result)
+        if (result):
+            session["isAdmin"] = True
+            print(session)
+            return render_template('adminHome.html', details=session["profile"], resutl=result)
+        else:
+            session["isAdmin"] = False
+            return render_template('user.html', details=session["profile"])
 
     else:
         # add page for sign in
@@ -98,10 +105,6 @@ def logs():
 @app.route("/addBook")
 def addBook():
     return render_template("addBook.html")
-
-@app.route("/user")
-def userDashboard():
-    return render_template('user.html')
 
 
 @app.route("/allBooks")
