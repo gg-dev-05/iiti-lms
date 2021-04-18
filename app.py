@@ -114,10 +114,12 @@ def user_allBooks():
     cur.execute(f"SELECT ID FROM reader WHERE reader_email='{email}'")
     person = cur.fetchone()
     print(cur.fetchall())
-    cur.execute(f"SELECT ISBN FROM issue_details WHERE reader_id='{person}'")
+
+    cur.execute(f"SELECT ISBN,title,shelf_id,current_status,avg_rating,book_language,publisher,publish_date FROM book WHERE ISBN in( SELECT ISBN FROM issue_details WHERE reader_id='{person[0]}')")
     books = cur.fetchall()
+    print(books)
     # cur.execute(f")
-    return render_template('allBooks.html')
+    return render_template('allBooks.html',books=books)
 
 
 @app.route("/recommendedBooks")
@@ -132,7 +134,21 @@ def user_booksWithTags():
 
 @app.route("/friends")
 def friends():
-    return render_template('allFriends.html')
+    if "profile" in session:
+        email = session["profile"]["email"]
+    else:
+        return redirect("/")
+
+    cur = mysql.connection.cursor()
+    cur.execute(f"SELECT ID FROM reader WHERE reader_email='{email}'")
+    reader_1=cur.fetchall()
+  #  cur.execute(f"SELECT reader_2 FROM friends WHERE reader_1='{reader_1}'")
+  #  friendsid = cur.fetchall()
+    cur.execute(f"SELECT reader_name,phone_no,books_issued FROM reader WHERE ID IN ( SELECT reader_2 FROM friends WHERE reader_1={reader_1[0][0]} )")
+    friendinfo = cur.fetchall()
+   # print(f"SELECT reader_name,phone_no,books_issued FROM reader WHERE ID IN ( SELECT reader_2 FROM friends WHERE reader_1={reader_1[0][0]} )")
+    print(friendinfo)
+    return render_template('allFriends.html',len=len(friendinfo), friendinfo=friendinfo)
 
 
 @app.route("/feedback")

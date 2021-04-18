@@ -78,14 +78,14 @@
 								<tbody>
 									{% for book in books %}
 									<tr>
-										<td>{{book[0]}}</td>
-										<td>{{book[1]}}</td>
-										<td>{{book[2]}}</td>
-										<td>{{book[3]}}</td>
-										<td>{{book[4]}}</td>
-										<td>{{book[5]}}</td>
-										<td>{{book[6]}}</td>
-										<td>{{book[7]}}</td>
+									{% for value in book %}
+									
+										
+										<td>{{value}}</td>
+
+										
+									
+									{% endfor %}
 									</tr>
 									{% endfor %}
 								</tbody>
