@@ -55,8 +55,6 @@ google = oauth.register(
 @app.route("/")
 def home():
     if "profile" in session:
-        # check is this email belongs to admin to normal user
-        # if email is of admin (librarian)
         email = session["profile"]["email"]
         cur = mysql.connection.cursor()
         cur.execute(
@@ -64,14 +62,24 @@ def home():
         result = cur.fetchall()
         if (result):
             session["isAdmin"] = True
-            print(session)
-            return render_template('adminHome.html', details=session["profile"], resutl=result)
+            return render_template('adminHome.html', details=session["profile"])
         else:
             session["isAdmin"] = False
+            cur.execute("SELECT is_faculty from reader WHERE reader_email = '{}';".format(email))
+            print("SELECT is_faculty from reader WHERE reader_email = '{}';".format(email))
+            result = cur.fetchone()
+            if result == None:
+                return render_template("register.html", email=session['profile']['email'], name=session['profile']['name'])
+            else:
+                if result[0] == 1:
+                    session["isFaculty"] = True
+                    return "Faculty"
+                else:
+                    session["isFaculty"] = False
+                    return "Student"
             return render_template('userHome.html', details=session["profile"])
 
     else:
-        # add page for sign in
         return render_template('Login.html')
 
 
@@ -133,6 +141,14 @@ def book():
         return render_template("userSearchBook.html",books=books); 
     return redirect("/");         
 
+@app.route("/new", methods=["POST"])
+def newStudent():
+    data = request.form
+    print(data)
+    return "DONE"
+
+
+
 # issue details
 @app.route("/logs")
 def logs():
@@ -179,7 +195,7 @@ def demo():
     else:
         return "Not signed in <a href='/login'>LOGIN</a>>"
     # Only If he/she is a student
-    return render_template("form-wizard.html", email=email, name=name)
+    return render_template("register.html", email=email, name=name)
 
 
 @app.route("/recommendedBooks")
