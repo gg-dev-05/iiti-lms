@@ -19,7 +19,7 @@ else:
     DATABASE_URL = os.environ.get("CLEARDB_DATABASE_URL")
 
 user, password, host, db = database_config(DATABASE_URL)
-print(user, password, host, db)
+
 app.config['MYSQL_HOST'] = host
 app.config['MYSQL_USER'] = user
 app.config['MYSQL_PASSWORD'] = password
@@ -62,14 +62,13 @@ def home():
         cur.execute(
             "SELECT * from librarian WHERE librarian_email='{}';".format(email))
         result = cur.fetchall()
-        print(result)
         if (result):
             session["isAdmin"] = True
             print(session)
             return render_template('adminHome.html', details=session["profile"], resutl=result)
         else:
             session["isAdmin"] = False
-            return render_template('user.html', details=session["profile"])
+            return render_template('userHome.html', details=session["profile"])
 
     else:
         # add page for sign in
