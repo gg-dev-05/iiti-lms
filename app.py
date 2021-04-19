@@ -26,12 +26,14 @@ app.config['MYSQL_PASSWORD'] = password
 app.config['MYSQL_DB'] = db
 
 # Session config
-app.secret_key = os.environ.get("client_secret") if (env != 'dev') else dev['client_secret']
+app.secret_key = os.environ.get("client_secret") if (
+    env != 'dev') else dev['client_secret']
 app.config['SESSION_COOKIE_NAME'] = 'google-login-session'
 
 mysql = MySQL(app)
 
-clientSecret = os.environ.get("client_secret") if (env != 'dev') else dev['client_secret']
+clientSecret = os.environ.get("client_secret") if (
+    env != 'dev') else dev['client_secret']
 clientId = os.environ.get("client_id") if (env != 'dev') else dev['client_id']
 
 oauth = OAuth(app)
@@ -62,28 +64,48 @@ def home():
         return "Not signed in <a href='/login'>LOGIN</a>>"
     return render_template('dashboard.html')
 
+
 @app.route("/<memberType>")
 def members(memberType):
     if memberType == 'students':
         cur = mysql.connection.cursor()
-        cur.execute("SELECT reader_name, reader_email, reader_address, phone_no, books_issued, unpaid_fines FROM reader WHERE is_faculty = 0;")
+        cur.execute(
+            "SELECT reader_name, reader_email, reader_address, phone_no, books_issued, unpaid_fines,ID FROM reader WHERE is_faculty = 0;")
         students = cur.fetchall()
         return render_template("students.html", students=students)
     if memberType == 'faculties':
         cur = mysql.connection.cursor()
-        cur.execute("SELECT reader_name, reader_email, reader_address, phone_no, books_issued, unpaid_fines FROM reader WHERE is_faculty = 1;")
+        cur.execute(
+            "SELECT reader_name, reader_email, reader_address, phone_no, books_issued, unpaid_fines,ID FROM reader WHERE is_faculty = 1;")
         faculties = cur.fetchall()
         return render_template("faculties.html", faculties=faculties)
     return redirect("/")
 
+
+@app.route("/<memberType>/delete/<ID>")
+def members1(memberType, ID):
+
+    if memberType == 'faculties' or memberType == 'students':
+        cur = mysql.connection.cursor()
+        print("Executing Query: " + "DELETE FROM reader WHERE ID ={};".format(ID))
+        cur.execute("DELETE FROM reader WHERE ID ={};".format(ID))
+        print("Done!!")
+        mysql.connection.commit()
+        return redirect("/{}".format(memberType))
+    return redirect("/")
+
+
 @app.route('/books')
 def allBooks():
     cur = mysql.connection.cursor()
-    cur.execute("SELECT ISBN, title, shelf_id, current_status, avg_rating, book_language, publisher, publish_date FROM book;")
+    cur.execute(
+        "SELECT ISBN, title, shelf_id, current_status, avg_rating, book_language, publisher, publish_date FROM book;")
     books = cur.fetchall()
     return render_template("allBooks.html", books=books)
 
 # issue details
+
+
 @app.route("/logs")
 def logs():
     cur = mysql.connection.cursor()
@@ -91,9 +113,11 @@ def logs():
     details = cur.fetchall()
     return render_template("issueDetails.html", details=details)
 
+
 @app.route("/addBook")
 def addBook():
     return render_template("addBook.html")
+
 
 @app.route("/user")
 def userDashboard():
