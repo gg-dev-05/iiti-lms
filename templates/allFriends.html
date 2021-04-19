@@ -1,4 +1,4 @@
-{% extends 'user.html' %} {% block Usidebar_and_navbar %}
+{% extends 'user.html' %} {% block sidebar_and_navbar %}
 <!-- ============================================================== -->
 <!-- End Left Sidebar - style you can find in sidebar.scss  -->
 <!-- ============================================================== -->
@@ -53,16 +53,16 @@
 								<th scope="col">Name</th>
 								<th scope="col">Phone_Number</th>
 								<th scope="col">Number of Books issued</th>
-								
 							</tr>
 						</thead>
-						{% for reader_name,phone_no,books_issued  in friendinfo %}
-							  <tr>
-								<td>{{ reader_name }}</td>
-								<td>{{ phone_no }}</td>
-								<td>{{ books_issued }}</td>
-							  </tr>
-							{% endfor %}
+						{% for reader_name,phone_no,books_issued in friendinfo
+						%}
+						<tr>
+							<td>{{ reader_name }}</td>
+							<td>{{ phone_no }}</td>
+							<td>{{ books_issued }}</td>
+						</tr>
+						{% endfor %}
 					</table>
 				</div>
 				<div class="card">
@@ -768,4 +768,4 @@
 	 ****************************************/
 	$("#zero_config").DataTable();
 </script>
-{% endblock Usidebar_and_navbar %}
+{% endblock sidebar_and_navbar %}

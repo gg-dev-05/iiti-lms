@@ -54,26 +54,40 @@ google = oauth.register(
 
 @app.route("/")
 def home():
+    
     if "profile" in session:
-        # check is this email belongs to admin to normal user
-        # if email is of admin (librarian)
         email = session["profile"]["email"]
         cur = mysql.connection.cursor()
-        cur.execute(
-            "SELECT * from librarian WHERE librarian_email='{}';".format(email))
+        cur.execute("SELECT * from librarian WHERE librarian_email='{}';".format(email))
         result = cur.fetchall()
         if (result):
             session["isAdmin"] = True
-            print(session)
-            return render_template('adminHome.html', details=session["profile"], resutl=result)
+            return render_template('adminHome.html', details=session["profile"])
         else:
             session["isAdmin"] = False
-            return render_template('userHome.html', details=session["profile"])
+            cur.execute("SELECT is_faculty from reader WHERE reader_email = '{}';".format(email))
+            print("SELECT is_faculty from reader WHERE reader_email = '{}';".format(email))
+            result = cur.fetchone()
+            if result == None:
+                return render_template("register.html", email=session['profile']['email'], name=session['profile']['name'])
+            else:
+                if result[0] == 1:
+                    session["isFaculty"] = True
+                else:
+                    session["isFaculty"] = False
+                return render_template('userHome.html', details=session["profile"])
 
     else:
-        # add page for sign in
         return render_template('Login.html')
 
+# Register new student
+@app.route("/new", methods=["POST"])
+def newStudent():
+    data = request.form
+    cur = mysql.connection.cursor()
+    cur.execute("INSERT INTO reader (reader_name, reader_email, reader_address, phone_no, is_faculty) VALUES ('{}', '{}', '{}', {}, {});".format(data['Name'], data['Email'], data['Address'], data['Number'], 0))
+    mysql.connection.commit()
+    return redirect("/")
 
 @app.route("/<memberType>")
 def members(memberType):
@@ -133,6 +147,9 @@ def book():
         return render_template("userSearchBook.html",books=books); 
     return redirect("/");         
 
+
+
+
 # issue details
 @app.route("/logs")
 def logs():
@@ -188,7 +205,7 @@ def demo():
     else:
         return "Not signed in <a href='/login'>LOGIN</a>>"
     # Only If he/she is a student
-    return render_template("form-wizard.html", email=email, name=name)
+    return render_template("register.html", email=email, name=name)
 
 
 @app.route("/recommendedBooks")
