@@ -165,13 +165,9 @@ def user_allBooks():
     cur = mysql.connection.cursor()
     cur.execute(f"SELECT ID FROM reader WHERE reader_email='{email}'")
     person = cur.fetchone()
-    print(cur.fetchall())
-
     cur.execute(
-        f"SELECT ISBN,title,shelf_id,current_status,avg_rating,book_language,publisher,publish_date FROM book WHERE ISBN in( SELECT ISBN FROM issue_details WHERE reader_id='{person[0]}')")
+        f"SELECT ISBN,title,avg_rating,book_language,publisher,publish_date FROM book WHERE ISBN in( SELECT ISBN FROM issue_details WHERE reader_id='{person[0]}')")
     books = cur.fetchall()
-    print(books)
-    # cur.execute(f")
     return render_template('allBooks.html', books=books)
 
 
