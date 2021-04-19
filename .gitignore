@@ -1,3 +1,4 @@
 db.yaml
 env
 __pycache__
+.vscode

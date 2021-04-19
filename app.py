@@ -57,11 +57,19 @@ def home():
     if "profile" in session:
         # check is this email belongs to admin to normal user
         # if email is of admin (librarian)
-        session["isAdmin"] = True
-        if(session == "isAdmin"):
-            return render_template('students.html')
+        email = session["profile"]["email"]
+        cur = mysql.connection.cursor()
+        cur.execute(
+            "SELECT * from librarian WHERE librarian_email='{}';".format(email))
+        result = cur.fetchall()
+        print(result)
+        if (result):
+            session["isAdmin"] = True
+            print(session)
+            return render_template('adminHome.html', details=session["profile"], resutl=result)
         else:
-            return render_template('user.html')
+            session["isAdmin"] = False
+            return render_template('user.html', details=session["profile"])
 
     else:
         # add page for sign in
@@ -73,15 +81,28 @@ def members(memberType):
     if memberType == 'students':
         cur = mysql.connection.cursor()
         cur.execute(
-            "SELECT reader_name, reader_email, reader_address, phone_no, books_issued, unpaid_fines FROM reader WHERE is_faculty = 0;")
+            "SELECT reader_name, reader_email, reader_address, phone_no, books_issued, unpaid_fines,ID FROM reader WHERE is_faculty = 0;")
         students = cur.fetchall()
         return render_template("students.html", students=students)
     if memberType == 'faculties':
         cur = mysql.connection.cursor()
         cur.execute(
-            "SELECT reader_name, reader_email, reader_address, phone_no, books_issued, unpaid_fines FROM reader WHERE is_faculty = 1;")
+            "SELECT reader_name, reader_email, reader_address, phone_no, books_issued, unpaid_fines,ID FROM reader WHERE is_faculty = 1;")
         faculties = cur.fetchall()
         return render_template("faculties.html", faculties=faculties)
+    return redirect("/")
+
+
+@app.route("/<memberType>/delete/<ID>")
+def members1(memberType, ID):
+
+    if memberType == 'faculties' or memberType == 'students':
+        cur = mysql.connection.cursor()
+        print("Executing Query: " + "DELETE FROM reader WHERE ID ={};".format(ID))
+        cur.execute("DELETE FROM reader WHERE ID ={};".format(ID))
+        print("Done!!")
+        mysql.connection.commit()
+        return redirect("/{}".format(memberType))
     return redirect("/")
 
 
@@ -104,10 +125,9 @@ def logs():
     return render_template("issueDetails.html", details=details)
 
 
-@app.route("/addBook", methods=['GET', 'POST'])
+@app.route("/addBook")
 def addBook():
     if request.method == 'GET':
-        print("AAAAAAAAA")
         return render_template("addBook.html")
     else:
         data = request.form
@@ -116,12 +136,7 @@ def addBook():
         cur.execute(
             f"insert into book(title,ISBN,book_language,publisher,publish_date,shelf_id) values('{data['title']}','{data['ISBN']}','{data['language']}','{data['publisher']}','{data['date']}','{data['shelf']}')")
         mysql.connection.commit()
-        return render_template('user.html')
-
-
-@app.route("/user")
-def userDashboard():
-    return render_template('user.html')
+        return render_template("addBook.html")
 
 
 @app.route("/allBooks")
@@ -134,10 +149,24 @@ def user_allBooks():
     cur.execute(f"SELECT ID FROM reader WHERE reader_email='{email}'")
     person = cur.fetchone()
     print(cur.fetchall())
-    cur.execute(f"SELECT ISBN FROM issue_details WHERE reader_id='{person}'")
+
+    cur.execute(
+        f"SELECT ISBN,title,shelf_id,current_status,avg_rating,book_language,publisher,publish_date FROM book WHERE ISBN in( SELECT ISBN FROM issue_details WHERE reader_id='{person[0]}')")
     books = cur.fetchall()
+    print(books)
     # cur.execute(f")
-    return render_template('allBooks.html')
+    return render_template('allBooks.html', books=books)
+
+
+@app.route("/demo")
+def demo():
+    if "profile" in session:
+        email = session["profile"]["email"]
+        name = session["profile"]["name"]
+    else:
+        return "Not signed in <a href='/login'>LOGIN</a>>"
+    # Only If he/she is a student
+    return render_template("form-wizard.html", email=email, name=name)
 
 
 @app.route("/recommendedBooks")
@@ -152,7 +181,22 @@ def user_booksWithTags():
 
 @app.route("/friends")
 def friends():
-    return render_template('allFriends.html')
+    if "profile" in session:
+        email = session["profile"]["email"]
+    else:
+        return redirect("/")
+
+    cur = mysql.connection.cursor()
+    cur.execute(f"SELECT ID FROM reader WHERE reader_email='{email}'")
+    reader_1 = cur.fetchall()
+  #  cur.execute(f"SELECT reader_2 FROM friends WHERE reader_1='{reader_1}'")
+  #  friendsid = cur.fetchall()
+    cur.execute(
+        f"SELECT reader_name,phone_no,books_issued FROM reader WHERE ID IN ( SELECT reader_2 FROM friends WHERE reader_1={reader_1[0][0]} )")
+    friendinfo = cur.fetchall()
+   # print(f"SELECT reader_name,phone_no,books_issued FROM reader WHERE ID IN ( SELECT reader_2 FROM friends WHERE reader_1={reader_1[0][0]} )")
+    print(friendinfo)
+    return render_template('allFriends.html', len=len(friendinfo), friendinfo=friendinfo)
 
 
 @app.route("/feedback")
