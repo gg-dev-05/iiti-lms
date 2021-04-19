@@ -126,33 +126,36 @@ def allBooks():
         return render_template("allBooksA.html", books=books)
     return render_template("allBooksU.html", books=books)
 
+
 @app.route("/book", methods=['GET', 'POST'])
 def book():
     if request.method == 'GET':
-        return "GET";
-    if session["isAdmin"] == True:   
+        return "GET"
+    if session["isAdmin"] == True:
         data = request.form
         cur = mysql.connection.cursor()
         cur.execute("SELECT * FROM book WHERE title='{}'".format(data['book']))
         books = cur.fetchall()
         print(books)
         # return render_template("searchBook.html",books=books);
-        return render_template("adminSearchBook.html",books=books);
+        return render_template("adminSearchBook.html", books=books)
 
-    if session["isAdmin"] == False:   
+    if session["isAdmin"] == False:
         data = request.form
         cur = mysql.connection.cursor()
         cur.execute("SELECT * FROM book WHERE title='{}'".format(data['book']))
         books = cur.fetchall()
         print(books)
         # return render_template("searchBook.html",books=books);
-        return render_template("userSearchBook.html",books=books); 
-    return redirect("/");         
+        return render_template("userSearchBook.html", books=books)
+    return redirect("/")
 
 
 
 
 # issue details
+
+
 @app.route("/logs")
 def logs():
     cur = mysql.connection.cursor()
