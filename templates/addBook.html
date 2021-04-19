@@ -314,7 +314,7 @@
 			<div class="row">
 				<div class="col-md-12">
 					<div class="card">
-						<form class="form-horizontal">
+						<form class="form-horizontal" action="/addBook" method="POST">
 							<div class="card-body">
 								<h4 class="card-title">Details of New Book</h4>
 								<div class="form-group row">
@@ -329,6 +329,7 @@
 											class="form-control"
 											id="ISBN"
 											placeholder="ISBN"
+											name="ISBN"
 										/>
 									</div>
 								</div>
@@ -343,7 +344,8 @@
 											type="text"
 											class="form-control"
 											id="lname"
-											placeholder="Last Name Here"
+											placeholder="Title of the book"
+											name="title"
 										/>
 									</div>
 								</div>
@@ -355,10 +357,11 @@
 									>
 									<div class="col-sm-9">
 										<input
-											type="password"
+											type="text"
 											class="form-control"
 											id="lname"
-											placeholder="Password Here"
+											placeholder="Language of the book"
+											name="language"
 										/>
 									</div>
 								</div>
@@ -373,7 +376,8 @@
 											type="text"
 											class="form-control"
 											id="email1"
-											placeholder="Company Name Here"
+											placeholder="publisher"
+											name="publisher"
 										/>
 									</div>
 								</div>
@@ -388,7 +392,8 @@
 											type="text"
 											class="form-control"
 											id="cono1"
-											placeholder="Contact No Here"
+											placeholder="publishing date"
+											name="date"
 										/>
 									</div>
 								</div>
@@ -401,6 +406,8 @@
 									<div class="col-sm-9">
 										<textarea
 											class="form-control"
+											name="shelf"
+											placeholder="Shelf id of library"
 										></textarea>
 									</div>
 								</div>
@@ -408,7 +415,7 @@
 							<div class="border-top">
 								<div class="card-body">
 									<button
-										type="button"
+										type="submit"
 										class="btn btn-primary"
 									>
 										Submit

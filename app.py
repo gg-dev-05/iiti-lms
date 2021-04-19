@@ -1,4 +1,4 @@
-from flask import Flask, flash, render_template, redirect, url_for, session
+from flask import Flask, flash, render_template, request, redirect, url_for, session
 from flask_mysqldb import MySQL
 import yaml
 from functions.dbConfig import database_config
@@ -19,19 +19,21 @@ else:
     DATABASE_URL = os.environ.get("CLEARDB_DATABASE_URL")
 
 user, password, host, db = database_config(DATABASE_URL)
-
+print(user, password, host, db)
 app.config['MYSQL_HOST'] = host
 app.config['MYSQL_USER'] = user
 app.config['MYSQL_PASSWORD'] = password
 app.config['MYSQL_DB'] = db
 
 # Session config
-app.secret_key = os.environ.get("client_secret") if (env != 'dev') else dev['client_secret']
+app.secret_key = os.environ.get("client_secret") if (
+    env != 'dev') else dev['client_secret']
 app.config['SESSION_COOKIE_NAME'] = 'google-login-session'
 
 mysql = MySQL(app)
 
-clientSecret = os.environ.get("client_secret") if (env != 'dev') else dev['client_secret']
+clientSecret = os.environ.get("client_secret") if (
+    env != 'dev') else dev['client_secret']
 clientId = os.environ.get("client_id") if (env != 'dev') else dev['client_id']
 
 oauth = OAuth(app)
@@ -56,38 +58,44 @@ def home():
         # check is this email belongs to admin to normal user
         # if email is of admin (librarian)
         session["isAdmin"] = True
-        if(session=="isAdmin") :
+        if(session == "isAdmin"):
             return render_template('students.html')
-        else:   
+        else:
             return render_template('user.html')
 
     else:
         # add page for sign in
         return render_template('Login.html')
-    
+
 
 @app.route("/<memberType>")
 def members(memberType):
     if memberType == 'students':
         cur = mysql.connection.cursor()
-        cur.execute("SELECT reader_name, reader_email, reader_address, phone_no, books_issued, unpaid_fines FROM reader WHERE is_faculty = 0;")
+        cur.execute(
+            "SELECT reader_name, reader_email, reader_address, phone_no, books_issued, unpaid_fines FROM reader WHERE is_faculty = 0;")
         students = cur.fetchall()
         return render_template("students.html", students=students)
     if memberType == 'faculties':
         cur = mysql.connection.cursor()
-        cur.execute("SELECT reader_name, reader_email, reader_address, phone_no, books_issued, unpaid_fines FROM reader WHERE is_faculty = 1;")
+        cur.execute(
+            "SELECT reader_name, reader_email, reader_address, phone_no, books_issued, unpaid_fines FROM reader WHERE is_faculty = 1;")
         faculties = cur.fetchall()
         return render_template("faculties.html", faculties=faculties)
     return redirect("/")
 
+
 @app.route('/books')
 def allBooks():
     cur = mysql.connection.cursor()
-    cur.execute("SELECT ISBN, title, shelf_id, current_status, avg_rating, book_language, publisher, publish_date FROM book;")
+    cur.execute(
+        "SELECT ISBN, title, shelf_id, current_status, avg_rating, book_language, publisher, publish_date FROM book;")
     books = cur.fetchall()
     return render_template("allBooks.html", books=books)
 
 # issue details
+
+
 @app.route("/logs")
 def logs():
     cur = mysql.connection.cursor()
@@ -95,9 +103,21 @@ def logs():
     details = cur.fetchall()
     return render_template("issueDetails.html", details=details)
 
-@app.route("/addBook")
+
+@app.route("/addBook", methods=['GET', 'POST'])
 def addBook():
-    return render_template("addBook.html")
+    if request.method == 'GET':
+        print("AAAAAAAAA")
+        return render_template("addBook.html")
+    else:
+        data = request.form
+        print(data)
+        cur = mysql.connection.cursor()
+        cur.execute(
+            f"insert into book(title,ISBN,book_language,publisher,publish_date,shelf_id) values('{data['title']}','{data['ISBN']}','{data['language']}','{data['publisher']}','{data['date']}','{data['shelf']}')")
+        mysql.connection.commit()
+        return render_template('user.html')
+
 
 @app.route("/user")
 def userDashboard():
