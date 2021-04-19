@@ -129,32 +129,25 @@ def allBooks():
 
 @app.route("/book", methods=['GET', 'POST'])
 def book():
-    if session["isAdmin"] == True:
+    if request.method == 'POST':
         data = request.form
         query = data['book']
         cur = mysql.connection.cursor()
         cur.execute(
             '''
-            SELECT ISBN, title, shelf_id, current_status, avg_rating, book_language, publisher, publish_date FROM book WHERE title = '{}'
+            SELECT ISBN, title, shelf_id, current_status, avg_rating, book_language, publisher, publish_date FROM book WHERE title LIKE '%{}%'
             UNION
-            SELECT ISBN, title, shelf_id, current_status, avg_rating, book_language, publisher, publish_date FROM book WHERE book_language = '{}'
+            SELECT ISBN, title, shelf_id, current_status, avg_rating, book_language, publisher, publish_date FROM book WHERE book_language LIKE '%{}%'
             UNION
-            SELECT ISBN, title, shelf_id, current_status, avg_rating, book_language, publisher, publish_date FROM book WHERE publisher = '{}'
+            SELECT ISBN, title, shelf_id, current_status, avg_rating, book_language, publisher, publish_date FROM book WHERE publisher LIKE '%{}%'
             '''.format(query, query, query)
         )
         books = cur.fetchall()
-        # return render_template("searchBook.html",books=books);
-        return render_template("adminSearchBook.html", books=books)
-
-    if session["isAdmin"] == False:
-        data = request.form
-        cur = mysql.connection.cursor()
-        cur.execute("SELECT * FROM book WHERE title='{}'".format(data['book']))
-        print("SELECT * FROM book WHERE title='{}'".format(data['book']))
-        books = cur.fetchall()
-        print(books)
-        # return render_template("searchBook.html",books=books);
-        return render_template("userSearchBook.html", books=books)
+        if "isAdmin" in session:
+            if session["isAdmin"] == True:
+                return render_template("adminSearchBook.html", books=books, query=query)
+            if session["isAdmin"] == False:
+                return render_template("userSearchBook.html", books=books)
     return redirect("/")
 
 

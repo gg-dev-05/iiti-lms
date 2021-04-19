@@ -45,7 +45,9 @@
 			<div class="col-12">
 				<div class="card">
 					<div class="card-body">
-						<h5 class="card-title">All Books</h5>
+						<h5 class="card-title">
+							All Books for query : '{{query}}'
+						</h5>
 						<div class="table-responsive">
 							<table
 								id="zero_config"
@@ -88,9 +90,10 @@
 									{% endfor %}
 								</tbody>
 								{% else %}
-								<h1>
-									Sorry! You have no books, try reading a few
-								</h1>
+								<h2>
+									Nothing found for your entered string:
+									'{{query}}'
+								</h2>
 								{% endif %}
 							</table>
 						</div>
