@@ -129,14 +129,20 @@ def allBooks():
 
 @app.route("/book", methods=['GET', 'POST'])
 def book():
-    if request.method == 'GET':
-        return "GET"
     if session["isAdmin"] == True:
         data = request.form
+        query = data['book']
         cur = mysql.connection.cursor()
-        cur.execute("SELECT * FROM book WHERE title='{}'".format(data['book']))
+        cur.execute(
+            '''
+            SELECT ISBN, title, shelf_id, current_status, avg_rating, book_language, publisher, publish_date FROM book WHERE title = '{}'
+            UNION
+            SELECT ISBN, title, shelf_id, current_status, avg_rating, book_language, publisher, publish_date FROM book WHERE book_language = '{}'
+            UNION
+            SELECT ISBN, title, shelf_id, current_status, avg_rating, book_language, publisher, publish_date FROM book WHERE publisher = '{}'
+            '''.format(query, query, query)
+        )
         books = cur.fetchall()
-        print(books)
         # return render_template("searchBook.html",books=books);
         return render_template("adminSearchBook.html", books=books)
 
@@ -144,6 +150,7 @@ def book():
         data = request.form
         cur = mysql.connection.cursor()
         cur.execute("SELECT * FROM book WHERE title='{}'".format(data['book']))
+        print("SELECT * FROM book WHERE title='{}'".format(data['book']))
         books = cur.fetchall()
         print(books)
         # return render_template("searchBook.html",books=books);
@@ -151,7 +158,12 @@ def book():
     return redirect("/")
 
 
-
+@app.route("/test")
+def test():
+    cur = mysql.connection.cursor()
+    cur.execute("SELECT * FROM book_id AND SELECT * FROM librarian;")
+    print(cur.fetchall())
+    return "DONE"
 
 # issue details
 
