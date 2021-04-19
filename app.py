@@ -54,11 +54,11 @@ google = oauth.register(
 
 @app.route("/")
 def home():
+    
     if "profile" in session:
         email = session["profile"]["email"]
         cur = mysql.connection.cursor()
-        cur.execute(
-            "SELECT * from librarian WHERE librarian_email='{}';".format(email))
+        cur.execute("SELECT * from librarian WHERE librarian_email='{}';".format(email))
         result = cur.fetchall()
         if (result):
             session["isAdmin"] = True
@@ -73,15 +73,21 @@ def home():
             else:
                 if result[0] == 1:
                     session["isFaculty"] = True
-                    return "Faculty"
                 else:
                     session["isFaculty"] = False
-                    return "Student"
-            return render_template('userHome.html', details=session["profile"])
+                return render_template('userHome.html', details=session["profile"])
 
     else:
         return render_template('Login.html')
 
+# Register new student
+@app.route("/new", methods=["POST"])
+def newStudent():
+    data = request.form
+    cur = mysql.connection.cursor()
+    cur.execute("INSERT INTO reader (reader_name, reader_email, reader_address, phone_no, is_faculty) VALUES ('{}', '{}', '{}', {}, {});".format(data['Name'], data['Email'], data['Address'], data['Number'], 0))
+    mysql.connection.commit()
+    return redirect("/")
 
 @app.route("/<memberType>")
 def members(memberType):
@@ -141,11 +147,6 @@ def book():
         return render_template("userSearchBook.html",books=books); 
     return redirect("/");         
 
-@app.route("/new", methods=["POST"])
-def newStudent():
-    data = request.form
-    print(data)
-    return "DONE"
 
 
 

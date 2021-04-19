@@ -61,20 +61,18 @@
 									type="text"
 									class="required form-control"
 									value="{{name}}"
-									disabled
+									readonly
 								/>
 
 								<label for="userName">Email *</label>
 								<input
 									id="Email"
 									name="Email"
-									type="text"
+									type="email"
 									class="required form-control"
 									value="{{email}}"
-									disabled
+									readonly
 								/>
-
-								<p>(*) Mandatory</p>
 							</section>
 							<h3>Profile</h3>
 							<section>
@@ -82,7 +80,7 @@
 								<input
 									id="Number"
 									name="Number"
-									type="text"
+									type="number"
 									class="required form-control"
 								/>
 								<label for="Address">Address *</label>
@@ -112,9 +110,9 @@
 							</section> -->
 							<h3>Finish</h3>
 							<section>
-								<h2>Thank you for your information!!</h2>
+								<h2>Thank you !! Press Finish to continue;</h2>
 
-								<h3>Let you visit dashboard.</h3>
+								<h3>Enjoy your new reading experience !!</h3>
 							</section>
 						</div>
 					</form>
@@ -179,8 +177,10 @@
 			element.before(error);
 		},
 		rules: {
-			confirm: {
-				equalTo: "#password",
+			Number: {
+				required: true,
+				minlength: 10,
+				maxlength: 10,
 			},
 		},
 	});
@@ -198,6 +198,7 @@
 		},
 		onFinished: function (event, currentIndex) {
 			console.log(event);
+			form.submit();
 		},
 	});
 </script>
