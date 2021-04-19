@@ -1,4 +1,4 @@
-from flask import Flask, flash, render_template, redirect, url_for, session
+from flask import Flask, render_template, redirect, url_for, session, request
 from flask_mysqldb import MySQL
 import yaml
 from functions.dbConfig import database_config
@@ -94,6 +94,16 @@ def allBooks():
     books = cur.fetchall()
     return render_template("allBooks.html", books=books)
 
+@app.route("/book", methods=['GET', 'POST'])
+def book():
+    if request.method == 'GET':
+        return "GET"
+    data = request.form
+    cur = mysql.connection.cursor()
+    cur.execute("SELECT * FROM book WHERE title='{}'".format(data['book']))
+    books = cur.fetchall()
+    print(books)
+    return "POST"
 # issue details
 @app.route("/logs")
 def logs():
