@@ -208,6 +208,7 @@ def friends():
     reader_1 = cur.fetchall()
   #  cur.execute(f"SELECT reader_2 FROM friends WHERE reader_1='{reader_1}'")
   #  friendsid = cur.fetchall()
+    print(reader_1)
     cur.execute(
         f"SELECT reader_name,phone_no,books_issued FROM reader WHERE ID IN ( SELECT reader_2 FROM friends WHERE reader_1={reader_1[0][0]} )")
     friendinfo = cur.fetchall()
