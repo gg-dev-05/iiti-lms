@@ -62,7 +62,6 @@ def home():
         cur.execute(
             "SELECT * from librarian WHERE librarian_email='{}';".format(email))
         result = cur.fetchall()
-        print(result)
         if (result):
             session["isAdmin"] = True
             print(session)
