@@ -115,6 +115,16 @@ def members1(memberType, ID):
         return redirect("/{}".format(memberType))
     return redirect("/")
 
+@app.route("/friend/delete/<ID>")
+def friendDelete(ID):
+    if session["isAdmin"] == True:
+        redirect("/")
+    print(ID)
+    cur = mysql.connection.cursor()
+    cur.execute("DELETE FROM friends WHERE reader_2 ={};".format(ID))
+    mysql.connection.commit()
+    return redirect("/friends")
+
 
 @app.route('/books')
 def allBooks():
@@ -144,8 +154,8 @@ def addFriend():
     friend = cur.fetchall()
     cur.execute(f"SELECT ID FROM reader WHERE reader_email='{email}'")
     Me = cur.fetchone()
-    print(friend[0][0])
-    print(Me[0]) 
+    # print(friend[0][0])
+    # print(Me[0]) 
     cur.execute(
             f"insert into friends(reader_1, reader_2) values('{Me[0]}','{friend[0][0]}')")
     mysql.connection.commit()
@@ -160,7 +170,7 @@ def book():
         cur = mysql.connection.cursor()
         cur.execute("SELECT * FROM book WHERE title='{}'".format(data['book']))
         books = cur.fetchall()
-        print(books)
+        # print(books)
         # return render_template("searchBook.html",books=books);
         return render_template("adminSearchBook.html", books=books)
 
@@ -169,7 +179,7 @@ def book():
         cur = mysql.connection.cursor()
         cur.execute("SELECT * FROM book WHERE title='{}'".format(data['book']))
         books = cur.fetchall()
-        print(books)
+        # print(books)
         # return render_template("searchBook.html",books=books);
         return render_template("userSearchBook.html", books=books)
     return redirect("/")
@@ -263,10 +273,11 @@ def friends():
   #  friendsid = cur.fetchall()
     print(reader_1)
     cur.execute(
-        f"SELECT reader_name,phone_no,books_issued FROM reader WHERE ID IN ( SELECT reader_2 FROM friends WHERE reader_1={reader_1[0][0]} )")
+        f"SELECT reader_name,phone_no,books_issued,ID  FROM reader WHERE ID IN ( SELECT reader_2 FROM friends WHERE reader_1={reader_1[0][0]} )")
     friendinfo = cur.fetchall()
     # print(f"SELECT reader_name,phone_no,books_issued FROM reader WHERE ID IN ( SELECT reader_2 FROM friends WHERE reader_1={reader_1[0][0]} )")
-    print(friendinfo)
+    print(friendinfo[0][2])
+    # friend_id = friendinfo[0][2]
     return render_template('allFriends.html', len=len(friendinfo), friendinfo=friendinfo)
 
 
