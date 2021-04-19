@@ -170,6 +170,15 @@ def user_allBooks():
     books = cur.fetchall()
     return render_template('allBooks.html', books=books)
 
+@app.route("/shelf")
+def shelf():
+    if session["isAdmin"] == True:
+        cur = mysql.connection.cursor()
+        cur.execute(
+        "SELECT shelf_id, capacity FROM shelf;")
+        shelfs = cur.fetchall()
+        return render_template('shelf.html', shelfs = shelfs)
+    return redirect("/")
 
 @app.route("/demo")
 def demo():
