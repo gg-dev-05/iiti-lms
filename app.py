@@ -1,4 +1,4 @@
-from flask import Flask, flash, render_template, request, redirect, url_for, session
+from flask import Flask, render_template, redirect, url_for, session, request
 from flask_mysqldb import MySQL
 import yaml
 from functions.dbConfig import database_config
@@ -19,7 +19,7 @@ else:
     DATABASE_URL = os.environ.get("CLEARDB_DATABASE_URL")
 
 user, password, host, db = database_config(DATABASE_URL)
-print(user, password, host, db)
+
 app.config['MYSQL_HOST'] = host
 app.config['MYSQL_USER'] = user
 app.config['MYSQL_PASSWORD'] = password
@@ -68,7 +68,7 @@ def home():
             return render_template('adminHome.html', details=session["profile"], resutl=result)
         else:
             session["isAdmin"] = False
-            return render_template('user.html', details=session["profile"])
+            return render_template('userHome.html', details=session["profile"])
 
     else:
         # add page for sign in
@@ -109,6 +109,29 @@ def allBooks():
         "SELECT ISBN, title, shelf_id, current_status, avg_rating, book_language, publisher, publish_date FROM book;")
     books = cur.fetchall()
     return render_template("allBooks.html", books=books)
+
+@app.route("/book", methods=['GET', 'POST'])
+def book():
+    if request.method == 'GET':
+        return "GET";
+    if session["isAdmin"] == True:   
+        data = request.form
+        cur = mysql.connection.cursor()
+        cur.execute("SELECT * FROM book WHERE title='{}'".format(data['book']))
+        books = cur.fetchall()
+        print(books)
+        # return render_template("searchBook.html",books=books);
+        return render_template("adminSearchBook.html",books=books);
+
+    if session["isAdmin"] == False:   
+        data = request.form
+        cur = mysql.connection.cursor()
+        cur.execute("SELECT * FROM book WHERE title='{}'".format(data['book']))
+        books = cur.fetchall()
+        print(books)
+        # return render_template("searchBook.html",books=books);
+        return render_template("userSearchBook.html",books=books); 
+    return redirect("/");         
 
 # issue details
 @app.route("/logs")
