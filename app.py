@@ -94,12 +94,9 @@ def members(memberType):
 
 @app.route("/<memberType>/delete/<ID>")
 def members1(memberType, ID):
-
     if memberType == 'faculties' or memberType == 'students':
         cur = mysql.connection.cursor()
-        print("Executing Query: " + "DELETE FROM reader WHERE ID ={};".format(ID))
         cur.execute("DELETE FROM reader WHERE ID ={};".format(ID))
-        print("Done!!")
         mysql.connection.commit()
         return redirect("/{}".format(memberType))
     return redirect("/")
@@ -114,8 +111,6 @@ def allBooks():
     return render_template("allBooks.html", books=books)
 
 # issue details
-
-
 @app.route("/logs")
 def logs():
     cur = mysql.connection.cursor()
