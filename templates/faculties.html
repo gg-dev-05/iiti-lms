@@ -67,6 +67,7 @@
 											Books Issued
 										</th>
 										<th style="font-weight: bold">Fines</th>
+										<th style="font-weight: bold">Delete Data</th>
 									</tr>
 								</thead>
 								<tbody>
@@ -78,6 +79,7 @@
 										<td>{{faculty[3]}}</td>
 										<td>{{faculty[4]}}</td>
 										<td>{{faculty[5]}}</td>
+										<td><a href="/faculties/delete/{{faculty[6]}}"><i class="fas fa-trash-alt"></i></a></td>
 									</tr>
 									{% endfor %}
 								</tbody>
