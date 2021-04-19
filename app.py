@@ -108,11 +108,12 @@ def members(memberType):
 
 @app.route("/<memberType>/delete/<ID>")
 def members1(memberType, ID):
-    if memberType == 'faculties' or memberType == 'students':
-        cur = mysql.connection.cursor()
-        cur.execute("DELETE FROM reader WHERE ID ={};".format(ID))
-        mysql.connection.commit()
-        return redirect("/{}".format(memberType))
+    if session['isAdmin']:
+        if memberType == 'faculties' or memberType == 'students':
+            cur = mysql.connection.cursor()
+            cur.execute("DELETE FROM reader WHERE ID ={};".format(ID))
+            mysql.connection.commit()
+            return redirect("/{}".format(memberType))
     return redirect("/")
 
 
@@ -150,16 +151,14 @@ def book():
                 return render_template("userSearchBook.html", books=books)
     return redirect("/")
 
-
-@app.route("/test")
-def test():
-    cur = mysql.connection.cursor()
-    cur.execute("SELECT * FROM book_id AND SELECT * FROM librarian;")
-    print(cur.fetchall())
-    return "DONE"
-
-# issue details
-
+@app.route('/isbn/delete/<isbn>')
+def deleteByISBN(isbn):
+    if session['isAdmin']:
+        cur = mysql.connection.cursor()
+        cur.execute("DELETE FROM book WHERE ISBN = {}".format(isbn))
+        mysql.connection.commit()
+        return redirect("/books")
+    return redirect("/")
 
 @app.route("/logs")
 def logs():

@@ -76,6 +76,9 @@
 										<th style="font-weight: bold">
 											Published On
 										</th>
+										<th style="font-weight: bold">
+											Delete Book
+										</th>
 									</tr>
 								</thead>
 								<tbody>
@@ -86,6 +89,11 @@
 										<td>{{value}}</td>
 
 										{% endfor %}
+										<td>
+											<a href="/isbn/delete/{{book[0]}}"
+												><i class="fas fa-trash-alt"></i
+											></a>
+										</td>
 									</tr>
 									{% endfor %}
 								</tbody>
