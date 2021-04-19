@@ -5,10 +5,12 @@
 <!-- ============================================================== -->
 <!-- Page wrapper  -->
 <!-- ============================================================== -->
+
 <div class="page-wrapper">
 	<!-- ============================================================== -->
 	<!-- Bread crumb and right sidebar toggle -->
 	<!-- ============================================================== -->
+
 	<div class="page-breadcrumb">
 		<div class="row">
 			<div class="col-12 d-flex no-block align-items-center">
@@ -67,6 +69,7 @@
 											Books Issued
 										</th>
 										<th style="font-weight: bold">Fines</th>
+										<th style="font-weight: bold">Delete Data</th>
 									</tr>
 								</thead>
 								<tbody>
@@ -78,6 +81,7 @@
 										<td>{{student[3]}}</td>
 										<td>{{student[4]}}</td>
 										<td>{{student[5]}}</td>
+										<td><a href="/students/delete/{{student[6]}}"><i class="fas fa-trash-alt"></i></a></td>
 									</tr>
 									{% endfor %}
 								</tbody>
