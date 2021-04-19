@@ -125,7 +125,7 @@ def logs():
     return render_template("issueDetails.html", details=details)
 
 
-@app.route("/addBook")
+@app.route("/addBook", methods=['GET', 'POST'])
 def addBook():
     if request.method == 'GET':
         return render_template("addBook.html")
@@ -136,6 +136,21 @@ def addBook():
         cur.execute(
             f"insert into book(title,ISBN,book_language,publisher,publish_date,shelf_id) values('{data['title']}','{data['ISBN']}','{data['language']}','{data['publisher']}','{data['date']}','{data['shelf']}')")
         mysql.connection.commit()
+        if data['tag1'] != '':
+            cur = mysql.connection.cursor()
+            cur.execute(
+                f"insert into tags values('{data['ISBN']}','{data['tag1']}')")
+            mysql.connection.commit()
+        if data['tag2'] != '':
+            cur = mysql.connection.cursor()
+            cur.execute(
+                f"insert into tags values('{data['ISBN']}','{data['tag2']}')")
+            mysql.connection.commit()
+        if data['tag3'] != '':
+            cur = mysql.connection.cursor()
+            cur.execute(
+                f"insert into tags values('{data['ISBN']}','{data['tag3']}')")
+            mysql.connection.commit()
         return render_template("addBook.html")
 
 
