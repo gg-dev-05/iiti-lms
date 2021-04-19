@@ -122,7 +122,9 @@ def allBooks():
     cur.execute(
         "SELECT ISBN, title, shelf_id, current_status, avg_rating, book_language, publisher, publish_date FROM book;")
     books = cur.fetchall()
-    return render_template("allBooks.html", books=books)
+    if session['isAdmin']:
+        return render_template("allBooksA.html", books=books)
+    return render_template("allBooksU.html", books=books)
 
 @app.route("/book", methods=['GET', 'POST'])
 def book():
@@ -165,7 +167,6 @@ def addBook():
         return render_template("addBook.html")
     else:
         data = request.form
-        print(data)
         cur = mysql.connection.cursor()
         cur.execute(
             f"insert into book(title,ISBN,book_language,publisher,publish_date,shelf_id) values('{data['title']}','{data['ISBN']}','{data['language']}','{data['publisher']}','{data['date']}','{data['shelf']}')")
