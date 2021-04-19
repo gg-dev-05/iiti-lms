@@ -100,9 +100,9 @@ def book():
         return "GET"
     data = request.form
     cur = mysql.connection.cursor()
-    if ((str)data['book']).strp
     cur.execute("SELECT * FROM book WHERE title='{}'".format(data['book']))
-    print(cur.fetchall())
+    books = cur.fetchall()
+    print(books)
     return "POST"
 # issue details
 @app.route("/logs")
