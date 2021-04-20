@@ -116,7 +116,51 @@ def members1(memberType, ID):
             return redirect("/{}".format(memberType))
     return redirect("/")
 
+@app.route("/friend/delete/<ID>")
+def friendDelete(ID):
+    if session["isAdmin"] == True:
+        redirect("/")
+    print(ID)
+    cur = mysql.connection.cursor()
+    cur.execute("DELETE FROM friends WHERE reader_2 ={};".format(ID))
+    mysql.connection.commit()
+    return redirect("/friends")
 
+
+@app.route('/books')
+def allBooks():
+    cur = mysql.connection.cursor()
+    cur.execute(
+        "SELECT ISBN, title, shelf_id, current_status, avg_rating, book_language, publisher, publish_date FROM book;")
+    books = cur.fetchall()
+    if session['isAdmin']:
+        return render_template("allBooksA.html", books=books)
+    return render_template("allBooksU.html", books=books)
+
+@app.route("/addFriend", methods=['GET', 'POST'])
+def addFriend():
+    if "profile" in session:
+        email = session["profile"]["email"]
+    else:
+        return redirect('/')    
+    if session["isAdmin"] == True:
+        redirect("/")
+    if request.method == 'GET':
+        return render_template('addFriend.html')
+
+    data = request.form
+    cur = mysql.connection.cursor()
+    cur.execute("SELECT ID FROM reader WHERE reader_email='{}'".format(data['email']))
+    # cur.execute(f"SELECT ID FROM reader WHERE reader_email='{email}'")
+    friend = cur.fetchall()
+    cur.execute(f"SELECT ID FROM reader WHERE reader_email='{email}'")
+    Me = cur.fetchone()
+    # print(friend[0][0])
+    # print(Me[0]) 
+    cur.execute(
+            f"insert into friends(reader_1, reader_2) values('{Me[0]}','{friend[0][0]}')")
+    mysql.connection.commit()
+    return render_template('addFriend.html')
 
 @app.route("/book", methods=['GET', 'POST'])
 def book():
@@ -277,16 +321,22 @@ def friends():
 
     cur = mysql.connection.cursor()
     cur.execute(f"SELECT ID FROM reader WHERE reader_email='{email}'")
+    # cur.execute(f"SELECT ID FROM reader WHERE reader_email='cse190001015@iiti.ac.in'")
+    # 'cse190001015@iiti.ac.in'
+
     reader_1 = cur.fetchall()
 #  cur.execute(f"SELECT reader_2 FROM friends WHERE reader_1='{reader_1}'")
 #  friendsid = cur.fetchall()
     print(reader_1)
     cur.execute(
-        f"SELECT reader_name,phone_no,books_issued FROM reader WHERE ID IN ( SELECT reader_2 FROM friends WHERE reader_1={reader_1[0][0]} )")
+        f"SELECT reader_name,phone_no,books_issued,ID  FROM reader WHERE ID IN ( SELECT reader_2 FROM friends WHERE reader_1={reader_1[0][0]} )")
     friendinfo = cur.fetchall()
     # print(f"SELECT reader_name,phone_no,books_issued FROM reader WHERE ID IN ( SELECT reader_2 FROM friends WHERE reader_1={reader_1[0][0]} )")
-    print(friendinfo)
+    print(friendinfo[0][2])
+    # friend_id = friendinfo[0][2]
     return render_template('allFriends.html', len=len(friendinfo), friendinfo=friendinfo)
+
+
 
 
 @app.route("/feedback")
