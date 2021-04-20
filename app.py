@@ -169,7 +169,7 @@ def addFriend():
     # print(friend)
     if friend == ():
         # print("sorry no friend exits with this email")
-        return render_template('addFriend.html', msg="Sorry no friend exits with this email")
+        return render_template('addFriend.html', msg="Sorry no user exits with this email")
     cur.execute(f"SELECT ID FROM reader WHERE reader_email='{email}'")
     Me = cur.fetchone()    
     cur.execute("DELETE FROM friends WHERE reader_2 ={} AND reader_1 = {} ;".format(friend[0][0],Me[0]))    
@@ -355,15 +355,24 @@ def friends():
     # friend_id = friendinfo[0][2]
     return render_template('allFriends.html', msg="", len=len(friendinfo), friendinfo = friendinfo)
 
-    
-@app.route("/feedback")
-def feedback():
-    return render_template('userFeedback.html')
-
-
 @app.route("/history")
 def user_History():
-    return render_template('userHistory.html')
+    if "profile" in session:
+        email = session["profile"]["email"]
+        if session["isAdmin"] == True:
+            return redirect("/")
+    else:
+        return redirect("/")
+    # user and logged
+    # fetch ID from email of user
+    cur = mysql.connection.cursor()
+    cur.execute(f"SELECT ID FROM reader WHERE reader_email='{email}'")
+    person = cur.fetchone()
+    print(person[0])
+    cur.execute(f"SELECT ISBN, borrow_date , book_returned FROM issue_details WHERE reader_id='{2}'")
+    data = cur.fetchall()
+    return render_template('userHistory.html',data = data)
+
 
 
 @app.route("/test")
