@@ -355,41 +355,6 @@ def friends():
     # friend_id = friendinfo[0][2]
     return render_template('allFriends.html', msg="", len=len(friendinfo), friendinfo = friendinfo)
 
-@app.route("/addFriend", methods=['GET', 'POST'])
-def addFriend():
-    if "profile" in session:
-        email = session["profile"]["email"]
-    else:
-        return redirect('/')    
-    if session["isAdmin"] == True:
-        redirect("/")
-    if request.method == 'GET':
-        return render_template('addFriend.html')
-
-    data = request.form
-    cur = mysql.connection.cursor()
-    cur.execute("SELECT ID FROM reader WHERE reader_email='{}'".format(data['email']))
-    # cur.execute(f"SELECT ID FROM reader WHERE reader_email='{email}'")
-    friend = cur.fetchall()
-    cur.execute(f"SELECT ID FROM reader WHERE reader_email='{email}'")
-    Me = cur.fetchone()
-    # print(friend[0][0])
-    # print(Me[0]) 
-    cur.execute(
-            f"insert into friends(reader_1, reader_2) values('{Me[0]}','{friend[0][0]}')")
-    mysql.connection.commit()
-    return render_template('addFriend.html')
-
-@app.route("/friend/delete/<ID>")
-def friendDelete(ID):
-    if session["isAdmin"] == True:
-        redirect("/")
-    print(ID)
-    cur = mysql.connection.cursor()
-    cur.execute("DELETE FROM friends WHERE reader_2 ={};".format(ID))
-    mysql.connection.commit()
-    return redirect("/friends")
-
     
 @app.route("/feedback")
 def feedback():
