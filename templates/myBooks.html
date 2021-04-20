@@ -68,16 +68,25 @@
 										<th style="font-weight: bold">
 											Published On
 										</th>
+										<th style="font-weight: bold">
+											Return
+										</th>
 									</tr>
 								</thead>
 								<tbody>
 									{% for book in books %}
 									<tr>
-										{% for value in book %}
-
-										<td>{{value}}</td>
-
+										{% for i in range(6) %}
+										<td>{{book[i]}}</td>
 										{% endfor %}
+										<td>
+											{% if book[6] == 'hold' %}
+											<a href="/isbn/unhold/{{book[0]}}"
+												><i class="fas fa-check"></i
+											></a>
+											{% else %}
+											<a>Already Returned</a> {% endif %}
+										</td>
 									</tr>
 									{% endfor %}
 								</tbody>

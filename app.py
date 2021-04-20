@@ -117,19 +117,28 @@ def members1(memberType, ID):
     return redirect("/")
 
 
-@app.route('/books')
-def allBooks():
-    cur = mysql.connection.cursor()
-    cur.execute(
-        "SELECT ISBN, title, shelf_id, current_status, avg_rating, book_language, publisher, publish_date FROM book;")
-    books = cur.fetchall()
-    if session['isAdmin']:
-        return render_template("allBooksA.html", books=books)
-    return render_template("allBooksU.html", books=books)
-
 
 @app.route("/book", methods=['GET', 'POST'])
 def book():
+    if request.method == 'GET':
+        query = ""
+        cur = mysql.connection.cursor()
+        cur.execute(
+            '''
+            SELECT ISBN, title, shelf_id, current_status, avg_rating, book_language, publisher, publish_date FROM book WHERE title LIKE '%{}%'
+            UNION
+            SELECT ISBN, title, shelf_id, current_status, avg_rating, book_language, publisher, publish_date FROM book WHERE book_language LIKE '%{}%'
+            UNION
+            SELECT ISBN, title, shelf_id, current_status, avg_rating, book_language, publisher, publish_date FROM book WHERE publisher LIKE '%{}%'
+            '''.format(query, query, query)
+        )
+        books = cur.fetchall()
+        if "isAdmin" in session:
+            if session["isAdmin"] == True:
+                return render_template("adminSearchBook.html", books=books, query=query)
+            if session["isAdmin"] == False:
+                return render_template("userSearchBook.html", books=books)
+                
     if request.method == 'POST':
         data = request.form
         query = data['book']
@@ -160,6 +169,39 @@ def deleteByISBN(isbn):
         return redirect("/books")
     return redirect("/")
 
+@app.route('/isbn/hold/<isbn>')
+def holdByISBN(isbn):
+    if "profile" in session:
+        email = session["profile"]["email"]
+        cur = mysql.connection.cursor()
+        cur.execute("SELECT ID, books_issued, unpaid_fines FROM reader WHERE reader_email = '{}'".format(email))
+        [reader_id, books_issued, unpaid_fines] = cur.fetchone()
+        if session['isFaculty'] == False and books_issued > 10 or unpaid_fines > 1000:
+            return redirect("/")
+        cur.execute("UPDATE reader SET books_issued = books_issued+1 WHERE ID={}".format(reader_id))
+        cur.execute("UPDATE book SET current_status = 'soldout' WHERE ISBN={}".format(isbn))
+        cur.execute("INSERT INTO issue_details VALUES ({}, {}, NOW  (), 0, 0)".format(reader_id, isbn))
+        mysql.connection.commit()
+        return redirect("/book")
+    return redirect("/")
+
+@app.route('/isbn/unhold/<isbn>')
+def unholdByISBN(isbn):
+    if "profile" in session:
+        email = session["profile"]["email"]
+        cur = mysql.connection.cursor()
+        cur.execute("SELECT ID, books_issued FROM reader WHERE reader_email = '{}'".format(email))
+        [reader_id, books_issued] = cur.fetchone()
+        books_issued -= 1
+        if books_issued < 0:
+            books_issued = 0
+        cur.execute("UPDATE reader SET books_issued = {} WHERE ID={}".format(books_issued, reader_id))
+        cur.execute("UPDATE book SET current_status = 'available' WHERE ISBN={}".format(isbn))
+        cur.execute("UPDATE issue_details SET book_returned = 1 WHERE ISBN={}".format(isbn))
+        mysql.connection.commit()
+        return redirect("/book")
+    return redirect("/")
+
 @app.route("/logs")
 def logs():
     cur = mysql.connection.cursor()
@@ -181,8 +223,8 @@ def addBook():
         return render_template("addBook.html")
 
 
-@app.route("/allBooks")
-def user_allBooks():
+@app.route("/myBooks")
+def myBooks():
     if "profile" in session:
         email = session["profile"]["email"]
     else:
@@ -191,9 +233,9 @@ def user_allBooks():
     cur.execute(f"SELECT ID FROM reader WHERE reader_email='{email}'")
     person = cur.fetchone()
     cur.execute(
-        f"SELECT ISBN,title,avg_rating,book_language,publisher,publish_date FROM book WHERE ISBN in( SELECT ISBN FROM issue_details WHERE reader_id='{person[0]}')")
+        f"SELECT ISBN,title,avg_rating,book_language,publisher,publish_date,current_status FROM book WHERE ISBN in( SELECT ISBN FROM issue_details WHERE reader_id='{person[0]}')")
     books = cur.fetchall()
-    return render_template('allBooks.html', books=books)
+    return render_template('myBooks.html', books=books)
 
 @app.route("/shelf")
 def shelf():
@@ -236,8 +278,8 @@ def friends():
     cur = mysql.connection.cursor()
     cur.execute(f"SELECT ID FROM reader WHERE reader_email='{email}'")
     reader_1 = cur.fetchall()
-  #  cur.execute(f"SELECT reader_2 FROM friends WHERE reader_1='{reader_1}'")
-  #  friendsid = cur.fetchall()
+#  cur.execute(f"SELECT reader_2 FROM friends WHERE reader_1='{reader_1}'")
+#  friendsid = cur.fetchall()
     print(reader_1)
     cur.execute(
         f"SELECT reader_name,phone_no,books_issued FROM reader WHERE ID IN ( SELECT reader_2 FROM friends WHERE reader_1={reader_1[0][0]} )")
