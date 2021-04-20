@@ -59,6 +59,16 @@
 					<div class="card">
 						<form class="form-horizontal" action="/addFriend" method="POST">
 							<div class="card-body">
+
+								{%  if msg!="" %}
+								<div class="alert alert-warning alert-dismissible fade show" role="alert">
+									<strong>Hello!!</strong> {{msg}}
+									<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+									<span aria-hidden="true">&times;</span>
+									</button>
+								</div>
+								{%  endif  %}
+
 								<h4 class="card-title">Make new friend by Email Id</h4>
 								<div class="form-group row">
 									<label
