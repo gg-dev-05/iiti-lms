@@ -1,10 +1,12 @@
 from flask import flash, Flask, render_template, redirect, url_for, session, request
 from flask_mysqldb import MySQL
+from flask_mail import Mail
 import yaml
 from functions.dbConfig import database_config
 from authlib.integrations.flask_client import OAuth
 import os
 from datetime import timedelta
+from datetime import date
 
 
 app = Flask(__name__)
@@ -24,6 +26,15 @@ app.config['MYSQL_HOST'] = host
 app.config['MYSQL_USER'] = user
 app.config['MYSQL_PASSWORD'] = password
 app.config['MYSQL_DB'] = db
+
+app.config.update(
+    MAIL_SERVER = 'smtp.gmail.com',
+    MAIL_PORT = '465',
+    MAIL_USE_SSL = True,
+    MAIL_USERNAME = 'clubsiiti@gmail.com',
+    MAIL_PASSWORD = 'somyamehta'
+)
+mail = Mail(app)
 
 # Session config
 app.secret_key = os.environ.get("client_secret") if (
@@ -79,6 +90,37 @@ def home():
 
     else:
         return render_template('Login.html')
+
+# send mail
+@app.route("/sendmail")
+def send_mail():
+    if "profile" in session:
+        email = session["profile"]["email"]
+    else:
+        return redirect('/')
+    
+    
+    cur = mysql.connection.cursor()
+    cur.execute(f"select return_date, ISBN, reader_id,last_reminder_sent_date from reminders")
+    readers=cur.fetchall()
+    for reader in readers:
+        [return_date,ISBN, reader_id,last_reminder_sent_date]=reader
+        cur.execute(f"SELECT reader_email FROM reader WHERE ID='{reader_id}'")
+        person_email = cur.fetchone()
+        today = date. today()
+        present= return_date
+        # print("Today's date:", today)
+        delta = (today-present).days
+        print(delta)
+        # print(return_date)
+        # mail.send_message('Gentle Reminder that you have to return ',
+        # sender = "clubsiiti@gmail.com",
+        # recipients = person_email,
+        # body = "message",
+        # )
+    return redirect('/')
+
+   
 
 # Register new student
 @app.route("/new", methods=["POST"])
