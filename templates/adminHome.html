@@ -14,12 +14,12 @@
 	<div class="page-breadcrumb">
 		<div class="align-items-center">
 			{% with messages = get_flashed_messages() %} {% if messages %} {%
-			for msg in messages %}
+			for thisMessage in messages %}
 			<div
 				class="alert alert-success alert-dismissible fade show text-center"
 				role="alert"
 			>
-				{{msg}}
+				{{thisMessage}}
 				<button
 					type="button"
 					class="close"

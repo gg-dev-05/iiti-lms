@@ -91,9 +91,15 @@
 									{% endfor %}
 								</tbody>
 								{% else %}
-								<h1>
-									Sorry! You have no books, try reading a few
-								</h1>
+								<div class="card-body">
+									<h3>Sorry! You have no books, try reading a few</h3>
+									<a
+									class="btn btn-primary"
+									href="/book"
+									role="button"
+									>Issue Book</a
+								>
+								</div>
 								{% endif %}
 							</table>
 						</div>

@@ -128,9 +128,7 @@ def friendDelete(ID):
     cur.execute(f"SELECT ID FROM reader WHERE reader_email='{email}'")
     Me = cur.fetchone()  
     # Only For Users         
-    print(ID)
-    
-
+    # print(ID)
     
     cur.execute("DELETE FROM friends WHERE reader_2 ={} AND reader_1 = {} ;".format(ID,Me[0]))
     mysql.connection.commit()
@@ -242,11 +240,18 @@ def deleteByISBN(isbn):
 @app.route('/isbn/hold/<isbn>')
 def holdByISBN(isbn):
     if "profile" in session:
+        if session["isAdmin"] == True:
+            return redirect("/")
+        # Only for readers 
         email = session["profile"]["email"]
         cur = mysql.connection.cursor()
         cur.execute("SELECT ID, books_issued, unpaid_fines FROM reader WHERE reader_email = '{}'".format(email))
         [reader_id, books_issued, unpaid_fines] = cur.fetchone()
         if session['isFaculty'] == False and books_issued > 10 or unpaid_fines > 1000:
+            if books_issued > 10:
+                flash("You already have issued 10 books","info")
+            else:
+                flash("Please pay you unpaid fines first","info")
             return redirect("/")
         cur.execute("UPDATE reader SET books_issued = books_issued+1 WHERE ID={}".format(reader_id))
         cur.execute("UPDATE book SET current_status = 'soldout' WHERE ISBN={}".format(isbn))
@@ -280,7 +285,7 @@ def logs():
     return render_template("issueDetails.html", details=[details])
 
 
-@app.route("/addBook")
+@app.route("/addBook", methods=['GET', 'POST'])
 def addBook():
     if request.method == 'GET':
         return render_template("addBook.html", details=session["profile"])
@@ -290,7 +295,24 @@ def addBook():
         cur.execute(
             f"insert into book(title,ISBN,book_language,publisher,publish_date,shelf_id) values('{data['title']}','{data['ISBN']}','{data['language']}','{data['publisher']}','{data['date']}','{data['shelf']}')")
         mysql.connection.commit()
+
+        if data['tag1'] != '':
+            cur = mysql.connection.cursor()
+            cur.execute(
+                f"insert into tags values('{data['ISBN']}','{data['tag1']}')")
+            mysql.connection.commit()
+        if data['tag2'] != '':
+            cur = mysql.connection.cursor()
+            cur.execute(
+                f"insert into tags values('{data['ISBN']}','{data['tag2']}')")
+            mysql.connection.commit()
+        if data['tag3'] != '':
+            cur = mysql.connection.cursor()
+            cur.execute(
+                f"insert into tags values('{data['ISBN']}','{data['tag3']}')")
+            mysql.connection.commit()
         return render_template("addBook.html", details=session["profile"])
+
 
 
 @app.route("/myBooks")
@@ -330,15 +352,34 @@ def demo():
 
 @app.route("/recommendedBooks")
 def user_BookRecommedation():
-    return render_template('user_BookRecommedation.html', details=session["profile"])
+
+    if "profile" in session:
+        email = session["profile"]["email"]
+    else:
+        return redirect("/")
+    cur = mysql.connection.cursor()
+    cur.execute(f"SELECT ID FROM reader WHERE reader_email='{email}'")
+    person = cur.fetchone()
+    cur.execute(
+        f"select * from book where ISBN in(select ISBN from tags where tag_name in(select tag_name from tags where ISBN in (select ISBN from issue_details where reader_id = '{person[0]}'))) order by avg_rating DESC")
+    books = cur.fetchall()
+    # cur = mysql.connection.cursor()
+    # cur.execute(
+    #     f"select tag_name from tags where ISBN in (select ISBN from issue_details where reader_id='{person[0]}'")
+    # tags = cur.fetchall()
+    # print(tags)
+    print(books)
+    zeroes = 1 if len(books) == 0 else 0
+    return render_template('user_BookRecommedation.html', books=books, zeroes=zeroes, details=session["profile"])
 
 
-@app.route("/booksWithTags")
+
+@ app.route("/booksWithTags")
 def user_booksWithTags():
     return render_template('booksWithTags.html', details=session["profile"])
 
 
-@app.route("/friends")
+@ app.route("/friends")
 def friends():
     if "profile" in session:
         email = session["profile"]["email"]
@@ -349,12 +390,15 @@ def friends():
     cur.execute(
         "SELECT reader_name,phone_no,books_issued,ID  FROM reader WHERE ID IN ( SELECT reader_2 FROM friends WHERE reader_1 IN (SELECT ID FROM reader WHERE reader_email='{}') )".format(email))
     friendinfo = cur.fetchall()
-    # print(f"SELECT reader_name,phone_no,books_issued FROM reader WHERE ID IN ( SELECT reader_2 FROM friends WHERE reader_1={reader_1[0][0]} )")
-    # print(friendinfo[0][2])
-    # friend_id = friendinfo[0][2]
-    return render_template('allFriends.html', msg="", len=len(friendinfo), friendinfo = friendinfo, details=session["profile"])
 
-@app.route("/history")
+    return render_template('allFriends.html', len=len(friendinfo), friendinfo=friendinfo, details=session["profile"])
+
+
+@ app.route("/feedback")
+def feedback():
+    return render_template('userFeedback.html')
+
+@ app.route("/history")
 def user_History():
     if "profile" in session:
         email = session["profile"]["email"]
@@ -374,29 +418,29 @@ def user_History():
 
 
 
-@app.route("/test")
+@ app.route("/test")
 def updateBooks():
     return render_template('updateBooks.html', details=session["profile"])
 
 
-@app.route("/tables")
+@ app.route("/tables")
 def addBooks():
     return render_template('tables.html', details=session["profile"])
 
 
-@app.route("/dashboard")
+@ app.route("/dashboard")
 def dashboard():
     return render_template('dashboard.html', details=session["profile"])
 
 
-@app.route('/login')
+@ app.route('/login')
 def login():
     google = oauth.create_client('google')  # create the google oauth client
     redirect_uri = url_for('authorize', _external=True)
     return google.authorize_redirect(redirect_uri)
 
 
-@app.route('/authorize')
+@ app.route('/authorize')
 def authorize():
     message = None
     google = oauth.create_client('google')
@@ -417,7 +461,7 @@ def authorize():
     return redirect('/')
 
 
-@app.route("/logout")
+@ app.route("/logout")
 def logout():
     for key in list(session.keys()):
         session.pop(key)
@@ -425,7 +469,7 @@ def logout():
     return redirect("/")
 
 
-@app.errorhandler(404)
+@ app.errorhandler(404)
 def page_not_found(e):
     return render_template('error.html')
 
