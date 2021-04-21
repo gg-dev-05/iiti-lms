@@ -255,9 +255,10 @@ def holdByISBN(isbn):
         cur.execute(
             "SELECT ID, books_issued, unpaid_fines FROM reader WHERE reader_email = '{}'".format(email))
         [reader_id, books_issued, unpaid_fines] = cur.fetchone()
-        if session['isFaculty'] == False and books_issued > 10 or unpaid_fines > 1000:
-            if books_issued > 10:
-                flash("You already have issued 10 books", "info")
+        if session['isFaculty'] == False and books_issued > 3 or unpaid_fines > 1000:
+            if books_issued > 3:
+                flash(
+                    "You already have issued 3 books so now you cannot issue more", "info")
             else:
                 flash("Please pay you unpaid fines first", "info")
             return redirect("/")
