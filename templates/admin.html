@@ -10,9 +10,9 @@
 		<!-- Favicon icon -->
 		<link
 			rel="icon"
-			type="image/png"
+			type="image/ico"
 			sizes="16x16"
-			href="static/assets/images/favicon.png"
+			href="static/assets/images/favicon.ico"
 		/>
 		<title>IITI LMS</title>
 		<!-- Custom CSS -->
@@ -43,11 +43,12 @@
 		<!-- ============================================================== -->
 		<!-- Main wrapper - style you can find in pages.scss -->
 		<!-- ============================================================== -->
-		<div id="main-wrapper">
+		<div id="main-wrapper" >
 			<!-- ============================================================== -->
 			<!-- Topbar header - style you can find in pages.scss -->
 			<!-- ============================================================== -->
 			<header class="topbar" data-navbarbg="skin5">
+				
 				<nav class="navbar top-navbar navbar-expand-md navbar-dark">
 					<div class="navbar-header" data-logobg="skin5">
 						<!-- This is for the sidebar toggle which is visible on mobile only -->
@@ -65,7 +66,7 @@
 								<!--You can put here icon as well // <i class="wi wi-sunset"></i> //-->
 								<!-- Dark Logo icon -->
 								<img
-									src="static/assets/images/logo-icon.png"
+									src="static/assets/images/logo-icon.jpg"
 									alt="homepage"
 									class="light-logo"
 								/>
@@ -136,11 +137,12 @@
 									href="javascript:void(0)"
 									><i class="ti-search"></i
 								></a>
-								<form class="app-search position-absolute">
+								<form class="app-search position-absolute" method="POST" action="/book">
 									<input
+										name="book"
 										type="text"
 										class="form-control"
-										placeholder="Search &amp; enter"
+										placeholder="Search for books"
 									/>
 									<a class="srh-btn"
 										><i class="ti-close"></i
@@ -317,22 +319,11 @@
 								>
 									<a
 										class="dropdown-item"
-										href="javascript:void(0)"
+										href="/"
 										><i class="ti-user m-r-5 m-l-5"></i>
 										Profile</a
 									>
-									<a
-										class="dropdown-item"
-										href="javascript:void(0)"
-										><i class="ti-email m-r-5 m-l-5"></i>
-										Inbox</a
-									>
-									<a
-										class="dropdown-item"
-										href="javascript:void(0)"
-										><i class="ti-settings m-r-5 m-l-5"></i>
-										Account Setting</a
-									>
+									
 									<a
 										class="dropdown-item"
 										href="/logout"
@@ -413,7 +404,7 @@
 								>
 									<li class="sidebar-item">
 										<a
-											href="/books"
+											href="/book"
 											class="sidebar-link"
 											><i class="mdi mdi-emoticon"></i
 											><span class="hide-menu">
@@ -463,11 +454,11 @@
 									</li>
 									<li class="sidebar-item">
 										<a
-											href="icon-material.html"
+											href="/shelf"
 											class="sidebar-link"
 											><i class="mdi mdi-emoticon"></i
 											><span class="hide-menu">
-												Shelves
+												Shelfs
 											</span></a
 										>
 									</li>

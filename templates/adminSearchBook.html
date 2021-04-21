@@ -1,4 +1,4 @@
-{% extends 'user.html' %} {% block sidebar_and_navbar %}
+{% extends 'admin.html' %} {% block sidebar_and_navbar %}
 <!-- ============================================================== -->
 <!-- End Left Sidebar - style you can find in sidebar.scss  -->
 <!-- ============================================================== -->
@@ -45,57 +45,66 @@
 			<div class="col-12">
 				<div class="card">
 					<div class="card-body">
-						{% if zeroes==1 %}
-						<h2>We need more readings from you to be able to suggest you!!!!</h2>
-						{% else %}
-						<h5 class="card-title">Basic Datatable</h5>
+						<h5 class="card-title">
+							All Books for query : '{{query}}'
+						</h5>
 						<div class="table-responsive text-center">
 							<table
 								id="zero_config"
 								class="table table-striped table-bordered"
 							>
+								{% if books != () %}
 								<thead>
 									<tr>
-										<th style="font-weight: bold">TITLE</th>
 										<th style="font-weight: bold">ISBN</th>
+										<th style="font-weight: bold">TITLE</th>
 										<th style="font-weight: bold">
-											Language
+											Shelf ID
 										</th>
 										<th style="font-weight: bold">
-											Issued by
-										</th>
-										<th style="font-weight: bold">
-											Published On
+											Current Status
 										</th>
 										<th style="font-weight: bold">
 											Avg. Ratings
 										</th>
 										<th style="font-weight: bold">
-											Shelf ID
+											Language
 										</th>
 										<th style="font-weight: bold">
-											Status
+											Publisher
+										</th>
+										<th style="font-weight: bold">
+											Published On
+										</th>
+										<th style="font-weight: bold">
+											Delete Book
 										</th>
 									</tr>
 								</thead>
 								<tbody>
 									{% for book in books %}
 									<tr>
-									{% for value in book %}
-									
-										
+										{% for value in book %}
+
 										<td>{{value}}</td>
 
-										
-									
-									{% endfor %}
-
+										{% endfor %}
+										<td>
+											<a href="/isbn/delete/{{book[0]}}"
+												><i class="fas fa-trash-alt"></i
+											></a>
+										</td>
 									</tr>
 									{% endfor %}
 								</tbody>
+								{% else %}
+								<h2>
+									Nothing found for your entered string:
+									'{{query}}'
+								</h2>
+								{% endif %}
 							</table>
 						</div>
-						{% endif %}
 					</div>
 				</div>
 			</div>
@@ -135,30 +144,4 @@
 <!-- All Jquery -->
 <!-- ============================================================== -->
 
-<script src="assets/libs/jquery/dist/jquery.min.js"></script>
-<!-- Bootstrap tether Core JavaScript -->
-<script src="assets/libs/popper.js/dist/umd/popper.min.js"></script>
-<script src="assets/libs/bootstrap/dist/js/bootstrap.min.js"></script>
-<!-- slimscrollbar scrollbar JavaScript -->
-<script src="assets/libs/perfect-scrollbar/dist/perfect-scrollbar.jquery.min.js"></script>
-<script src="assets/extra-libs/sparkline/sparkline.js"></script>
-<!--Wave Effects -->
-<script src="dist/js/waves.js"></script>
-<!--Menu sidebar -->
-<script src="dist/js/sidebarmenu.js"></script>
-<!--Custom JavaScript -->
-<script src="dist/js/custom.min.js"></script>
-<!-- this page js -->
-<script src="assets/extra-libs/multicheck/datatable-checkbox-init.js"></script>
-<script src="assets/extra-libs/multicheck/jquery.multicheck.js"></script>
-<script src="assets/extra-libs/DataTables/datatables.min.js"></script>
-<script>
-	/****************************************
-	 *       Basic Table                   *
-	 ****************************************/
-	$("#zero_config").DataTable();
-</script>
 {% endblock sidebar_and_navbar %}
-
-
-
