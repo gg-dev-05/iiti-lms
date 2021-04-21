@@ -127,7 +127,6 @@ def friendDelete(ID):
     cur = mysql.connection.cursor()
     cur.execute(f"SELECT ID FROM reader WHERE reader_email='{email}'")
     Me = cur.fetchone()  
-         
     # Only For Users         
     print(ID)
     

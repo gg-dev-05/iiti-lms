@@ -1,30 +1,44 @@
-{% extends 'user.html' %} {% block Usidebar_and_navbar %}
-<div class="page-wrapper" style="background: radial-gradient(circle, rgba(189,188,188,1) 0%, rgba(16,27,28,1) 100%);">
+{% extends 'user.html' %} {% block sidebar_and_navbar %}
+<div
+	class="page-wrapper"
+	style="
+		background: radial-gradient(
+			circle,
+			rgba(189, 188, 188, 1) 0%,
+			rgba(16, 27, 28, 1) 100%
+		);
+	"
+>
 	<!-- ============================================================== -->
 	<!-- Bread crumb and right sidebar toggle -->
 	<!-- ============================================================== -->
-	<div class="page-breadcrumb" >
-		<div class="row">
-			<div class="align-items-center">
-				{% with messages = get_flashed_messages() %}
-				{% if messages  %}
-					{% for msg in messages %}
-					<div class="alert alert-success alert-dismissible fade show" role="alert">
-						{{msg}}
-						<button type="button" class="close" data-dismiss="alert" aria-label="Close">
-						  <span aria-hidden="true">&times;</span>
-						</button>
-					  </div>
-					{% endfor %}
-				{% endif %}
-				{% endwith %}
+	<div class="page-breadcrumb">
+		<div class="align-items-center">
+			{% with messages = get_flashed_messages() %} {% if messages %} {%
+			for msg in messages %}
+			<div
+				class="alert alert-success alert-dismissible fade show text-center"
+				role="alert"
+			>
+				{{msg}}
+				<button
+					type="button"
+					class="close"
+					data-dismiss="alert"
+					aria-label="Close"
+				>
+					<span aria-hidden="true">&times;</span>
+				</button>
 			</div>
+			{% endfor %} {% endif %} {% endwith %}
+		</div>
+		<div class="row">
 			<div class="col-12 d-flex no-block align-items-center">
-				<h4 class="page-title" style="color: white;">
+				<h4 class="page-title" style="color: white">
 					{{details['name']}} <br />
 					{{details['email']}}
 				</h4>
-				<div class="ml-auto text-right" style="color: white;">
+				<div class="ml-auto text-right" style="color: white">
 					<nav aria-label="breadcrumb">
 						<ol class="breadcrumb">
 							<li class="breadcrumb-item">
@@ -33,7 +47,7 @@
 							<li
 								class="breadcrumb-item active"
 								aria-current="page"
-								style="color: white;"
+								style="color: white"
 							>
 								Library
 							</li>
@@ -61,7 +75,11 @@
 							<i class="mdi mdi-book-multiple"></i>
 						</h1>
 						<h6 class="text-white">
-							<a href="/allBooks" style="color: white; font-size: larger;"><b>Books</b></a>
+							<a
+								href="/allBooks"
+								style="color: white; font-size: larger"
+								><b>Books</b></a
+							>
 						</h6>
 					</div>
 				</div>
@@ -74,7 +92,11 @@
 							<i class="mdi mdi-account-star"></i>
 						</h1>
 						<h6 class="text-white">
-							<a href="/friends" style="color: white; font-size: larger;"><b>Friends</b></a>
+							<a
+								href="/friends"
+								style="color: white; font-size: larger"
+								><b>Friends</b></a
+							>
 						</h6>
 					</div>
 				</div>
@@ -86,7 +108,13 @@
 						<h1 class="font-light text-white">
 							<i class="mdi mdi-history"></i>
 						</h1>
-						<h6 class="text-white"><a href="/history" style="color:white; font-size: larger;"><b>History</b></a></h6>
+						<h6 class="text-white">
+							<a
+								href="/history"
+								style="color: white; font-size: larger"
+								><b>History</b></a
+							>
+						</h6>
 					</div>
 				</div>
 			</div>
