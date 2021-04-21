@@ -87,7 +87,7 @@ def home():
                     session["isFaculty"] = False
                     cur.execute("SELECT ID FROM reader WHERE reader_email = '{}'".format(email))
                     user_id = cur.fetchone()[0]
-                    cur.execute('SELECT reader_name, reader_email FROM friendrequests INNER JOIN reader ON friendrequests.reader_1 = reader.ID WHERE reader_2 = {};'.format(user_id))
+                    cur.execute('SELECT reader_name, reader_email, ID FROM friendrequests INNER JOIN reader ON friendrequests.reader_1 = reader.ID WHERE reader_2 = {};'.format(user_id))
                     friendRequests = cur.fetchall()
                     session['friendRequests'] = friendRequests
                     print(session['friendRequests'])
@@ -95,7 +95,6 @@ def home():
 
     else:
         return render_template('Login.html')
-# send mail
 
 
 @app.route("/sendmail")
@@ -234,9 +233,9 @@ def addFriend():
         friend = friend[0][0]
 
     cur.execute(f"SELECT ID FROM reader WHERE reader_email='{email}'")
-    Me = cur.fetchone()
+    Me = cur.fetchone()[0]
     cur.execute("DELETE FROM friends WHERE reader_2 ={} AND reader_1 = {} ;".format(
-        friend[0][0], Me[0]))
+        friend, Me))
 
     # print(friend[0][0])
     # print(Me[0])
@@ -247,7 +246,7 @@ def addFriend():
 
     # have to Add cond that they r already frnd
     cur.execute(
-        f"insert into friends(reader_1, reader_2) values('{Me[0]}','{friend[0][0]}')")
+        f"insert into friends(reader_1, reader_2) values('{Me}','{friend}')")
     mysql.connection.commit()
     return render_template('addFriend.html', msg="Your Friend is successfully added in your friend list", details=session["profile"])
     # return render_template('addFriend.html')

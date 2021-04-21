@@ -48,7 +48,8 @@
 			<!-- Topbar header - style you can find in pages.scss -->
 			<!-- ============================================================== -->
 			<header class="topbar" data-navbarbg="skin5">
-				<nav class="navbar top-navbar navbar-expand-md navbar-dark">
+				{% if details %}
+					<nav class="navbar top-navbar navbar-expand-md navbar-dark">
 					<div class="navbar-header" data-logobg="skin5">
 						<!-- This is for the sidebar toggle which is visible on mobile only -->
 						<a
@@ -197,12 +198,15 @@
 															></i
 														></span> -->
 														<div class="m-l-10">
-															<h5 class="m-b-0" style="color:darkblue">
-																FriendRequests :->
+															<h4 class="m-b-0" style="color:darkblue">
+																FriendRequests
 																<br>
 																<br>
-															</h5>
-															<span
+															</h4>
+															{% if friendRequests == () %}
+																<h5>No new friend requests</h5>
+															{% else %}
+																<span
 																class="mail-desc"
 																>
 																{% for i in friendRequests %}
@@ -219,8 +223,8 @@
 																{{i[1]}}
 																
 																<br>
-																<button type="button" class="btn btn-success"> <emp>Accept</emp></button>
-																<button type="button" class="btn btn-warning"><emp>Reject</emp></button>
+																<a href=""><button type="button" class="btn btn-success"> <emp>Accept</emp></button></a> 
+																<a href=""><button type="button" class="btn btn-warning"><emp>Reject</emp></button></a>
 
 																<hr>
 												                   
@@ -231,6 +235,8 @@
 																that event -->
 																</span
 															>
+															{% endif %}
+															
 														</div>
 													</div>
 												</a>
@@ -366,6 +372,10 @@
 						</ul>
 					</div>
 				</nav>
+				{% else %}
+					<h1>Please Register</h1>
+				{% endif %}
+				
 			</header>
 			<!-- ============================================================== -->
 			<!-- End Topbar header -->
