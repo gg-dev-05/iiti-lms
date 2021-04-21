@@ -5,7 +5,22 @@
 	<!-- ============================================================== -->
 	<div class="page-breadcrumb">
 		<div class="row">
+			<div class="align-items-center">
+				{% with messages = get_flashed_messages() %}
+				{% if messages  %}
+					{% for msg in messages %}
+					<div class="alert alert-success alert-dismissible fade show" role="alert">
+						{{msg}}
+						<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+						  <span aria-hidden="true">&times;</span>
+						</button>
+					  </div>
+					{% endfor %}
+				{% endif %}
+				{% endwith %}
+			</div>
 			<div class="col-12 d-flex no-block align-items-center">
+				
 				<h4 class="page-title">
 					{{details['name']}} <br />
 					{{details['email']}}

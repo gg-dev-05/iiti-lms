@@ -1,4 +1,4 @@
-from flask import Flask, render_template, redirect, url_for, session, request
+from flask import flash, Flask, render_template, redirect, url_for, session, request
 from flask_mysqldb import MySQL
 import yaml
 from functions.dbConfig import database_config
@@ -369,7 +369,7 @@ def user_History():
     cur.execute(f"SELECT ID FROM reader WHERE reader_email='{email}'")
     person = cur.fetchone()
     print(person[0])
-    cur.execute(f"SELECT ISBN, borrow_date , book_returned FROM issue_details WHERE reader_id='{2}'")
+    cur.execute(f"SELECT ISBN, borrow_date , book_returned FROM issue_details WHERE reader_id='{person[0]}'")
     data = cur.fetchall()
     return render_template('userHistory.html',data = data)
 
@@ -414,6 +414,7 @@ def authorize():
         message = 'You were successfully logged in'
     else:
         message = 'You Please Try Again'
+    flash("You were successfully logged in", "info")    
     return redirect('/')
 
 
@@ -421,6 +422,7 @@ def authorize():
 def logout():
     for key in list(session.keys()):
         session.pop(key)
+    flash("You have been logged out", "info")
     return redirect("/")
 
 
