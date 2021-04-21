@@ -1,0 +1,205 @@
+{% extends 'user.html' %} {% block sidebar_and_navbar %}
+<link
+	href="static/assets/libs/jquery-steps/jquery.steps.css"
+	rel="stylesheet"
+/>
+<link href="static/assets/libs/jquery-steps/steps.css" rel="stylesheet" />
+<div>
+	<div class="page-wrapper">
+		<!-- ============================================================== -->
+		<!-- Bread crumb and right sidebar toggle -->
+		<!-- ============================================================== -->
+		<div class="page-breadcrumb">
+			<div class="row">
+				<div class="col-12 d-flex no-block align-items-center">
+					<h4 class="page-title">Form Wizard</h4>
+					<div class="ml-auto text-right">
+						<nav aria-label="breadcrumb">
+							<ol class="breadcrumb">
+								<li class="breadcrumb-item">
+									<a href="#">Home</a>
+								</li>
+								<li
+									class="breadcrumb-item active"
+									aria-current="page"
+								>
+									Library
+								</li>
+							</ol>
+						</nav>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- ============================================================== -->
+		<!-- End Bread crumb and right sidebar toggle -->
+		<!-- ============================================================== -->
+		<!-- ============================================================== -->
+		<!-- Container fluid  -->
+		<!-- ============================================================== -->
+		<div class="container-fluid">
+			<!-- ============================================================== -->
+			<!-- Start Page Content -->
+			<!-- ============================================================== -->
+			<div class="card">
+				<div class="card-body wizard-content">
+					<h4 class="card-title">Basic Form Example</h4>
+					<h6 class="card-subtitle"></h6>
+					<form
+						id="example-form"
+						action="/new"
+						method="POST"
+						class="m-t-40"
+					>
+						<div>
+							<h3>Account</h3>
+							<section>
+								<label for="userName">Name *</label>
+								<input
+									id="Name"
+									name="Name"
+									type="text"
+									class="required form-control"
+									value="{{name}}"
+									readonly
+								/>
+
+								<label for="userName">Email *</label>
+								<input
+									id="Email"
+									name="Email"
+									type="email"
+									class="required form-control"
+									value="{{email}}"
+									readonly
+								/>
+							</section>
+							<h3>Profile</h3>
+							<section>
+								<label for="Number"> Phone Number *</label>
+								<input
+									id="Number"
+									name="Number"
+									type="number"
+									class="required form-control"
+								/>
+								<label for="Address">Address *</label>
+								<input
+									id="Address"
+									name="Address"
+									type="text"
+									class="required form-control"
+								/>
+								<label for="CollegeName">College Name *</label>
+								<input
+									id="CollegeName"
+									name="CollegeName"
+									type="text"
+									class="required form-control"
+								/>
+
+								<p>(*) Mandatory</p>
+							</section>
+							<!-- <h3>Hints</h3>
+							<section>
+								<ul>
+									<li>Foo</li>
+									<li>Bar</li>
+									<li>Foobar</li>
+								</ul>
+							</section> -->
+							<h3>Finish</h3>
+							<section>
+								<h2>Thank you !! Press Finish to continue;</h2>
+
+								<h3>Enjoy your new reading experience !!</h3>
+							</section>
+						</div>
+					</form>
+				</div>
+			</div>
+			<!-- ============================================================== -->
+			<!-- End PAge Content -->
+			<!-- ============================================================== -->
+			<!-- ============================================================== -->
+			<!-- Right sidebar -->
+			<!-- ============================================================== -->
+			<!-- .right-sidebar -->
+			<!-- ============================================================== -->
+			<!-- End Right sidebar -->
+			<!-- ============================================================== -->
+		</div>
+		<!-- ============================================================== -->
+		<!-- End Container fluid  -->
+		<!-- ============================================================== -->
+		<!-- ============================================================== -->
+		<!-- footer -->
+		<!-- ============================================================== -->
+		<footer class="footer text-center">
+			All Rights Reserved by IITI - LMS.
+		</footer>
+		<!-- ============================================================== -->
+		<!-- End footer -->
+		<!-- ============================================================== -->
+	</div>
+	<!-- ============================================================== -->
+	<!-- End Page wrapper  -->
+	<!-- ============================================================== -->
+</div>
+<!-- ============================================================== -->
+<!-- End Wrapper -->
+<!-- ============================================================== -->
+<!-- ============================================================== -->
+<!-- All Jquery -->
+<!-- ============================================================== -->
+<script src="static/assets/libs/jquery/dist/jquery.min.js"></script>
+<!-- Bootstrap tether Core JavaScript -->
+<script src="static/assets/libs/popper.js/dist/umd/popper.min.js"></script>
+<script src="static/assets/libs/bootstrap/dist/js/bootstrap.min.js"></script>
+<!-- slimscrollbar scrollbar JavaScript -->
+<script src="static/assets/libs/perfect-scrollbar/dist/perfect-scrollbar.jquery.min.js"></script>
+<script src="static/assets/extra-libs/sparkline/sparkline.js"></script>
+<!--Wave Effects -->
+<script src="static/dist/js/waves.js"></script>
+<!--Menu sidebar -->
+<script src="static/dist/js/sidebarmenu.js"></script>
+<!--Custom JavaScript -->
+<script src="static/dist/js/custom.min.js"></script>
+<!-- this page js -->
+<script src="static/assets/libs/jquery-steps/build/jquery.steps.min.js"></script>
+<script src="static/assets/libs/jquery-validation/dist/jquery.validate.min.js"></script>
+<script>
+	// Basic Example with form
+	var form = $("#example-form");
+	form.validate({
+		errorPlacement: function errorPlacement(error, element) {
+			element.before(error);
+		},
+		rules: {
+			Number: {
+				required: true,
+				minlength: 10,
+				maxlength: 10,
+			},
+		},
+	});
+	form.children("div").steps({
+		headerTag: "h3",
+		bodyTag: "section",
+		transitionEffect: "slideLeft",
+		onStepChanging: function (event, currentIndex, newIndex) {
+			form.validate().settings.ignore = ":disabled,:hidden";
+			return form.valid();
+		},
+		onFinishing: function (event, currentIndex) {
+			form.validate().settings.ignore = ":disabled";
+			return form.valid();
+		},
+		onFinished: function (event, currentIndex) {
+			console.log(event);
+			form.submit();
+		},
+	});
+</script>
+
+{% endblock sidebar_and_navbar %}

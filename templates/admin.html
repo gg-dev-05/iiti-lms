@@ -10,9 +10,9 @@
 		<!-- Favicon icon -->
 		<link
 			rel="icon"
-			type="image/png"
+			type="image/ico"
 			sizes="16x16"
-			href="static/assets/images/favicon.png"
+			href="static/assets/images/favicon.ico"
 		/>
 		<title>IITI LMS</title>
 		<!-- Custom CSS -->
@@ -43,11 +43,12 @@
 		<!-- ============================================================== -->
 		<!-- Main wrapper - style you can find in pages.scss -->
 		<!-- ============================================================== -->
-		<div id="main-wrapper">
+		<div id="main-wrapper" >
 			<!-- ============================================================== -->
 			<!-- Topbar header - style you can find in pages.scss -->
 			<!-- ============================================================== -->
 			<header class="topbar" data-navbarbg="skin5">
+				
 				<nav class="navbar top-navbar navbar-expand-md navbar-dark">
 					<div class="navbar-header" data-logobg="skin5">
 						<!-- This is for the sidebar toggle which is visible on mobile only -->
@@ -65,7 +66,7 @@
 								<!--You can put here icon as well // <i class="wi wi-sunset"></i> //-->
 								<!-- Dark Logo icon -->
 								<img
-									src="static/assets/images/logo-icon.png"
+									src="static/assets/images/logo-icon.jpg"
 									alt="homepage"
 									class="light-logo"
 								/>
@@ -136,11 +137,12 @@
 									href="javascript:void(0)"
 									><i class="ti-search"></i
 								></a>
-								<form class="app-search position-absolute">
+								<form class="app-search position-absolute" method="POST" action="/book">
 									<input
+										name="book"
 										type="text"
 										class="form-control"
-										placeholder="Search &amp; enter"
+										placeholder="Search for books"
 									/>
 									<a class="srh-btn"
 										><i class="ti-close"></i
@@ -198,12 +200,15 @@
 														></span>
 														<div class="m-l-10">
 															<h5 class="m-b-0">
-																Event today
+																Nothing
 															</h5>
 															<span
 																class="mail-desc"
+															
 																>Just a reminder
-																that event</span
+																that event
+
+																</span
 															>
 														</div>
 													</div>
@@ -307,8 +312,8 @@
 									aria-haspopup="true"
 									aria-expanded="false"
 									><img
-										src="static/assets/images/users/1.jpg"
-										alt="user"
+										src="{{details['picture']}}" 
+										alt="{{details['name']}}"
 										class="rounded-circle"
 										width="31"
 								/></a>
@@ -317,22 +322,11 @@
 								>
 									<a
 										class="dropdown-item"
-										href="javascript:void(0)"
+										href="/"
 										><i class="ti-user m-r-5 m-l-5"></i>
-										Profile</a
+										Home</a
 									>
-									<a
-										class="dropdown-item"
-										href="javascript:void(0)"
-										><i class="ti-email m-r-5 m-l-5"></i>
-										Inbox</a
-									>
-									<a
-										class="dropdown-item"
-										href="javascript:void(0)"
-										><i class="ti-settings m-r-5 m-l-5"></i>
-										Account Setting</a
-									>
+									
 									<a
 										class="dropdown-item"
 										href="/logout"
@@ -369,7 +363,7 @@
 									class="sidebar-link has-arrow waves-effect waves-dark"
 									href="javascript:void(0)"
 									aria-expanded="false"
-									><i class="mdi mdi-face"></i
+									><i class="mdi mdi-account-outline"></i
 									><span class="hide-menu">Members </span></a
 								>
 								<ul
@@ -380,7 +374,7 @@
 										<a
 											href="/students"
 											class="sidebar-link"
-											><i class="mdi mdi-emoticon"></i
+											><i class=" mdi mdi-account-card-details"></i
 											><span class="hide-menu">
 												Students
 											</span></a
@@ -391,7 +385,7 @@
 											href="/faculties"
 											class="sidebar-link"
 											><i
-												class="mdi mdi-emoticon-cool"
+												class="mdi mdi-account-box"
 											></i
 											><span class="hide-menu">
 												Faculties
@@ -404,7 +398,7 @@
 									class="sidebar-link has-arrow waves-effect waves-dark"
 									href="javascript:void(0)"
 									aria-expanded="false"
-									><i class="mdi mdi-chart-bar"></i
+									><i class="mdi mdi-book-open-page-variant"></i
 									><span class="hide-menu">Books</span></a
 								>
 								<ul
@@ -413,9 +407,9 @@
 								>
 									<li class="sidebar-item">
 										<a
-											href="/books"
+											href="/book"
 											class="sidebar-link"
-											><i class="mdi mdi-emoticon"></i
+											><i class="mdi mdi-book-open-variant"></i
 											><span class="hide-menu">
 												All Books
 											</span></a
@@ -425,7 +419,7 @@
 										<a
 											href="/addBook"
 											class="sidebar-link"
-											><i class="mdi mdi-emoticon"></i
+											><i class="mdi mdi-book-multiple"></i
 											><span class="hide-menu">
 												Add New Book
 											</span></a
@@ -435,7 +429,7 @@
 										<a
 											href="/logs"
 											class="sidebar-link"
-											><i class="mdi mdi-emoticon"></i
+											><i class="mdi mdi-book-open"></i
 											><span class="hide-menu">
 												Issue Details
 											</span></a
@@ -445,7 +439,7 @@
 										<a
 											href="icon-material.html"
 											class="sidebar-link"
-											><i class="mdi mdi-emoticon"></i
+											><i class="mdi mdi-book"></i
 											><span class="hide-menu">
 												Edit book tags
 											</span></a
@@ -455,7 +449,7 @@
 										<a
 											href="icon-material.html"
 											class="sidebar-link"
-											><i class="mdi mdi-emoticon"></i
+											><i class="mdi mdi-timer-sand"></i
 											><span class="hide-menu">
 												Reminders
 											</span></a
@@ -463,11 +457,11 @@
 									</li>
 									<li class="sidebar-item">
 										<a
-											href="icon-material.html"
+											href="/shelf"
 											class="sidebar-link"
-											><i class="mdi mdi-emoticon"></i
+											><i class="mdi mdi-view-list"></i
 											><span class="hide-menu">
-												Shelves
+												Shelfs
 											</span></a
 										>
 									</li>
@@ -479,8 +473,17 @@
 									class="sidebar-link waves-effect waves-dark sidebar-link"
 									href="widgets.html"
 									aria-expanded="false"
-									><i class="mdi mdi-chart-bubble"></i
+									><i class="mdi mdi-currency-usd"></i
 									><span class="hide-menu">Fines</span></a
+								>
+							</li>
+							<li class="sidebar-item">
+								<a
+									class="sidebar-link waves-effect waves-dark sidebar-link"
+									href="/sendmail"
+									aria-expanded="false"
+									><i class="mdi mdi-chart-bubble"></i
+									><span class="hide-menu">Notify users</span></a
 								>
 							</li>
 						</ul>
@@ -514,7 +517,7 @@
 		<script src="static/assets/libs/perfect-scrollbar/dist/perfect-scrollbar.jquery.min.js"></script>
 		<script src="static/assets/extra-libs/sparkline/sparkline.js"></script>
 		<!--Wave Effects -->
-		<script src="static/dist/js/waves.js"></script>
+		<!-- <script src="static/dist/js/waves.js"></script> -->
 		<!--Menu sidebar -->
 		<script src="static/dist/js/sidebarmenu.js"></script>
 		<!--Custom JavaScript -->
@@ -522,13 +525,13 @@
 		<!--This page JavaScript -->
 		<!-- <script src="static/dist/js/pages/dashboards/dashboard1.js"></script> -->
 		<!-- Charts js Files -->
-		<script src="static/assets/libs/flot/excanvas.js"></script>
-		<script src="static/assets/libs/flot/jquery.flot.js"></script>
-		<script src="static/assets/libs/flot/jquery.flot.pie.js"></script>
-		<script src="static/assets/libs/flot/jquery.flot.time.js"></script>
-		<script src="static/assets/libs/flot/jquery.flot.stack.js"></script>
-		<script src="static/assets/libs/flot/jquery.flot.crosshair.js"></script>
-		<script src="static/assets/libs/flot.tooltip/js/jquery.flot.tooltip.min.js"></script>
-		<script src="static/dist/js/pages/chart/chart-page-init.js"></script>
+		<!-- <script src="static/assets/libs/flot/excanvas.js"></script> -->
+		<!-- <script src="static/assets/libs/flot/jquery.flot.js"></script> -->
+		<!-- <script src="static/assets/libs/flot/jquery.flot.pie.js"></script> -->
+		<!-- <script src="static/assets/libs/flot/jquery.flot.time.js"></script> -->
+		<!-- <script src="static/assets/libs/flot/jquery.flot.stack.js"></script> -->
+		<!-- <script src="static/assets/libs/flot/jquery.flot.crosshair.js"></script> -->
+		<!-- <script src="static/assets/libs/flot.tooltip/js/jquery.flot.tooltip.min.js"></script> -->
+		<!-- <script src="static/dist/js/pages/chart/chart-page-init.js"></script> -->
 	</body>
 </html>

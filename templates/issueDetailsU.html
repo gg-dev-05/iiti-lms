@@ -45,9 +45,6 @@
 			<div class="col-12">
 				<div class="card">
 					<div class="card-body">
-						{% if zeroes==1 %}
-						<h2>We need more readings from you to be able to suggest you!!!!</h2>
-						{% else %}
 						<h5 class="card-title">Basic Datatable</h5>
 						<div class="table-responsive text-center">
 							<table
@@ -56,46 +53,37 @@
 							>
 								<thead>
 									<tr>
-										<th style="font-weight: bold">TITLE</th>
+										<th style="font-weight: bold">
+											Reader ID
+										</th>
 										<th style="font-weight: bold">ISBN</th>
 										<th style="font-weight: bold">
-											Language
+											Borrow Date
 										</th>
 										<th style="font-weight: bold">
-											Issued by
+											Book Returned
 										</th>
 										<th style="font-weight: bold">
-											Published On
-										</th>
-										<th style="font-weight: bold">
-											Avg. Ratings
-										</th>
-										<th style="font-weight: bold">
-											Shelf ID
-										</th>
-										<th style="font-weight: bold">
-											Status
+											Ratings
 										</th>
 									</tr>
 								</thead>
 								<tbody>
-									{% for book in books %}
+									{% for data in issueDetails %}
 									<tr>
-									{% for value in book %}
-									
-										
-										<td>{{value}}</td>
-
-										
-									
-									{% endfor %}
-
+										<td>{{data[0]}}</td>
+										<td>{{data[1]}}</td>
+										<td>{{data[2]}}</td>
+										<td>
+											{% if data[3] == 0 %} NO {% else %}
+											YES {% endif %}
+										</td>
+										<td>{{data[4]}}</td>
 									</tr>
 									{% endfor %}
 								</tbody>
 							</table>
 						</div>
-						{% endif %}
 					</div>
 				</div>
 			</div>
@@ -135,30 +123,4 @@
 <!-- All Jquery -->
 <!-- ============================================================== -->
 
-<script src="assets/libs/jquery/dist/jquery.min.js"></script>
-<!-- Bootstrap tether Core JavaScript -->
-<script src="assets/libs/popper.js/dist/umd/popper.min.js"></script>
-<script src="assets/libs/bootstrap/dist/js/bootstrap.min.js"></script>
-<!-- slimscrollbar scrollbar JavaScript -->
-<script src="assets/libs/perfect-scrollbar/dist/perfect-scrollbar.jquery.min.js"></script>
-<script src="assets/extra-libs/sparkline/sparkline.js"></script>
-<!--Wave Effects -->
-<script src="dist/js/waves.js"></script>
-<!--Menu sidebar -->
-<script src="dist/js/sidebarmenu.js"></script>
-<!--Custom JavaScript -->
-<script src="dist/js/custom.min.js"></script>
-<!-- this page js -->
-<script src="assets/extra-libs/multicheck/datatable-checkbox-init.js"></script>
-<script src="assets/extra-libs/multicheck/jquery.multicheck.js"></script>
-<script src="assets/extra-libs/DataTables/datatables.min.js"></script>
-<script>
-	/****************************************
-	 *       Basic Table                   *
-	 ****************************************/
-	$("#zero_config").DataTable();
-</script>
 {% endblock sidebar_and_navbar %}
-
-
-

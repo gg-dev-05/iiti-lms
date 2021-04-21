@@ -10,9 +10,9 @@
 		<!-- Favicon icon -->
 		<link
 			rel="icon"
-			type="image/png"
+			type="image/ico"
 			sizes="16x16"
-			href="static/assets/images/favicon.png"
+			href="static/assets/images/favicon.ico"
 		/>
 		<title>IITI LMS</title>
 		<!-- Custom CSS -->
@@ -48,7 +48,8 @@
 			<!-- Topbar header - style you can find in pages.scss -->
 			<!-- ============================================================== -->
 			<header class="topbar" data-navbarbg="skin5">
-				<nav class="navbar top-navbar navbar-expand-md navbar-dark">
+				{% if details %}
+					<nav class="navbar top-navbar navbar-expand-md navbar-dark">
 					<div class="navbar-header" data-logobg="skin5">
 						<!-- This is for the sidebar toggle which is visible on mobile only -->
 						<a
@@ -65,7 +66,7 @@
 								<!--You can put here icon as well // <i class="wi wi-sunset"></i> //-->
 								<!-- Dark Logo icon -->
 								<img
-									src="static/assets/images/logo-icon.png"
+									src="static/assets/images/logo-icon.jpg"
 									alt="homepage"
 									class="light-logo"
 								/>
@@ -136,11 +137,12 @@
 									href="javascript:void(0)"
 									><i class="ti-search"></i
 								></a>
-								<form class="app-search position-absolute">
+								<form class="app-search position-absolute" method="POST" action="/book">
 									<input
+										name="book"
 										type="text"
 										class="form-control"
-										placeholder="Search &amp; enter"
+										placeholder="Search for books"
 									/>
 									<a class="srh-btn"
 										><i class="ti-close"></i
@@ -158,7 +160,6 @@
 
 							<!-- ============================================================== -->
 							<!-- End Comment -->
-							<!-- ============================================================== -->
 							<!-- ============================================================== -->
 							<!-- Messages -->
 							<!-- ============================================================== -->
@@ -190,26 +191,53 @@
 													<div
 														class="d-flex no-block align-items-center p-10"
 													>
-														<span
+														<!-- <span
 															class="btn btn-success btn-circle"
 															><i
-																class="ti-calendar"
+																class="ti-user"
 															></i
-														></span>
+														></span> -->
 														<div class="m-l-10">
-															<h5 class="m-b-0">
-																Event today
-															</h5>
-															<span
+															<h4 class="m-b-0" style="color:darkblue">
+																FriendRequests
+																<br>
+																<br>
+															</h4>
+															{% if friendRequests == () %}
+																<h5>No new friend requests</h5>
+															{% else %}
+																<span
 																class="mail-desc"
-																>Just a reminder
-																that event</span
+																>
+																{% for i in friendRequests %}
+																<span>
+																	<span
+															class="btn btn-success btn-circle  "  style="background-color: #27A9E3;">
+															<i class="ti-user"></i></span>
+
+																<b>	{{i[0]}}  </b>
+																<br>
+																{{i[1]}}
+																
+																<br>
+																<a href="/request/cnf/{{i[2]}}"><button type="button" class="btn btn-success"> <emp>Accept</emp></button></a> 
+																<a href="/request/del/{{i[2]}}"><button type="button" class="btn btn-warning"><emp>Reject</emp></button></a>
+
+																<hr>
+															</span>
+																	
+																{% endfor %}
+																<!-- Just a reminder
+																that event -->
+																</span
 															>
+															{% endif %}
+															
 														</div>
 													</div>
 												</a>
 												<!-- Message -->
-												<a
+												<!-- <a
 													href="javascript:void(0)"
 													class="link border-top"
 												>
@@ -228,15 +256,15 @@
 															</h5>
 															<span
 																class="mail-desc"
-																>You can
+																>You canzzzzzz
 																customize this
 																template</span
 															>
 														</div>
 													</div>
-												</a>
+												</a> -->
 												<!-- Message -->
-												<a
+												<!-- <a
 													href="javascript:void(0)"
 													class="link border-top"
 												>
@@ -260,9 +288,9 @@
 															>
 														</div>
 													</div>
-												</a>
+												</a> -->
 												<!-- Message -->
-												<a
+												<!-- <a
 													href="javascript:void(0)"
 													class="link border-top"
 												>
@@ -286,7 +314,7 @@
 															>
 														</div>
 													</div>
-												</a>
+												</a> -->
 											</div>
 										</li>
 									</ul>
@@ -295,6 +323,7 @@
 							<!-- ============================================================== -->
 							<!-- End Messages -->
 							<!-- ============================================================== -->
+
 
 							<!-- ============================================================== -->
 							<!-- User profile and search -->
@@ -307,8 +336,8 @@
 									aria-haspopup="true"
 									aria-expanded="false"
 									><img
-										src="static/assets/images/users/1.jpg"
-										alt="user"
+										src="{{details['picture']}}" 
+										alt="{{details['name']}}"
 										class="rounded-circle"
 										width="31"
 								/></a>
@@ -317,25 +346,14 @@
 								>
 									<a
 										class="dropdown-item"
-										href="javascript:void(0)"
+										href="/"
 										><i class="ti-user m-r-5 m-l-5"></i>
-										Profile</a
+										Home</a
 									>
+									
 									<a
 										class="dropdown-item"
-										href="javascript:void(0)"
-										><i class="ti-email m-r-5 m-l-5"></i>
-										Inbox</a
-									>
-									<a
-										class="dropdown-item"
-										href="javascript:void(0)"
-										><i class="ti-settings m-r-5 m-l-5"></i>
-										Account Setting</a
-									>
-									<a
-										class="dropdown-item"
-										href="javascript:void(0)"
+										href="/logout"
 										><i
 											class="fa fa-power-off m-r-5 m-l-5"
 										></i>
@@ -350,6 +368,10 @@
 						</ul>
 					</div>
 				</nav>
+				{% else %}
+					<h1>Please Register</h1>
+				{% endif %}
+				
 			</header>
 			<!-- ============================================================== -->
 			<!-- End Topbar header -->
@@ -372,7 +394,7 @@
 									class="sidebar-link has-arrow waves-effect waves-dark"
 									href="javascript:void(0)"
 									aria-expanded="false"
-									><i class="mdi mdi-chart-bar"></i
+									><i class="mdi mdi-book-multiple"></i
 									><span class="hide-menu">Books</span></a
 								>
 								<ul
@@ -381,9 +403,19 @@
 								>
 									<li class="sidebar-item">
 										<a
-											href="/allBooks"
+											href="/myBooks"
 											class="sidebar-link"
-											><i class="mdi mdi-emoticon"></i
+											><i class="mdi mdi-book"></i
+											><span class="hide-menu">
+												My Books
+											</span></a
+										>
+									</li>
+									<li class="sidebar-item">
+										<a
+											href="/book"
+											class="sidebar-link"
+											><i class="mdi mdi-book"></i
 											><span class="hide-menu">
 												All Books
 											</span></a
@@ -393,7 +425,7 @@
 										<a
 											href="/recommendedBooks"
 											class="sidebar-link"
-											><i class="mdi mdi-emoticon"></i
+											><i class="mdi mdi-book"></i
 											><span class="hide-menu">
 												Recommended Book
 											</span></a
@@ -401,11 +433,11 @@
 									</li>
 									<li class="sidebar-item">
 										<a
-											href="/booksWithTags"
+											href="/previousReadings"
 											class="sidebar-link"
-											><i class="mdi mdi-emoticon"></i
+											><i class="mdi mdi-book"></i
 											><span class="hide-menu">
-												Books with tags
+												Previous Readings
 											</span></a
 										>
 									</li>
@@ -419,8 +451,18 @@
 									class="sidebar-link waves-effect waves-dark sidebar-link"
 									href="/friends"
 									aria-expanded="false"
-									><i class="mdi mdi-face"></i
+									><i class="fas fa-users mr-1"></i
 									><span class="hide-menu">All Friends</span></a
+								>
+							</li>
+
+							<li class="sidebar-item">
+								<a
+									class="sidebar-link waves-effect waves-dark sidebar-link"
+									href="/addFriend"
+									aria-expanded="false"
+									><i class="fas fa-user-plus mr-1"></i
+									><span class="hide-menu">Make Friends</span></a
 								>
 							</li>
 
@@ -429,21 +471,20 @@
 									class="sidebar-link waves-effect waves-dark sidebar-link"
 									href="/history"
 									aria-expanded="false"
-									><i class="mdi mdi-chart-bubble"></i
+									><i class=" fas fa-history mr-1"></i
 									><span class="hide-menu">History</span></a
 								>
 							</li>
-                            
+							
                             <li class="sidebar-item">
 								<a
 									class="sidebar-link waves-effect waves-dark sidebar-link"
-									href="/feedback"
+									href="/myfines"
 									aria-expanded="false"
-									><i class="mdi mdi-pencil"></i
-									><span class="hide-menu">Feedback</span></a
+									><i class=" fas fa-history mr-1"></i
+									><span class="hide-menu">My Fines</span></a
 								>
 							</li>
-							
 						</ul>
 					</nav>
 					<!-- End Sidebar navigation -->
@@ -456,8 +497,8 @@
 			<!-- ============================================================== -->
 			<!-- Page wrapper  -->
 			<!-- ============================================================== -->
-			{% block Usidebar_and_navbar %}
-			{% endblock Usidebar_and_navbar %}
+			{% block sidebar_and_navbar %}
+			{% endblock sidebar_and_navbar %}
 			<!-- ============================================================== -->
 			<!-- End Page wrapper  -->
 			<!-- ============================================================== -->
