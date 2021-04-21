@@ -318,22 +318,11 @@
 								>
 									<a
 										class="dropdown-item"
-										href="javascript:void(0)"
+										href="/"
 										><i class="ti-user m-r-5 m-l-5"></i>
 										Profile</a
 									>
-									<a
-										class="dropdown-item"
-										href="javascript:void(0)"
-										><i class="ti-email m-r-5 m-l-5"></i>
-										Inbox</a
-									>
-									<a
-										class="dropdown-item"
-										href="javascript:void(0)"
-										><i class="ti-settings m-r-5 m-l-5"></i>
-										Account Setting</a
-									>
+									
 									<a
 										class="dropdown-item"
 										href="/logout"
@@ -382,7 +371,17 @@
 								>
 									<li class="sidebar-item">
 										<a
-											href="/allBooks"
+											href="/myBooks"
+											class="sidebar-link"
+											><i class="mdi mdi-emoticon"></i
+											><span class="hide-menu">
+												My Books
+											</span></a
+										>
+									</li>
+									<li class="sidebar-item">
+										<a
+											href="/book"
 											class="sidebar-link"
 											><i class="mdi mdi-emoticon"></i
 											><span class="hide-menu">
@@ -425,6 +424,16 @@
 								>
 							</li>
 
+							<li class="sidebar-item">
+								<a
+									class="sidebar-link waves-effect waves-dark sidebar-link"
+									href="/addFriend"
+									aria-expanded="false"
+									><i class="mdi mdi-plus"></i
+									><span class="hide-menu">Make Friends</span></a
+								>
+							</li>
+
                             <li class="sidebar-item">
 								<a
 									class="sidebar-link waves-effect waves-dark sidebar-link"
@@ -457,8 +466,8 @@
 			<!-- ============================================================== -->
 			<!-- Page wrapper  -->
 			<!-- ============================================================== -->
-			{% block Usidebar_and_navbar %}
-			{% endblock Usidebar_and_navbar %}
+			{% block sidebar_and_navbar %}
+			{% endblock sidebar_and_navbar %}
 			<!-- ============================================================== -->
 			<!-- End Page wrapper  -->
 			<!-- ============================================================== -->
