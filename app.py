@@ -96,13 +96,13 @@ def members(memberType):
         cur.execute(
             "SELECT reader_name, reader_email, reader_address, phone_no, books_issued, unpaid_fines,ID FROM reader WHERE is_faculty = 0;")
         students = cur.fetchall()
-        return render_template("students.html", students=students)
+        return render_template("students.html", students=students, details=session["profile"])
     if memberType == 'faculties':
         cur = mysql.connection.cursor()
         cur.execute(
             "SELECT reader_name, reader_email, reader_address, phone_no, books_issued, unpaid_fines,ID FROM reader WHERE is_faculty = 1;")
         faculties = cur.fetchall()
-        return render_template("faculties.html", faculties=faculties)
+        return render_template("faculties.html", faculties=faculties, details=session["profile"])
     return redirect("/")
 
 
@@ -146,8 +146,8 @@ def allBooks():
         "SELECT ISBN, title, shelf_id, current_status, avg_rating, book_language, publisher, publish_date FROM book;")
     books = cur.fetchall()
     if session['isAdmin']:
-        return render_template("allBooksA.html", books=books)
-    return render_template("allBooksU.html", books=books)
+        return render_template("allBooksA.html", books=books, details=session["profile"])
+    return render_template("allBooksU.html", books=books, details=session["profile"])
 
 @app.route("/addFriend", methods=['GET', 'POST'])
 def addFriend():
@@ -158,7 +158,7 @@ def addFriend():
     if session["isAdmin"] == True:
         redirect("/")
     if request.method == 'GET':
-        return render_template('addFriend.html',msg="")
+        return render_template('addFriend.html',msg="", details=session["profile"])
 
     data = request.form
     cur = mysql.connection.cursor()
@@ -185,7 +185,7 @@ def addFriend():
     cur.execute(
             f"insert into friends(reader_1, reader_2) values('{Me[0]}','{friend[0][0]}')")
     mysql.connection.commit()
-    return render_template('addFriend.html', msg="Your Friend is successfully added in your friend list")
+    return render_template('addFriend.html', msg="Your Friend is successfully added in your friend list", details=session["profile"])
     # return render_template('addFriend.html')
 
 @app.route("/book", methods=['GET', 'POST'])
@@ -205,9 +205,9 @@ def book():
         books = cur.fetchall()
         if "isAdmin" in session:
             if session["isAdmin"] == True:
-                return render_template("adminSearchBook.html", books=books, query=query)
+                return render_template("adminSearchBook.html", books=books, query=query, details=session["profile"])
             if session["isAdmin"] == False:
-                return render_template("userSearchBook.html", books=books)
+                return render_template("userSearchBook.html", books=books, details=session["profile"])
                 
     if request.method == 'POST':
         data = request.form
@@ -225,9 +225,9 @@ def book():
         books = cur.fetchall()
         if "isAdmin" in session:
             if session["isAdmin"] == True:
-                return render_template("adminSearchBook.html", books=books, query=query)
+                return render_template("adminSearchBook.html", books=books, query=query, details=session["profile"])
             if session["isAdmin"] == False:
-                return render_template("userSearchBook.html", books=books)
+                return render_template("userSearchBook.html", books=books, details=session["profile"])
     return redirect("/")
 
 @app.route('/isbn/delete/<isbn>')
@@ -277,20 +277,20 @@ def logs():
     cur = mysql.connection.cursor()
     cur.execute("SELECT * FROM issue_details;")
     details = cur.fetchall()
-    return render_template("issueDetails.html", details=details)
+    return render_template("issueDetails.html", details=[details])
 
 
 @app.route("/addBook")
 def addBook():
     if request.method == 'GET':
-        return render_template("addBook.html")
+        return render_template("addBook.html", details=session["profile"])
     else:
         data = request.form
         cur = mysql.connection.cursor()
         cur.execute(
             f"insert into book(title,ISBN,book_language,publisher,publish_date,shelf_id) values('{data['title']}','{data['ISBN']}','{data['language']}','{data['publisher']}','{data['date']}','{data['shelf']}')")
         mysql.connection.commit()
-        return render_template("addBook.html")
+        return render_template("addBook.html", details=session["profile"])
 
 
 @app.route("/myBooks")
@@ -305,7 +305,7 @@ def myBooks():
     cur.execute(
         f"SELECT ISBN,title,avg_rating,book_language,publisher,publish_date,current_status FROM book WHERE ISBN in( SELECT ISBN FROM issue_details WHERE reader_id='{person[0]}')")
     books = cur.fetchall()
-    return render_template('myBooks.html', books=books)
+    return render_template('myBooks.html', books=books, details=session["profile"])
 
 @app.route("/shelf")
 def shelf():
@@ -314,7 +314,7 @@ def shelf():
         cur.execute(
         "SELECT shelf_id, capacity FROM shelf;")
         shelfs = cur.fetchall()
-        return render_template('shelf.html', shelfs = shelfs)
+        return render_template('shelf.html', shelfs = shelfs, details=session["profile"])
     return redirect("/")
 
 @app.route("/demo")
@@ -325,17 +325,17 @@ def demo():
     else:
         return "Not signed in <a href='/login'>LOGIN</a>>"
     # Only If he/she is a student
-    return render_template("register.html", email=email, name=name)
+    return render_template("register.html", email=email, name=name, details=session["profile"])
 
 
 @app.route("/recommendedBooks")
 def user_BookRecommedation():
-    return render_template('user_BookRecommedation.html')
+    return render_template('user_BookRecommedation.html', details=session["profile"])
 
 
 @app.route("/booksWithTags")
 def user_booksWithTags():
-    return render_template('booksWithTags.html')
+    return render_template('booksWithTags.html', details=session["profile"])
 
 
 @app.route("/friends")
@@ -352,7 +352,7 @@ def friends():
     # print(f"SELECT reader_name,phone_no,books_issued FROM reader WHERE ID IN ( SELECT reader_2 FROM friends WHERE reader_1={reader_1[0][0]} )")
     # print(friendinfo[0][2])
     # friend_id = friendinfo[0][2]
-    return render_template('allFriends.html', msg="", len=len(friendinfo), friendinfo = friendinfo)
+    return render_template('allFriends.html', msg="", len=len(friendinfo), friendinfo = friendinfo, details=session["profile"])
 
 @app.route("/history")
 def user_History():
@@ -370,23 +370,23 @@ def user_History():
     print(person[0])
     cur.execute(f"SELECT ISBN, borrow_date , book_returned FROM issue_details WHERE reader_id='{person[0]}'")
     data = cur.fetchall()
-    return render_template('userHistory.html',data = data)
+    return render_template('userHistory.html',data = data, details=session["profile"])
 
 
 
 @app.route("/test")
 def updateBooks():
-    return render_template('updateBooks.html')
+    return render_template('updateBooks.html', details=session["profile"])
 
 
 @app.route("/tables")
 def addBooks():
-    return render_template('tables.html')
+    return render_template('tables.html', details=session["profile"])
 
 
 @app.route("/dashboard")
 def dashboard():
-    return render_template('dashboard.html')
+    return render_template('dashboard.html', details=session["profile"])
 
 
 @app.route('/login')
