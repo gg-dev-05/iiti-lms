@@ -247,6 +247,10 @@ def holdByISBN(isbn):
         cur.execute("SELECT ID, books_issued, unpaid_fines FROM reader WHERE reader_email = '{}'".format(email))
         [reader_id, books_issued, unpaid_fines] = cur.fetchone()
         if session['isFaculty'] == False and books_issued > 10 or unpaid_fines > 1000:
+            if books_issued > 10:
+                flash("You already have issued 10 books","info")
+            else:
+                flash("Please pay you unpaid fines first","info")
             return redirect("/")
         cur.execute("UPDATE reader SET books_issued = books_issued+1 WHERE ID={}".format(reader_id))
         cur.execute("UPDATE book SET current_status = 'soldout' WHERE ISBN={}".format(isbn))
