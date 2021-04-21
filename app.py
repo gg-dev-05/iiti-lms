@@ -66,7 +66,6 @@ def home():
         else:
             session["isAdmin"] = False
             cur.execute("SELECT is_faculty from reader WHERE reader_email = '{}';".format(email))
-            print("SELECT is_faculty from reader WHERE reader_email = '{}';".format(email))
             result = cur.fetchone()
             if result == None:
                 return render_template("register.html", email=session['profile']['email'], name=session['profile']['name'])
@@ -75,7 +74,13 @@ def home():
                     session["isFaculty"] = True
                 else:
                     session["isFaculty"] = False
-                return render_template('userHome.html', details=session["profile"])
+                    cur.execute("SELECT ID FROM reader WHERE reader_email = '{}'".format(email))
+                    user_id = cur.fetchone()[0]
+                    cur.execute('SELECT reader_name, reader_email FROM friendrequests INNER JOIN reader ON friendrequests.reader_1 = reader.ID WHERE reader_2 = {};'.format(user_id))
+                    friendRequests = cur.fetchall()
+                    session['friendRequests'] = friendRequests
+                    print(session['friendRequests'])
+                return render_template('userHome.html', details=session["profile"], friendRequests=friendRequests)
 
     else:
         return render_template('Login.html')
@@ -159,32 +164,24 @@ def addFriend():
         return render_template('addFriend.html',msg="")
 
     data = request.form
+    if data['email'] == email:
+        return render_template("addFriend.html", msg="Enter e-mail address of your friend")
     cur = mysql.connection.cursor()
     cur.execute("SELECT ID FROM reader WHERE reader_email='{}'".format(data['email']))
-    # cur.execute(f"SELECT ID FROM reader WHERE reader_email='{email}'")
     friend = cur.fetchall()
-    # print(friend)
     if friend == ():
-        # print("sorry no friend exits with this email")
         return render_template('addFriend.html', msg="Sorry no user exits with this email")
+    else:
+        friend = friend[0][0]
+
     cur.execute(f"SELECT ID FROM reader WHERE reader_email='{email}'")
-    Me = cur.fetchone()    
-    cur.execute("DELETE FROM friends WHERE reader_2 ={} AND reader_1 = {} ;".format(friend[0][0],Me[0]))    
+    Me = cur.fetchone()[0]
     
-
-    # print(friend[0][0])
-    # print(Me[0]) 
-    # cur.execute("SELECT COUNT(*) AS total FROM friends WHERE reader_1 ='{friend[0][0]}';")
-    # count = cur.fetchall()
-    # print("checking that if he is already friend or not")
-    # print(count)
-
-    # have to Add cond that they r already frnd
+    
     cur.execute(
-            f"insert into friends(reader_1, reader_2) values('{Me[0]}','{friend[0][0]}')")
+            f"INSERT INTO friendrequests(reader_1, reader_2) VALUES('{Me}','{friend}')")
     mysql.connection.commit()
-    return render_template('addFriend.html', msg="Your Friend is successfully added in your friend list")
-    # return render_template('addFriend.html')
+    return render_template('addFriend.html', msg="Friend request sent to {}, awaiting their response !".format(data['email']))
 
 @app.route("/book", methods=['GET', 'POST'])
 def book():
