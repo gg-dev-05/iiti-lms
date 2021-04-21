@@ -160,7 +160,6 @@
 							<!-- ============================================================== -->
 							<!-- End Comment -->
 							<!-- ============================================================== -->
-							<!-- ============================================================== -->
 							<!-- Messages -->
 							<!-- ============================================================== -->
 							<li class="nav-item dropdown">
@@ -297,6 +296,7 @@
 							<!-- End Messages -->
 							<!-- ============================================================== -->
 
+
 							<!-- ============================================================== -->
 							<!-- User profile and search -->
 							<!-- ============================================================== -->
@@ -308,8 +308,8 @@
 									aria-haspopup="true"
 									aria-expanded="false"
 									><img
-										src="static/assets/images/users/1.jpg"
-										alt="user"
+										src="{{details['picture']}}" 
+										alt="{{details['name']}}"
 										class="rounded-circle"
 										width="31"
 								/></a>
@@ -320,7 +320,7 @@
 										class="dropdown-item"
 										href="/"
 										><i class="ti-user m-r-5 m-l-5"></i>
-										Profile</a
+										Home</a
 									>
 									
 									<a
@@ -362,7 +362,7 @@
 									class="sidebar-link has-arrow waves-effect waves-dark"
 									href="javascript:void(0)"
 									aria-expanded="false"
-									><i class="mdi mdi-chart-bar"></i
+									><i class="mdi mdi-book-multiple"></i
 									><span class="hide-menu">Books</span></a
 								>
 								<ul
@@ -373,7 +373,7 @@
 										<a
 											href="/myBooks"
 											class="sidebar-link"
-											><i class="mdi mdi-emoticon"></i
+											><i class="mdi mdi-book"></i
 											><span class="hide-menu">
 												My Books
 											</span></a
@@ -383,7 +383,7 @@
 										<a
 											href="/book"
 											class="sidebar-link"
-											><i class="mdi mdi-emoticon"></i
+											><i class="mdi mdi-book"></i
 											><span class="hide-menu">
 												All Books
 											</span></a
@@ -393,7 +393,7 @@
 										<a
 											href="/recommendedBooks"
 											class="sidebar-link"
-											><i class="mdi mdi-emoticon"></i
+											><i class="mdi mdi-book"></i
 											><span class="hide-menu">
 												Recommended Book
 											</span></a
@@ -403,7 +403,7 @@
 										<a
 											href="/booksWithTags"
 											class="sidebar-link"
-											><i class="mdi mdi-emoticon"></i
+											><i class="mdi mdi-book"></i
 											><span class="hide-menu">
 												Books with tags
 											</span></a
@@ -419,7 +419,7 @@
 									class="sidebar-link waves-effect waves-dark sidebar-link"
 									href="/friends"
 									aria-expanded="false"
-									><i class="mdi mdi-face"></i
+									><i class="fas fa-users mr-1"></i
 									><span class="hide-menu">All Friends</span></a
 								>
 							</li>
@@ -429,7 +429,7 @@
 									class="sidebar-link waves-effect waves-dark sidebar-link"
 									href="/addFriend"
 									aria-expanded="false"
-									><i class="mdi mdi-plus"></i
+									><i class="fas fa-user-plus mr-1"></i
 									><span class="hide-menu">Make Friends</span></a
 								>
 							</li>
@@ -439,18 +439,8 @@
 									class="sidebar-link waves-effect waves-dark sidebar-link"
 									href="/history"
 									aria-expanded="false"
-									><i class="mdi mdi-chart-bubble"></i
+									><i class=" fas fa-history mr-1"></i
 									><span class="hide-menu">History</span></a
-								>
-							</li>
-                            
-                            <li class="sidebar-item">
-								<a
-									class="sidebar-link waves-effect waves-dark sidebar-link"
-									href="/feedback"
-									aria-expanded="false"
-									><i class="mdi mdi-pencil"></i
-									><span class="hide-menu">Feedback</span></a
 								>
 							</li>
 							
