@@ -212,24 +212,20 @@
 																{% for i in friendRequests %}
 																<span>
 																	<span
-															class="btn btn-success btn-circle  "  style="background-color: #27A9E3;"
-															    ><i
-																class="ti-user"
-															   ></i
-														     ></span>
+															class="btn btn-success btn-circle  "  style="background-color: #27A9E3;">
+															<i class="ti-user"></i></span>
 
 																<b>	{{i[0]}}  </b>
 																<br>
 																{{i[1]}}
 																
 																<br>
-																<a href=""><button type="button" class="btn btn-success"> <emp>Accept</emp></button></a> 
-																<a href=""><button type="button" class="btn btn-warning"><emp>Reject</emp></button></a>
+																<a href="/request/cnf/{{i[2]}}"><button type="button" class="btn btn-success"> <emp>Accept</emp></button></a> 
+																<a href="/request/del/{{i[2]}}"><button type="button" class="btn btn-warning"><emp>Reject</emp></button></a>
 
 																<hr>
-												                   
+															</span>
 																	
-															    </span>
 																{% endfor %}
 																<!-- Just a reminder
 																that event -->

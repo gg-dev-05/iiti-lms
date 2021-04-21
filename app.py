@@ -190,6 +190,8 @@ def friendDelete(ID):
 
     cur.execute(
         "DELETE FROM friends WHERE reader_2 ={} AND reader_1 = {} ;".format(ID, Me[0]))
+    cur.execute(
+        "DELETE FROM friends WHERE reader_2 ={} AND reader_1 = {} ;".format(Me[0], ID))
     mysql.connection.commit()
     # return render_template("allFriends.html", pop = 1)
     msg = "Friend Table Successfully Updated"
@@ -225,9 +227,11 @@ def addFriend():
     cur = mysql.connection.cursor()
     cur.execute(
         "SELECT ID FROM reader WHERE reader_email='{}'".format(data['email']))
-    # cur.execute(f"SELECT ID FROM reader WHERE reader_email='{email}'")
     friend = cur.fetchall()
-    print(friend)
+    cur.execute("SELECT * FROM friends WHERE reader_1='{}' AND reader_2='{}'".format(email, data['email']))
+    print("HERE: ", cur.fetchone())
+    if cur.fetchone() != None:
+        return render_template('addFriend.html', msg="You are already friends with {}".format(data['email']), details=session["profile"])
     if friend == ():
         return render_template('addFriend.html', msg="Sorry no user exits with this email", details=session["profile"])
     else:
@@ -235,23 +239,42 @@ def addFriend():
 
     cur.execute(f"SELECT ID FROM reader WHERE reader_email='{email}'")
     Me = cur.fetchone()[0]
-    cur.execute("DELETE FROM friends WHERE reader_2 ={} AND reader_1 = {} ;".format(
-        friend, Me))
-
-    # print(friend[0][0])
-    # print(Me[0])
-    # cur.execute("SELECT COUNT(*) AS total FROM friends WHERE reader_1 ='{friend[0][0]}';")
-    # count = cur.fetchall()
-    # print("checking that if he is already friend or not")
-    # print(count)
-
-    # have to Add cond that they r already frnd
-    cur.execute(
-        f"insert into friends(reader_1, reader_2) values('{Me}','{friend}')")
+    cur.execute("INSERT INTO friendrequests VALUES ({}, {});".format(Me, friend))
     mysql.connection.commit()
-    return render_template('addFriend.html', msg="Your Friend is successfully added in your friend list", details=session["profile"])
+    return render_template('addFriend.html', msg="Friend request sent to {}".format(data['email']), details=session["profile"])
     # return render_template('addFriend.html')
 
+@app.route("/request/cnf/<ID>")
+def accept_request(ID):
+    if "profile" in session:
+        if session["isAdmin"] == True:
+            return redirect("/")
+        email = session["profile"]["email"]
+        cur = mysql.connection.cursor()
+        cur.execute("SELECT ID FROM reader WHERE reader_email = '{}'".format(email))
+        reader_id = cur.fetchone()[0]
+        cur.execute("DELETE FROM friendrequests WHERE reader_1 = {} AND reader_2 = {}".format(ID, reader_id))
+        cur.execute("INSERT INTO friends VALUES ({}, {});".format(reader_id, ID))
+        cur.execute("INSERT INTO friends VALUES ({}, {});".format(ID, reader_id))
+        mysql.connection.commit()
+        flash("Friend request accepted")
+        return redirect("/friends")
+    return redirect("/")
+
+@app.route("/request/del/<ID>")
+def delete_request(ID):
+    if "profile" in session:
+        if session["isAdmin"] == True:
+            return redirect("/")
+        email = session["profile"]["email"]
+        cur = mysql.connection.cursor()
+        cur.execute("SELECT ID FROM reader WHERE reader_email = '{}'".format(email))
+        reader_id = cur.fetchone()[0]
+        cur.execute("DELETE FROM friendrequests WHERE reader_1 = {} AND reader_2 = {}".format(ID, reader_id))
+        mysql.connection.commit()
+        flash("Friend request deleted")
+        return redirect("/friends")
+    return redirect("/")
 
 @app.route("/book", methods=['GET', 'POST'])
 def book():
