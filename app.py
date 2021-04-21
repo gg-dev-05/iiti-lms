@@ -1,10 +1,13 @@
 from flask import flash, Flask, render_template, redirect, url_for, session, request
 from flask_mysqldb import MySQL
 import yaml
+from flask_mail import Mail
+import smtplib, ssl, re
 from functions.dbConfig import database_config
 from authlib.integrations.flask_client import OAuth
 import os
 from datetime import timedelta
+from datetime import date
 
 
 app = Flask(__name__)
@@ -25,15 +28,19 @@ app.config['MYSQL_USER'] = user
 app.config['MYSQL_PASSWORD'] = password
 app.config['MYSQL_DB'] = db
 
+
+port = 465  # For SSL
+smtp_server = "smtp.gmail.com"
+sender_email = os.environ.get("MAIL_USERNAME") if (env != 'dev') else dev['MAIL_USERNAME']  
+password = os.environ.get("MAIL_PASSWORD") if (env != 'dev') else dev['MAIL_PASSWORD']  
+
 # Session config
-app.secret_key = os.environ.get("client_secret") if (
-    env != 'dev') else dev['client_secret']
+app.secret_key = os.environ.get("client_secret") if(env != 'dev') else dev['client_secret']
 app.config['SESSION_COOKIE_NAME'] = 'google-login-session'
 
 mysql = MySQL(app)
 
-clientSecret = os.environ.get("client_secret") if (
-    env != 'dev') else dev['client_secret']
+clientSecret = os.environ.get("client_secret") if (env != 'dev') else dev['client_secret']
 clientId = os.environ.get("client_id") if (env != 'dev') else dev['client_id']
 
 oauth = OAuth(app)
@@ -66,7 +73,6 @@ def home():
             return render_template('adminHome.html', details=session["profile"])
         else:
             session["isAdmin"] = False
-
             cur.execute(
                 "SELECT is_faculty from reader WHERE reader_email = '{}';".format(email))
             print(
@@ -89,9 +95,47 @@ def home():
 
     else:
         return render_template('Login.html')
+# send mail
 
+
+@app.route("/sendmail")
+def generate():
+    if "profile" in session:
+        email = session["profile"]["email"]
+    else:
+        return redirect('/')
+    cur = mysql.connection.cursor()
+    cur.execute(
+        f"select return_date, ISBN, reader_id,last_reminder_sent_date from reminders")
+    readers = cur.fetchall()
+    for reader in readers:
+        [return_date, ISBN, reader_id, last_reminder_sent_date] = reader
+        cur.execute(f"SELECT reader_email FROM reader WHERE ID='{reader_id}'")
+        person_email = cur.fetchone()
+        today = date. today()
+        delta = (last_reminder_sent_date-today).days
+        mail_sent = []
+        cur.execute(f"SELECT * FROM book WHERE ISBN='{ISBN}'")
+        book=cur.fetchone()
+        print(book)
+        if abs(delta) % 1 == 0:
+            mail_sent.append(reader_id)
+            cur.execute(f"update reminders set last_reminder_sent_date='{today}' where ISBN='{ISBN}'")
+            send_mail(person_email[0], "Subject: Reminder for returning book\n\n Your book, {} is overdue.Kindly return it.".format(book[0]))
+            flash("Mail sent to {}".format(person_email[0]))
+        print(mail_sent)
+    return redirect('/')
 # Register new student
 
+
+def send_mail(receiver_email, message):
+    print("Sending mail to " + receiver_email)
+    print(message)
+    context = ssl.create_default_context()
+
+    with smtplib.SMTP_SSL(smtp_server, port, context=context) as server:
+        server.login(sender_email, password)
+        server.sendmail(sender_email, receiver_email, message)
 
 @app.route("/new", methods=["POST"])
 def newStudent():
@@ -164,6 +208,7 @@ def allBooks():
     return render_template("allBooksU.html", books=books, details=session["profile"])
 
 
+
 @app.route("/addFriend", methods=['GET', 'POST'])
 def addFriend():
     if "profile" in session:
@@ -179,7 +224,6 @@ def addFriend():
     if data['email'] == email:
         return render_template("addFriend.html", msg="Enter e-mail address of your friend")
     cur = mysql.connection.cursor()
-
     cur.execute(
         "SELECT ID FROM reader WHERE reader_email='{}'".format(data['email']))
     # cur.execute(f"SELECT ID FROM reader WHERE reader_email='{email}'")
@@ -190,7 +234,6 @@ def addFriend():
         friend = friend[0][0]
 
     cur.execute(f"SELECT ID FROM reader WHERE reader_email='{email}'")
-
     Me = cur.fetchone()
     cur.execute("DELETE FROM friends WHERE reader_2 ={} AND reader_1 = {} ;".format(
         friend[0][0], Me[0]))
@@ -390,6 +433,7 @@ def myBooks():
         f"SELECT ISBN,title,avg_rating,book_language,publisher,publish_date,current_status FROM book WHERE ISBN in( SELECT ISBN FROM issue_details WHERE reader_id='{person[0]}' and book_returned=0)")
     books = cur.fetchall()
     return render_template('myBooks.html', books=books, details=session["profile"])
+
 
 
 @app.route("/shelf")
