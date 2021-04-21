@@ -1,6 +1,8 @@
 from flask import flash, Flask, render_template, redirect, url_for, session, request
 from flask_mysqldb import MySQL
 import yaml
+from flask_mail import Mail
+import smtplib, ssl, re
 from functions.dbConfig import database_config
 from authlib.integrations.flask_client import OAuth
 import os
@@ -26,15 +28,19 @@ app.config['MYSQL_USER'] = user
 app.config['MYSQL_PASSWORD'] = password
 app.config['MYSQL_DB'] = db
 
+
+port = 465  # For SSL
+smtp_server = "smtp.gmail.com"
+sender_email = os.environ.get("MAIL_USERNAME") if (env != 'dev') else dev['MAIL_USERNAME']  
+password = os.environ.get("MAIL_PASSWORD") if (env != 'dev') else dev['MAIL_PASSWORD']  
+
 # Session config
-app.secret_key = os.environ.get("client_secret") if (
-    env != 'dev') else dev['client_secret']
+app.secret_key = os.environ.get("client_secret") if(env != 'dev') else dev['client_secret']
 app.config['SESSION_COOKIE_NAME'] = 'google-login-session'
 
 mysql = MySQL(app)
 
-clientSecret = os.environ.get("client_secret") if (
-    env != 'dev') else dev['client_secret']
+clientSecret = os.environ.get("client_secret") if (env != 'dev') else dev['client_secret']
 clientId = os.environ.get("client_id") if (env != 'dev') else dev['client_id']
 
 oauth = OAuth(app)
@@ -87,7 +93,7 @@ def home():
 
 
 @app.route("/sendmail")
-def send_mail():
+def generate():
     if "profile" in session:
         email = session["profile"]["email"]
     else:
@@ -103,13 +109,27 @@ def send_mail():
         today = date. today()
         delta = (last_reminder_sent_date-today).days
         mail_sent = []
-        if delta % 3 == 0:
-            mail_sent.insert(reader_id)
-            # update reminders table
-            # send_mail---
+        cur.execute(f"SELECT * FROM book WHERE ISBN='{ISBN}'")
+        book=cur.fetchone()
+        print(book)
+        if abs(delta) % 1 == 0:
+            mail_sent.append(reader_id)
+            cur.execute(f"update reminders set last_reminder_sent_date='{today}' where ISBN='{ISBN}'")
+            send_mail(person_email[0], "Subject: Reminder for returning book\n\n Your book, {} is overdue.Kindly return it.".format(book[0]))
+            flash("Mail sent to {}".format(person_email[0]))
+        print(mail_sent)
     return redirect('/')
 # Register new student
 
+
+def send_mail(receiver_email, message):
+    print("Sending mail to " + receiver_email)
+    print(message)
+    context = ssl.create_default_context()
+
+    with smtplib.SMTP_SSL(smtp_server, port, context=context) as server:
+        server.login(sender_email, password)
+        server.sendmail(sender_email, receiver_email, message)
 
 @app.route("/new", methods=["POST"])
 def newStudent():
