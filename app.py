@@ -128,9 +128,7 @@ def friendDelete(ID):
     cur.execute(f"SELECT ID FROM reader WHERE reader_email='{email}'")
     Me = cur.fetchone()  
     # Only For Users         
-    print(ID)
-    
-
+    # print(ID)
     
     cur.execute("DELETE FROM friends WHERE reader_2 ={} AND reader_1 = {} ;".format(ID,Me[0]))
     mysql.connection.commit()
@@ -242,6 +240,9 @@ def deleteByISBN(isbn):
 @app.route('/isbn/hold/<isbn>')
 def holdByISBN(isbn):
     if "profile" in session:
+        if session["isAdmin"] == True:
+            return redirect("/")
+        # Only for readers 
         email = session["profile"]["email"]
         cur = mysql.connection.cursor()
         cur.execute("SELECT ID, books_issued, unpaid_fines FROM reader WHERE reader_email = '{}'".format(email))
