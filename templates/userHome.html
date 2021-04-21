@@ -1,9 +1,9 @@
-{% extends 'user.html' %} {% block sidebar_and_navbar %}
-<div class="page-wrapper">
+{% extends 'user.html' %} {% block Usidebar_and_navbar %}
+<div class="page-wrapper" style="background: radial-gradient(circle, rgba(189,188,188,1) 0%, rgba(16,27,28,1) 100%);">
 	<!-- ============================================================== -->
 	<!-- Bread crumb and right sidebar toggle -->
 	<!-- ============================================================== -->
-	<div class="page-breadcrumb">
+	<div class="page-breadcrumb" >
 		<div class="row">
 			<div class="align-items-center">
 				{% with messages = get_flashed_messages() %}
@@ -20,20 +20,20 @@
 				{% endwith %}
 			</div>
 			<div class="col-12 d-flex no-block align-items-center">
-				
-				<h4 class="page-title">
+				<h4 class="page-title" style="color: white;">
 					{{details['name']}} <br />
 					{{details['email']}}
 				</h4>
-				<div class="ml-auto text-right">
+				<div class="ml-auto text-right" style="color: white;">
 					<nav aria-label="breadcrumb">
 						<ol class="breadcrumb">
 							<li class="breadcrumb-item">
-								<a href="#">Home</a>
+								<p>Home</p>
 							</li>
 							<li
 								class="breadcrumb-item active"
 								aria-current="page"
+								style="color: white;"
 							>
 								Library
 							</li>
@@ -58,10 +58,10 @@
 				<div class="card card-hover">
 					<div class="box bg-cyan text-center">
 						<h1 class="font-light text-white">
-							<i class="mdi mdi-view-dashboard"></i>
+							<i class="mdi mdi-book-multiple"></i>
 						</h1>
 						<h6 class="text-white">
-							<a href="/students">Students</a>
+							<a href="/allBooks" style="color: white; font-size: larger;"><b>Books</b></a>
 						</h6>
 					</div>
 				</div>
@@ -71,10 +71,10 @@
 				<div class="card card-hover">
 					<div class="box bg-success text-center">
 						<h1 class="font-light text-white">
-							<i class="mdi mdi-chart-areaspline"></i>
+							<i class="mdi mdi-account-star"></i>
 						</h1>
 						<h6 class="text-white">
-							<a href="/faculties">Faculties</a>
+							<a href="/friends" style="color: white; font-size: larger;"><b>Friends</b></a>
 						</h6>
 					</div>
 				</div>
@@ -84,9 +84,9 @@
 				<div class="card card-hover">
 					<div class="box bg-warning text-center">
 						<h1 class="font-light text-white">
-							<i class="mdi mdi-collage"></i>
+							<i class="mdi mdi-history"></i>
 						</h1>
-						<h6 class="text-white"><a href="/books">Books</a></h6>
+						<h6 class="text-white"><a href="/history" style="color:white; font-size: larger;"><b>History</b></a></h6>
 					</div>
 				</div>
 			</div>
