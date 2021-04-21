@@ -95,6 +95,11 @@
 												><i class="fas fa-check"></i
 											></a>
 										</td>
+										{% elif book[3] == 'soldout'%}
+										<td>
+											<a href="/isbn/putOnhold/{{book[0]}}"
+												><i class="fa fa-pause" aria-hidden="true"></i></a>
+										</td>
 										{% else %}
 										<td>
 											<a><i class="fas fa-ban"></i></a>

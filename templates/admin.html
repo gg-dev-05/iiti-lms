@@ -312,8 +312,8 @@
 									aria-haspopup="true"
 									aria-expanded="false"
 									><img
-										src="static/assets/images/users/1.jpg"
-										alt="user"
+										src="{{details['picture']}}" 
+										alt="{{details['name']}}"
 										class="rounded-circle"
 										width="31"
 								/></a>
@@ -324,7 +324,7 @@
 										class="dropdown-item"
 										href="/"
 										><i class="ti-user m-r-5 m-l-5"></i>
-										Profile</a
+										Home</a
 									>
 									
 									<a
@@ -363,7 +363,7 @@
 									class="sidebar-link has-arrow waves-effect waves-dark"
 									href="javascript:void(0)"
 									aria-expanded="false"
-									><i class="mdi mdi-face"></i
+									><i class="mdi mdi-account-outline"></i
 									><span class="hide-menu">Members </span></a
 								>
 								<ul
@@ -374,7 +374,7 @@
 										<a
 											href="/students"
 											class="sidebar-link"
-											><i class="mdi mdi-emoticon"></i
+											><i class=" mdi mdi-account-card-details"></i
 											><span class="hide-menu">
 												Students
 											</span></a
@@ -385,7 +385,7 @@
 											href="/faculties"
 											class="sidebar-link"
 											><i
-												class="mdi mdi-emoticon-cool"
+												class="mdi mdi-account-box"
 											></i
 											><span class="hide-menu">
 												Faculties
@@ -398,7 +398,7 @@
 									class="sidebar-link has-arrow waves-effect waves-dark"
 									href="javascript:void(0)"
 									aria-expanded="false"
-									><i class="mdi mdi-chart-bar"></i
+									><i class="mdi mdi-book-open-page-variant"></i
 									><span class="hide-menu">Books</span></a
 								>
 								<ul
@@ -409,7 +409,7 @@
 										<a
 											href="/book"
 											class="sidebar-link"
-											><i class="mdi mdi-emoticon"></i
+											><i class="mdi mdi-book-open-variant"></i
 											><span class="hide-menu">
 												All Books
 											</span></a
@@ -419,7 +419,7 @@
 										<a
 											href="/addBook"
 											class="sidebar-link"
-											><i class="mdi mdi-emoticon"></i
+											><i class="mdi mdi-book-multiple"></i
 											><span class="hide-menu">
 												Add New Book
 											</span></a
@@ -429,7 +429,7 @@
 										<a
 											href="/logs"
 											class="sidebar-link"
-											><i class="mdi mdi-emoticon"></i
+											><i class="mdi mdi-book-open"></i
 											><span class="hide-menu">
 												Issue Details
 											</span></a
@@ -439,7 +439,7 @@
 										<a
 											href="icon-material.html"
 											class="sidebar-link"
-											><i class="mdi mdi-emoticon"></i
+											><i class="mdi mdi-book"></i
 											><span class="hide-menu">
 												Edit book tags
 											</span></a
@@ -449,7 +449,7 @@
 										<a
 											href="icon-material.html"
 											class="sidebar-link"
-											><i class="mdi mdi-emoticon"></i
+											><i class="mdi mdi-timer-sand"></i
 											><span class="hide-menu">
 												Reminders
 											</span></a
@@ -459,7 +459,7 @@
 										<a
 											href="/shelf"
 											class="sidebar-link"
-											><i class="mdi mdi-emoticon"></i
+											><i class="mdi mdi-view-list"></i
 											><span class="hide-menu">
 												Shelfs
 											</span></a
@@ -473,7 +473,7 @@
 									class="sidebar-link waves-effect waves-dark sidebar-link"
 									href="widgets.html"
 									aria-expanded="false"
-									><i class="mdi mdi-chart-bubble"></i
+									><i class="mdi mdi-currency-usd"></i
 									><span class="hide-menu">Fines</span></a
 								>
 							</li>
