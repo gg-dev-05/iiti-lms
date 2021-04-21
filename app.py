@@ -186,15 +186,31 @@ def demo():
 
 @app.route("/recommendedBooks")
 def user_BookRecommedation():
-    return render_template('user_BookRecommedation.html')
+    if "profile" in session:
+        email = session["profile"]["email"]
+    else:
+        return redirect("/")
+    cur = mysql.connection.cursor()
+    cur.execute(f"SELECT ID FROM reader WHERE reader_email='{email}'")
+    person = cur.fetchone()
+    cur.execute(
+        f"select * from book where ISBN in(select ISBN from tags where tag_name in(select tag_name from tags where ISBN in (select ISBN from issue_details where reader_id = '{person[0]}'))) order by avg_rating DESC")
+    books = cur.fetchall()
+    # cur = mysql.connection.cursor()
+    # cur.execute(
+    #     f"select tag_name from tags where ISBN in (select ISBN from issue_details where reader_id='{person[0]}'")
+    # tags = cur.fetchall()
+    # print(tags)
+    print(books)
+    return render_template('user_BookRecommedation.html', books=books)
 
 
-@app.route("/booksWithTags")
+@ app.route("/booksWithTags")
 def user_booksWithTags():
     return render_template('booksWithTags.html')
 
 
-@app.route("/friends")
+@ app.route("/friends")
 def friends():
     if "profile" in session:
         email = session["profile"]["email"]
@@ -214,39 +230,39 @@ def friends():
     return render_template('allFriends.html', len=len(friendinfo), friendinfo=friendinfo)
 
 
-@app.route("/feedback")
+@ app.route("/feedback")
 def feedback():
     return render_template('userFeedback.html')
 
 
-@app.route("/history")
+@ app.route("/history")
 def user_History():
     return render_template('userHistory.html')
 
 
-@app.route("/test")
+@ app.route("/test")
 def updateBooks():
     return render_template('updateBooks.html')
 
 
-@app.route("/tables")
+@ app.route("/tables")
 def addBooks():
     return render_template('tables.html')
 
 
-@app.route("/dashboard")
+@ app.route("/dashboard")
 def dashboard():
     return render_template('dashboard.html')
 
 
-@app.route('/login')
+@ app.route('/login')
 def login():
     google = oauth.create_client('google')  # create the google oauth client
     redirect_uri = url_for('authorize', _external=True)
     return google.authorize_redirect(redirect_uri)
 
 
-@app.route('/authorize')
+@ app.route('/authorize')
 def authorize():
     message = None
     google = oauth.create_client('google')
@@ -266,14 +282,14 @@ def authorize():
     return redirect('/')
 
 
-@app.route("/logout")
+@ app.route("/logout")
 def logout():
     for key in list(session.keys()):
         session.pop(key)
     return redirect("/")
 
 
-@app.errorhandler(404)
+@ app.errorhandler(404)
 def page_not_found(e):
     return render_template('error.html')
 
