@@ -228,8 +228,9 @@ def addFriend():
         "SELECT ID FROM reader WHERE reader_email='{}'".format(data['email']))
     # cur.execute(f"SELECT ID FROM reader WHERE reader_email='{email}'")
     friend = cur.fetchall()
+    print(friend)
     if friend == ():
-        return render_template('addFriend.html', msg="Sorry no user exits with this email")
+        return render_template('addFriend.html', msg="Sorry no user exits with this email", details=session["profile"])
     else:
         friend = friend[0][0]
 
