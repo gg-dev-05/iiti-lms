@@ -365,7 +365,8 @@ def user_BookRecommedation():
     # tags = cur.fetchall()
     # print(tags)
     print(books)
-    return render_template('user_BookRecommedation.html', books=books)
+    zeroes = 1 if len(books) == 0 else 0
+    return render_template('user_BookRecommedation.html', books=books, zeroes=zeroes)
 
 
 @ app.route("/booksWithTags")
