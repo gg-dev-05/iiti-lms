@@ -1,4 +1,4 @@
-{% extends 'admin.html' %} {% block sidebar_and_navbar %}
+{% extends 'user.html' %} {% block sidebar_and_navbar %}
 
 <div id="main-wrapper">
 	<!-- ============================================================== -->
@@ -25,7 +25,7 @@
 		<div class="page-breadcrumb">
 			<div class="row">
 				<div class="col-12 d-flex no-block align-items-center">
-					<h4 class="page-title">Form Basic</h4>
+					<h4 class="page-title">Make Friend</h4>
 					<div class="ml-auto text-right">
 						<nav aria-label="breadcrumb">
 							<ol class="breadcrumb">
@@ -57,145 +57,41 @@
 			<div class="row">
 				<div class="col-md-12">
 					<div class="card">
-						<form class="form-horizontal" action="/addBook" method="POST">
+						<form class="form-horizontal" action="/addFriend" method="POST">
 							<div class="card-body">
-								<h4 class="card-title">Details of New Book</h4>
+
+								{%  if msg!="" %}
+								<div class="alert alert-warning alert-dismissible fade show" role="alert">
+									<strong>Hello!!</strong> {{msg}}
+									<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+									<span aria-hidden="true">&times;</span>
+									</button>
+								</div>
+								{%  endif  %}
+
+								<h4 class="card-title">Make new friend by Email Id</h4>
 								<div class="form-group row">
 									<label
-										for="ISBN"
+										for="email"
 										class="col-sm-3 text-right control-label col-form-label"
-										>ISBN</label
+										>Email</label
 									>
 									<div class="col-sm-9">
 										<input
 											type="text"
 											class="form-control"
-											id="ISBN"
-											placeholder="ISBN"
-											name="ISBN"
+											id="email"
+											placeholder="Enter email id of your friend"
+											name="email"
+                                            required
 										/>
 									</div>
 								</div>
-								<div class="form-group row">
-									<label
-										for="lname"
-										class="col-sm-3 text-right control-label col-form-label"
-										>Title</label
-									>
-									<div class="col-sm-9">
-										<input
-											type="text"
-											class="form-control"
-											id="lname"
-											placeholder="Title of the book"
-											name="title"
-										/>
-									</div>
-								</div>
-								<div class="form-group row">
-									<label
-										for="lname"
-										class="col-sm-3 text-right control-label col-form-label"
-										>Language</label
-									>
-									<div class="col-sm-9">
-										<input
-											type="text"
-											class="form-control"
-											id="lname"
-											placeholder="Language of the book"
-											name="language"
-										/>
-									</div>
-								</div>
-								<div class="form-group row">
-									<label
-										for="email1"
-										class="col-sm-3 text-right control-label col-form-label"
-										>Publisher</label
-									>
-									<div class="col-sm-9">
-										<input
-											type="text"
-											class="form-control"
-											id="email1"
-											placeholder="publisher"
-											name="publisher"
-										/>
-									</div>
-								</div>
-								<div class="form-group row">
-									<label
-										for="cono1"
-										class="col-sm-3 text-right control-label col-form-label"
-										>Publish Date</label
-									>
-									<div class="col-sm-9">
-										<input
-											type="text"
-											class="form-control"
-											id="cono1"
-											placeholder="publishing date"
-											name="date"
-										/>
-									</div>
-								</div>
-								<div class="form-group row">
-									<label
-										for="tag1"
-										class="col-sm-3 text-right control-label col-form-label"
-										>Tag</label
-									>
-									<div class="col-sm-9">
-										<textarea
-											class="form-control"
-											name="tag1"
-											placeholder="A suitable genre"
-										></textarea>
-									</div>
-								</div>
-								<div class="form-group row">
-									<label
-										for="tag2"
-										class="col-sm-3 text-right control-label col-form-label"
-										>Tag</label
-									>
-									<div class="col-sm-9">
-										<textarea
-											class="form-control"
-											name="tag2"
-											placeholder="A suitable genre"
-										></textarea>
-									</div>
-								</div>
-								<div class="form-group row">
-									<label
-										for="tag3"
-										class="col-sm-3 text-right control-label col-form-label"
-										>Tag</label
-									>
-									<div class="col-sm-9">
-										<textarea
-											class="form-control"
-											name="tag3"
-											placeholder="A suitable genre"
-										></textarea>
-									</div>
-								</div>
-								<div class="form-group row">
-									<label
-										for="cono1"
-										class="col-sm-3 text-right control-label col-form-label"
-										>Shelf ID</label
-									>
-									<div class="col-sm-9">
-										<textarea
-											class="form-control"
-											name="shelf"
-											placeholder="Shelf id of library"
-										></textarea>
-									</div>
-								</div>
+
+
+
+
+
 							</div>
 							<div class="border-top">
 								<div class="card-body">

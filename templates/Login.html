@@ -6,7 +6,7 @@
         <meta name="description" content="" />
         <meta name="author" content="" />
         <title>Login Page</title>
-        <link rel="icon" type="image/x-icon" href="static/assets/images/favicon.png" />
+        <link rel="icon" type="image/x-icon" href="static/assets/images/favicon.ico" />
         <!-- Font Awesome icons (free version)-->
         <script src="https://use.fontawesome.com/releases/v5.15.1/js/all.js" crossorigin="anonymous"></script>
         <!-- Google fonts-->
@@ -17,14 +17,37 @@
     </head>
     <body id="page-top">
         <!-- Masthead-->
+          
         <header class="masthead" >
-            <div class="container d-flex h-100 align-items-center">
+            <!-- <div class="container d-flex align-items-center">
+                
                 <div class="mx-auto text-center">
+                    
+                 </div>
+            </div> -->
+            
+            <div class="container d-flex h-100 align-items-center">
+                
+                <div class="mx-auto text-center">
+                    {% with messages = get_flashed_messages() %}
+                    {% if messages  %}
+                        {% for msg in messages %}
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            {{msg}}
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                              <span aria-hidden="true">&times;</span>
+                            </button>
+                          </div>
+                        {% endfor %}
+                    {% endif %}
+                    {% endwith %}
                     <h1 class="mx-auto my-0 text-uppercase">IITI LMS</h1>
                     <h2 class="text-white-50 mx-auto mt-2 mb-5">Meet your next favourite book and see what your friends are reading.</h2>
                     <a class="btn btn-primary js-scroll-trigger" style="background-color: #27a9e3;" href="/login">LOGIN</a>
                 </div>
             </div>
+            
+
         </header>
         <!-- Bootstrap core JS-->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>

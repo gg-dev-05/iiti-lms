@@ -10,9 +10,9 @@
 		<!-- Favicon icon -->
 		<link
 			rel="icon"
-			type="image/png"
+			type="image/ico"
 			sizes="16x16"
-			href="static/assets/images/favicon.png"
+			href="static/assets/images/favicon.ico"
 		/>
 		<title>IITI LMS</title>
 		<!-- Custom CSS -->
@@ -65,7 +65,7 @@
 								<!--You can put here icon as well // <i class="wi wi-sunset"></i> //-->
 								<!-- Dark Logo icon -->
 								<img
-									src="static/assets/images/logo-icon.png"
+									src="static/assets/images/logo-icon.jpg"
 									alt="homepage"
 									class="light-logo"
 								/>
@@ -136,11 +136,12 @@
 									href="javascript:void(0)"
 									><i class="ti-search"></i
 								></a>
-								<form class="app-search position-absolute">
+								<form class="app-search position-absolute" method="POST" action="/book">
 									<input
+										name="book"
 										type="text"
 										class="form-control"
-										placeholder="Search &amp; enter"
+										placeholder="Search for books"
 									/>
 									<a class="srh-btn"
 										><i class="ti-close"></i
@@ -317,25 +318,14 @@
 								>
 									<a
 										class="dropdown-item"
-										href="javascript:void(0)"
+										href="/"
 										><i class="ti-user m-r-5 m-l-5"></i>
 										Profile</a
 									>
+									
 									<a
 										class="dropdown-item"
-										href="javascript:void(0)"
-										><i class="ti-email m-r-5 m-l-5"></i>
-										Inbox</a
-									>
-									<a
-										class="dropdown-item"
-										href="javascript:void(0)"
-										><i class="ti-settings m-r-5 m-l-5"></i>
-										Account Setting</a
-									>
-									<a
-										class="dropdown-item"
-										href="javascript:void(0)"
+										href="/logout"
 										><i
 											class="fa fa-power-off m-r-5 m-l-5"
 										></i>
@@ -381,7 +371,17 @@
 								>
 									<li class="sidebar-item">
 										<a
-											href="/allBooks"
+											href="/myBooks"
+											class="sidebar-link"
+											><i class="mdi mdi-emoticon"></i
+											><span class="hide-menu">
+												My Books
+											</span></a
+										>
+									</li>
+									<li class="sidebar-item">
+										<a
+											href="/book"
 											class="sidebar-link"
 											><i class="mdi mdi-emoticon"></i
 											><span class="hide-menu">
@@ -424,6 +424,16 @@
 								>
 							</li>
 
+							<li class="sidebar-item">
+								<a
+									class="sidebar-link waves-effect waves-dark sidebar-link"
+									href="/addFriend"
+									aria-expanded="false"
+									><i class="mdi mdi-plus"></i
+									><span class="hide-menu">Make Friends</span></a
+								>
+							</li>
+
                             <li class="sidebar-item">
 								<a
 									class="sidebar-link waves-effect waves-dark sidebar-link"
@@ -456,8 +466,8 @@
 			<!-- ============================================================== -->
 			<!-- Page wrapper  -->
 			<!-- ============================================================== -->
-			{% block Usidebar_and_navbar %}
-			{% endblock Usidebar_and_navbar %}
+			{% block sidebar_and_navbar %}
+			{% endblock sidebar_and_navbar %}
 			<!-- ============================================================== -->
 			<!-- End Page wrapper  -->
 			<!-- ============================================================== -->
