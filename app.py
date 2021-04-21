@@ -66,6 +66,7 @@ def home():
             return render_template('adminHome.html', details=session["profile"])
         else:
             session["isAdmin"] = False
+
             cur.execute(
                 "SELECT is_faculty from reader WHERE reader_email = '{}';".format(email))
             print(
@@ -78,7 +79,13 @@ def home():
                     session["isFaculty"] = True
                 else:
                     session["isFaculty"] = False
-                return render_template('userHome.html', details=session["profile"])
+                    cur.execute("SELECT ID FROM reader WHERE reader_email = '{}'".format(email))
+                    user_id = cur.fetchone()[0]
+                    cur.execute('SELECT reader_name, reader_email FROM friendrequests INNER JOIN reader ON friendrequests.reader_1 = reader.ID WHERE reader_2 = {};'.format(user_id))
+                    friendRequests = cur.fetchall()
+                    session['friendRequests'] = friendRequests
+                    print(session['friendRequests'])
+                return render_template('userHome.html', details=session["profile"], friendRequests=friendRequests)
 
     else:
         return render_template('Login.html')
@@ -169,16 +176,21 @@ def addFriend():
         return render_template('addFriend.html',msg="", details=session["profile"])
 
     data = request.form
+    if data['email'] == email:
+        return render_template("addFriend.html", msg="Enter e-mail address of your friend")
     cur = mysql.connection.cursor()
+
     cur.execute(
         "SELECT ID FROM reader WHERE reader_email='{}'".format(data['email']))
     # cur.execute(f"SELECT ID FROM reader WHERE reader_email='{email}'")
     friend = cur.fetchall()
-    # print(friend)
     if friend == ():
-        # print("sorry no friend exits with this email")
         return render_template('addFriend.html', msg="Sorry no user exits with this email")
+    else:
+        friend = friend[0][0]
+
     cur.execute(f"SELECT ID FROM reader WHERE reader_email='{email}'")
+
     Me = cur.fetchone()
     cur.execute("DELETE FROM friends WHERE reader_2 ={} AND reader_1 = {} ;".format(
         friend[0][0], Me[0]))

@@ -190,26 +190,52 @@
 													<div
 														class="d-flex no-block align-items-center p-10"
 													>
-														<span
+														<!-- <span
 															class="btn btn-success btn-circle"
 															><i
-																class="ti-calendar"
+																class="ti-user"
 															></i
-														></span>
+														></span> -->
 														<div class="m-l-10">
-															<h5 class="m-b-0">
-																Event today
+															<h5 class="m-b-0" style="color:darkblue">
+																FriendRequests :->
+																<br>
+																<br>
 															</h5>
 															<span
 																class="mail-desc"
-																>Just a reminder
-																that event</span
+																>
+																{% for i in friendRequests %}
+																<span>
+																	<span
+															class="btn btn-success btn-circle  "  style="background-color: #27A9E3;"
+															    ><i
+																class="ti-user"
+															   ></i
+														     ></span>
+
+																<b>	{{i[0]}}  </b>
+																<br>
+																{{i[1]}}
+																
+																<br>
+																<button type="button" class="btn btn-success"> <emp>Accept</emp></button>
+																<button type="button" class="btn btn-warning"><emp>Reject</emp></button>
+
+																<hr>
+												                   
+																	
+															    </span>
+																{% endfor %}
+																<!-- Just a reminder
+																that event -->
+																</span
 															>
 														</div>
 													</div>
 												</a>
 												<!-- Message -->
-												<a
+												<!-- <a
 													href="javascript:void(0)"
 													class="link border-top"
 												>
@@ -228,15 +254,15 @@
 															</h5>
 															<span
 																class="mail-desc"
-																>You can
+																>You canzzzzzz
 																customize this
 																template</span
 															>
 														</div>
 													</div>
-												</a>
+												</a> -->
 												<!-- Message -->
-												<a
+												<!-- <a
 													href="javascript:void(0)"
 													class="link border-top"
 												>
@@ -260,9 +286,9 @@
 															>
 														</div>
 													</div>
-												</a>
+												</a> -->
 												<!-- Message -->
-												<a
+												<!-- <a
 													href="javascript:void(0)"
 													class="link border-top"
 												>
@@ -286,7 +312,7 @@
 															>
 														</div>
 													</div>
-												</a>
+												</a> -->
 											</div>
 										</li>
 									</ul>
