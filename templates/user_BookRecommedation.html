@@ -45,6 +45,9 @@
 			<div class="col-12">
 				<div class="card">
 					<div class="card-body">
+						{% if zeroes==1 %}
+						<h2>We need more readings from you to be able to suggest you!!!!</h2>
+						{% else %}
 						<h5 class="card-title">Basic Datatable</h5>
 						<div class="table-responsive text-center">
 							<table
@@ -92,6 +95,7 @@
 								</tbody>
 							</table>
 						</div>
+						{% endif %}
 					</div>
 				</div>
 			</div>
@@ -155,3 +159,6 @@
 	$("#zero_config").DataTable();
 </script>
 {% endblock sidebar_and_navbar %}
+
+
+
