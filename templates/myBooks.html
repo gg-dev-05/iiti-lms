@@ -80,12 +80,9 @@
 										<td>{{book[i]}}</td>
 										{% endfor %}
 										<td>
-											{% if book[6] == 'hold' %}
 											<a href="/isbn/unhold/{{book[0]}}"
 												><i class="fas fa-check"></i
 											></a>
-											{% else %}
-											<a>Already Returned</a> {% endif %}
 										</td>
 									</tr>
 									{% endfor %}

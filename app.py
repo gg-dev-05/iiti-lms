@@ -54,19 +54,22 @@ google = oauth.register(
 
 @app.route("/")
 def home():
-    
+
     if "profile" in session:
         email = session["profile"]["email"]
         cur = mysql.connection.cursor()
-        cur.execute("SELECT * from librarian WHERE librarian_email='{}';".format(email))
+        cur.execute(
+            "SELECT * from librarian WHERE librarian_email='{}';".format(email))
         result = cur.fetchall()
         if (result):
             session["isAdmin"] = True
             return render_template('adminHome.html', details=session["profile"])
         else:
             session["isAdmin"] = False
-            cur.execute("SELECT is_faculty from reader WHERE reader_email = '{}';".format(email))
-            print("SELECT is_faculty from reader WHERE reader_email = '{}';".format(email))
+            cur.execute(
+                "SELECT is_faculty from reader WHERE reader_email = '{}';".format(email))
+            print(
+                "SELECT is_faculty from reader WHERE reader_email = '{}';".format(email))
             result = cur.fetchone()
             if result == None:
                 return render_template("register.html", email=session['profile']['email'], name=session['profile']['name'])
@@ -81,13 +84,17 @@ def home():
         return render_template('Login.html')
 
 # Register new student
+
+
 @app.route("/new", methods=["POST"])
 def newStudent():
     data = request.form
     cur = mysql.connection.cursor()
-    cur.execute("INSERT INTO reader (reader_name, reader_email, reader_address, phone_no, is_faculty) VALUES ('{}', '{}', '{}', {}, {});".format(data['Name'], data['Email'], data['Address'], data['Number'], 0))
+    cur.execute("INSERT INTO reader (reader_name, reader_email, reader_address, phone_no, is_faculty) VALUES ('{}', '{}', '{}', {}, {});".format(
+        data['Name'], data['Email'], data['Address'], data['Number'], 0))
     mysql.connection.commit()
     return redirect("/")
+
 
 @app.route("/<memberType>")
 def members(memberType):
@@ -116,6 +123,7 @@ def members1(memberType, ID):
             return redirect("/{}".format(memberType))
     return redirect("/")
 
+
 @app.route("/friend/delete/<ID>")
 def friendDelete(ID):
     if "profile" in session:
@@ -126,14 +134,15 @@ def friendDelete(ID):
     email = session["profile"]["email"]
     cur = mysql.connection.cursor()
     cur.execute(f"SELECT ID FROM reader WHERE reader_email='{email}'")
-    Me = cur.fetchone()  
-    # Only For Users         
+    Me = cur.fetchone()
+    # Only For Users
     # print(ID)
-    
-    cur.execute("DELETE FROM friends WHERE reader_2 ={} AND reader_1 = {} ;".format(ID,Me[0]))
+
+    cur.execute(
+        "DELETE FROM friends WHERE reader_2 ={} AND reader_1 = {} ;".format(ID, Me[0]))
     mysql.connection.commit()
     # return render_template("allFriends.html", pop = 1)
-    msg="Friend Table Successfully Updated"
+    msg = "Friend Table Successfully Updated"
     return redirect("/friends")
 
 
@@ -147,20 +156,22 @@ def allBooks():
         return render_template("allBooksA.html", books=books)
     return render_template("allBooksU.html", books=books)
 
+
 @app.route("/addFriend", methods=['GET', 'POST'])
 def addFriend():
     if "profile" in session:
         email = session["profile"]["email"]
     else:
-        return redirect('/')    
+        return redirect('/')
     if session["isAdmin"] == True:
         redirect("/")
     if request.method == 'GET':
-        return render_template('addFriend.html',msg="")
+        return render_template('addFriend.html', msg="")
 
     data = request.form
     cur = mysql.connection.cursor()
-    cur.execute("SELECT ID FROM reader WHERE reader_email='{}'".format(data['email']))
+    cur.execute(
+        "SELECT ID FROM reader WHERE reader_email='{}'".format(data['email']))
     # cur.execute(f"SELECT ID FROM reader WHERE reader_email='{email}'")
     friend = cur.fetchall()
     # print(friend)
@@ -168,12 +179,12 @@ def addFriend():
         # print("sorry no friend exits with this email")
         return render_template('addFriend.html', msg="Sorry no user exits with this email")
     cur.execute(f"SELECT ID FROM reader WHERE reader_email='{email}'")
-    Me = cur.fetchone()    
-    cur.execute("DELETE FROM friends WHERE reader_2 ={} AND reader_1 = {} ;".format(friend[0][0],Me[0]))    
-    
+    Me = cur.fetchone()
+    cur.execute("DELETE FROM friends WHERE reader_2 ={} AND reader_1 = {} ;".format(
+        friend[0][0], Me[0]))
 
     # print(friend[0][0])
-    # print(Me[0]) 
+    # print(Me[0])
     # cur.execute("SELECT COUNT(*) AS total FROM friends WHERE reader_1 ='{friend[0][0]}';")
     # count = cur.fetchall()
     # print("checking that if he is already friend or not")
@@ -181,10 +192,11 @@ def addFriend():
 
     # have to Add cond that they r already frnd
     cur.execute(
-            f"insert into friends(reader_1, reader_2) values('{Me[0]}','{friend[0][0]}')")
+        f"insert into friends(reader_1, reader_2) values('{Me[0]}','{friend[0][0]}')")
     mysql.connection.commit()
     return render_template('addFriend.html', msg="Your Friend is successfully added in your friend list")
     # return render_template('addFriend.html')
+
 
 @app.route("/book", methods=['GET', 'POST'])
 def book():
@@ -192,21 +204,14 @@ def book():
         query = ""
         cur = mysql.connection.cursor()
         cur.execute(
-            '''
-            SELECT ISBN, title, shelf_id, current_status, avg_rating, book_language, publisher, publish_date FROM book WHERE title LIKE '%{}%'
-            UNION
-            SELECT ISBN, title, shelf_id, current_status, avg_rating, book_language, publisher, publish_date FROM book WHERE book_language LIKE '%{}%'
-            UNION
-            SELECT ISBN, title, shelf_id, current_status, avg_rating, book_language, publisher, publish_date FROM book WHERE publisher LIKE '%{}%'
-            '''.format(query, query, query)
-        )
+            'SELECT ISBN, title, shelf_id, current_status, avg_rating, book_language, publisher, publish_date FROM book')
         books = cur.fetchall()
         if "isAdmin" in session:
             if session["isAdmin"] == True:
                 return render_template("adminSearchBook.html", books=books, query=query)
             if session["isAdmin"] == False:
                 return render_template("userSearchBook.html", books=books)
-                
+
     if request.method == 'POST':
         data = request.form
         query = data['book']
@@ -228,6 +233,7 @@ def book():
                 return render_template("userSearchBook.html", books=books)
     return redirect("/")
 
+
 @app.route('/isbn/delete/<isbn>')
 def deleteByISBN(isbn):
     if session['isAdmin']:
@@ -237,45 +243,88 @@ def deleteByISBN(isbn):
         return redirect("/books")
     return redirect("/")
 
+
 @app.route('/isbn/hold/<isbn>')
 def holdByISBN(isbn):
     if "profile" in session:
         if session["isAdmin"] == True:
             return redirect("/")
-        # Only for readers 
+        # Only for readers
         email = session["profile"]["email"]
         cur = mysql.connection.cursor()
-        cur.execute("SELECT ID, books_issued, unpaid_fines FROM reader WHERE reader_email = '{}'".format(email))
+        cur.execute(
+            "SELECT ID, books_issued, unpaid_fines FROM reader WHERE reader_email = '{}'".format(email))
         [reader_id, books_issued, unpaid_fines] = cur.fetchone()
         if session['isFaculty'] == False and books_issued > 10 or unpaid_fines > 1000:
             if books_issued > 10:
-                flash("You already have issued 10 books","info")
+                flash("You already have issued 10 books", "info")
             else:
-                flash("Please pay you unpaid fines first","info")
+                flash("Please pay you unpaid fines first", "info")
             return redirect("/")
-        cur.execute("UPDATE reader SET books_issued = books_issued+1 WHERE ID={}".format(reader_id))
-        cur.execute("UPDATE book SET current_status = 'soldout' WHERE ISBN={}".format(isbn))
-        cur.execute("INSERT INTO issue_details VALUES ({}, {}, NOW  (), 0, 0)".format(reader_id, isbn))
+        cur.execute(
+            "UPDATE reader SET books_issued = books_issued+1 WHERE ID={}".format(reader_id))
+        cur.execute(
+            "UPDATE book SET current_status = 'soldout' WHERE ISBN={}".format(isbn))
+        cur.execute("INSERT INTO issue_details VALUES ({}, {}, CURDATE(),0,0)".format(
+            reader_id, isbn))
         mysql.connection.commit()
         return redirect("/book")
     return redirect("/")
+
+
+@app.route('/isbn/putOnhold/<isbn>')
+def putOnHoldByISBN(isbn):
+    if "profile" in session:
+        if session["isAdmin"] == True:
+            return redirect("/")
+        # Only for readers
+        email = session["profile"]["email"]
+        cur = mysql.connection.cursor()
+        cur.execute(
+            "SELECT ID, books_issued, unpaid_fines FROM reader WHERE reader_email = '{}'".format(email))
+        [reader_id, books_issued, unpaid_fines] = cur.fetchone()
+        if session['isFaculty'] == False and books_issued > 3 or unpaid_fines > 1000:
+            if books_issued > 3:
+                flash(
+                    "You already have issued 3 books.You cannot put the book on hold", "info")
+            else:
+                flash("Please pay you unpaid fines first", "info")
+            return redirect("/")
+        cur.execute(
+            "UPDATE book SET current_status = 'hold' WHERE ISBN={}".format(isbn))
+        cur.execute(
+            "INSERT INTO  holds VALUES ({}, {},NOW())".format(isbn, reader_id))
+        mysql.connection.commit()
+        return redirect("/book")
+    return redirect("/")
+
 
 @app.route('/isbn/unhold/<isbn>')
 def unholdByISBN(isbn):
     if "profile" in session:
         email = session["profile"]["email"]
         cur = mysql.connection.cursor()
-        cur.execute("SELECT ID, books_issued FROM reader WHERE reader_email = '{}'".format(email))
+        cur.execute(
+            "SELECT ID, books_issued FROM reader WHERE reader_email = '{}'".format(email))
         [reader_id, books_issued] = cur.fetchone()
         books_issued -= 1
         if books_issued < 0:
             books_issued = 0
-        cur.execute("UPDATE reader SET books_issued = {} WHERE ID={}".format(books_issued, reader_id))
-        cur.execute("UPDATE book SET current_status = 'available' WHERE ISBN={}".format(isbn))
-        cur.execute("UPDATE issue_details SET book_returned = 1 WHERE ISBN={}".format(isbn))
+        cur.execute("UPDATE reader SET books_issued = {} WHERE ID={}".format(
+            books_issued, reader_id))
+        cur.execute(
+            "select current_status from book WHERE ISBN={}".format(isbn))
+        [current_status] = cur.fetchone()
+        # if current_status=="hold":
+        #     redirect("/isbn/hold/<isbn>")
+        cur.execute(
+            "UPDATE book SET current_status = 'available' WHERE ISBN={}".format(isbn))
+        cur.execute(
+            "UPDATE issue_details SET book_returned = 1 WHERE ISBN={}".format(isbn))
         mysql.connection.commit()
         return redirect("/book")
     return redirect("/")
+
 
 @app.route("/logs")
 def logs():
@@ -323,19 +372,21 @@ def myBooks():
     cur.execute(f"SELECT ID FROM reader WHERE reader_email='{email}'")
     person = cur.fetchone()
     cur.execute(
-        f"SELECT ISBN,title,avg_rating,book_language,publisher,publish_date,current_status FROM book WHERE ISBN in( SELECT ISBN FROM issue_details WHERE reader_id='{person[0]}')")
+        f"SELECT ISBN,title,avg_rating,book_language,publisher,publish_date,current_status FROM book WHERE ISBN in( SELECT ISBN FROM issue_details WHERE reader_id='{person[0]}' and book_returned=0)")
     books = cur.fetchall()
     return render_template('myBooks.html', books=books)
+
 
 @app.route("/shelf")
 def shelf():
     if session["isAdmin"] == True:
         cur = mysql.connection.cursor()
         cur.execute(
-        "SELECT shelf_id, capacity FROM shelf;")
+            "SELECT shelf_id, capacity FROM shelf;")
         shelfs = cur.fetchall()
-        return render_template('shelf.html', shelfs = shelfs)
+        return render_template('shelf.html', shelfs=shelfs)
     return redirect("/")
+
 
 @app.route("/demo")
 def demo():
@@ -395,6 +446,7 @@ def friends():
 def feedback():
     return render_template('userFeedback.html')
 
+
 @ app.route("/history")
 def user_History():
     if "profile" in session:
@@ -409,10 +461,10 @@ def user_History():
     cur.execute(f"SELECT ID FROM reader WHERE reader_email='{email}'")
     person = cur.fetchone()
     print(person[0])
-    cur.execute(f"SELECT ISBN, borrow_date , book_returned FROM issue_details WHERE reader_id='{person[0]}'")
+    cur.execute(
+        f"SELECT ISBN, borrow_date , book_returned FROM issue_details WHERE reader_id='{person[0]}'")
     data = cur.fetchall()
-    return render_template('userHistory.html',data = data)
-
+    return render_template('userHistory.html', data=data)
 
 
 @ app.route("/test")
@@ -454,7 +506,7 @@ def authorize():
         message = 'You were successfully logged in'
     else:
         message = 'You Please Try Again'
-    flash("You were successfully logged in", "info")    
+    flash("You were successfully logged in", "info")
     return redirect('/')
 
 
