@@ -407,10 +407,32 @@ def unholdByISBN(isbn):
 
 @app.route("/logs")
 def logs():
-    cur = mysql.connection.cursor()
-    cur.execute("SELECT * FROM issue_details;")
-    details = cur.fetchall()
-    return render_template("issueDetails.html", details=details)
+    if "profile" in session:
+        if session["isAdmin"] == False:
+            return redirect("/")
+        cur = mysql.connection.cursor()
+        cur.execute("SELECT * FROM issue_details;")
+        details = cur.fetchall()
+        return render_template("issueDetails.html", details=details)
+    return redirect("/")
+
+@app.route("/previousReadings")
+def previousReadings():
+    if "profile" in session:
+        if session["isAdmin"] == True:
+            return redirect("/")
+        email = session["profile"]["email"]
+        cur = mysql.connection.cursor()
+        cur.execute('''
+        SELECT book.ISBN, title, avg_rating, borrow_date FROM issue_details
+        INNER JOIN reader ON issue_details.reader_id = reader.ID
+        INNER JOIN book ON issue_details.ISBN = book.ISBN
+        WHERE
+        reader_email = "{}";
+        '''.format(email))
+        details = cur.fetchall()
+        return render_template("issueDetailsU.html", details=session["profile"], issueDetails=details)
+    return redirect("/")
 
 
 @app.route("/addBook", methods=['GET', 'POST'])
@@ -440,9 +462,7 @@ def addBook():
                 f"insert into tags values('{data['ISBN']}','{data['tag3']}')")
             mysql.connection.commit()
         return render_template("addBook.html", details=session["profile"])
-
-
-
+    
 @app.route("/myBooks")
 def myBooks():
     if "profile" in session:
