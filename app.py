@@ -387,7 +387,7 @@ def logs():
     cur = mysql.connection.cursor()
     cur.execute("SELECT * FROM issue_details;")
     details = cur.fetchall()
-    return render_template("issueDetails.html", details=[details])
+    return render_template("issueDetails.html", details=details)
 
 
 @app.route("/addBook", methods=['GET', 'POST'])
