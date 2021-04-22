@@ -68,21 +68,21 @@ google = oauth.register(
 def calculate_fines(user_id):
     cur = mysql.connection.cursor()
     cur.execute(
-        'SELECT return_date,borrow_date FROM issue_details WHERE reader_id = {} and book_returned=1;'.format(user_id))
+        'SELECT return_date,borrow_date FROM issue_details WHERE reader_id = {} and book_returned=1 AND return_date <> NULL;'.format(user_id))
     previousBookHistory = cur.fetchall()
     previousFines = 0
     curr_date = date.today()
     for val in previousBookHistory:
-        if val[0]-val[1] >= 10:
-            previousFines = previousFines+(val[0]-val[1]-10)*2
+        if (val[0]-val[1]).days >= 10:
+            previousFines = previousFines+((val[0]-val[1]).days-10)*2
     cur.execute(
         'SELECT borrow_date FROM issue_details WHERE reader_id = {} and book_returned=0;'.format(user_id))
     currentBookHistory = cur.fetchall()
     currentFines = 0
     curr_date = date.today()
     for val in currentBookHistory:
-        if curr_date-val[0] >= 10:
-            currentFines = currentFines+(curr_date-val[0]-10)*2
+        if (curr_date-val[0]).days >= 10:
+            currentFines = currentFines+((curr_date-val[0]).days-10)*2
     return currentFines+previousFines
 
 
@@ -117,9 +117,9 @@ def home():
                         'SELECT reader_name, reader_email, ID FROM friendrequests INNER JOIN reader ON friendrequests.reader_1 = reader.ID WHERE reader_2 = {};'.format(user_id))
                     friendRequests = cur.fetchall()
                     session['friendRequests'] = friendRequests
-                # fines = calculate_fines(user_id)
-                # return render_template('userHome.html', details=session["profile"], friendRequests=session['friendRequests'], unpaid_fines=fines)
-                return render_template('userHome.html', details=session["profile"], friendRequests=session['friendRequests'])
+                fines = calculate_fines(user_id)
+                return render_template('userHome.html', details=session["profile"], friendRequests=session['friendRequests'], unpaid_fines=fines)
+                # return render_template('userHome.html', details=session["profile"], friendRequests=session['friendRequests'])
 
     else:
         return render_template('Login.html')
@@ -144,6 +144,7 @@ def generate():
         mail_sent = []
         cur.execute(f"SELECT * FROM book WHERE ISBN='{ISBN}'")
         book = cur.fetchone()
+
         if delta % 3 == 0:
             mail_sent.append(reader_id)
             cur.execute(
@@ -379,7 +380,7 @@ def holdByISBN(isbn):
             "UPDATE reader SET books_issued = books_issued+1 WHERE ID={}".format(reader_id))
         cur.execute(
             "UPDATE book SET current_status = 'soldout' WHERE ISBN={}".format(isbn))
-        cur.execute("INSERT INTO issue_details VALUES ({}, {}, CURDATE(),0,0)".format(
+        cur.execute("INSERT INTO issue_details VALUES ({}, {}, CURDATE(),0,0,NULL)".format(
             reader_id, isbn))
         mysql.connection.commit()
         return redirect("/book")
@@ -433,10 +434,11 @@ def unholdByISBN(isbn):
         [current_status] = cur.fetchone()
         # if current_status=="hold":
         #     redirect("/isbn/hold/<isbn>")
+        today = date.today()
         cur.execute(
             "UPDATE book SET current_status = 'available' WHERE ISBN={}".format(isbn))
         cur.execute(
-            "UPDATE issue_details SET book_returned = 1 WHERE ISBN={}".format(isbn))
+            "UPDATE issue_details SET book_returned = 1 , return_date='{}' WHERE ISBN={}".format(today, isbn))
         mysql.connection.commit()
         flash("You have successfully returned book to library", "info")
         return redirect("/book")
@@ -612,6 +614,7 @@ def user_History():
     return render_template('userHistory.html', data=data, details=session["profile"], friendRequests=session['friendRequests'])
 
 
+
 @ app.route("/myfines")
 def myfines():
     if "profile" in session:
@@ -631,6 +634,7 @@ def myfines():
     data = cur.fetchall()
 
     return render_template('myFines.html', data=data, date=curr_date)
+
 
 
 @ app.route("/tables")
