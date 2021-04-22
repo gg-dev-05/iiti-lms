@@ -65,11 +65,33 @@ google = oauth.register(
 )
 
 
+def calculate_fines(user_id):
+    cur = mysql.connection.cursor()
+    cur.execute(
+        'SELECT return_date,borrow_date FROM issue_details WHERE reader_id = {} and book_returned=1;'.format(user_id))
+    previousBookHistory = cur.fetchall()
+    previousFines = 0
+    curr_date = date.today()
+    for val in previousBookHistory:
+        if val[0]-val[1] >= 10:
+            previousFines = previousFines+(val[0]-val[1]-10)*2
+    cur.execute(
+        'SELECT borrow_date FROM issue_details WHERE reader_id = {} and book_returned=0;'.format(user_id))
+    currentBookHistory = cur.fetchall()
+    currentFines = 0
+    curr_date = date.today()
+    for val in currentBookHistory:
+        if curr_date-val[0] >= 10:
+            currentFines = currentFines+(curr_date-val[0]-10)*2
+    return currentFines+previousFines
+
+
 @app.route("/")
 def home():
     if "profile" in session:
         email = session["profile"]["email"]
         cur = mysql.connection.cursor()
+
         cur.execute(
             "SELECT * from librarian WHERE librarian_email='{}';".format(email))
         result = cur.fetchall()
@@ -79,8 +101,6 @@ def home():
         else:
             session["isAdmin"] = False
             cur.execute(
-                "SELECT is_faculty from reader WHERE reader_email = '{}';".format(email))
-            print(
                 "SELECT is_faculty from reader WHERE reader_email = '{}';".format(email))
             result = cur.fetchone()
             if result == None:
@@ -97,7 +117,8 @@ def home():
                         'SELECT reader_name, reader_email, ID FROM friendrequests INNER JOIN reader ON friendrequests.reader_1 = reader.ID WHERE reader_2 = {};'.format(user_id))
                     friendRequests = cur.fetchall()
                     session['friendRequests'] = friendRequests
-                    print(session['friendRequests'])
+                # fines = calculate_fines(user_id)
+                # return render_template('userHome.html', details=session["profile"], friendRequests=session['friendRequests'], unpaid_fines=fines)
                 return render_template('userHome.html', details=session["profile"], friendRequests=session['friendRequests'])
 
     else:
@@ -123,15 +144,14 @@ def generate():
         mail_sent = []
         cur.execute(f"SELECT * FROM book WHERE ISBN='{ISBN}'")
         book = cur.fetchone()
-        print(book)
-        if abs(delta) % 1 == 0:
+
+        if delta % 3 == 0:
             mail_sent.append(reader_id)
             cur.execute(
                 f"update reminders set last_reminder_sent_date='{today}' where ISBN='{ISBN}'")
             send_mail(
                 person_email[0], "Subject: Reminder for returning book\n\n Your book, {} is overdue.Kindly return it.".format(book[0]))
             flash("Mail sent to {}".format(person_email[0]))
-        print(mail_sent)
     return redirect('/')
 # Register new student
 
@@ -197,8 +217,6 @@ def friendDelete(ID):
     cur = mysql.connection.cursor()
     cur.execute(f"SELECT ID FROM reader WHERE reader_email='{email}'")
     Me = cur.fetchone()
-    # Only For Users
-    # print(ID)
 
     cur.execute(
         "DELETE FROM friends WHERE reader_2 ={} AND reader_1 = {} ;".format(ID, Me[0]))
@@ -406,6 +424,7 @@ def unholdByISBN(isbn):
             "SELECT ID, books_issued FROM reader WHERE reader_email = '{}'".format(email))
         [reader_id, books_issued] = cur.fetchone()
         books_issued -= 1
+        today = date.today()
         if books_issued < 0:
             books_issued = 0
         cur.execute("UPDATE reader SET books_issued = {} WHERE ID={}".format(
@@ -446,15 +465,46 @@ def previousReadings():
         email = session["profile"]["email"]
         cur = mysql.connection.cursor()
         cur.execute('''
-        SELECT book.ISBN, title, avg_rating, borrow_date FROM issue_details
+        SELECT book.ISBN, title, borrow_date, ratings FROM issue_details
         INNER JOIN reader ON issue_details.reader_id = reader.ID
         INNER JOIN book ON issue_details.ISBN = book.ISBN
         WHERE
-        reader_email = "{}";
+        reader_email = "{}" AND book_returned=1 ;
         '''.format(email))
         details = cur.fetchall()
         return render_template("issueDetailsU.html", details=session["profile"], issueDetails=details, friendRequests=session['friendRequests'])
     return redirect("/")
+
+@app.route("/ratings/<isbn>", methods=['POST'])
+def update_ratings(isbn):
+    if "profile" in session:
+        if not session['isAdmin']:
+            email = session["profile"]["email"]
+            data = request.form;
+            cur = mysql.connection.cursor()
+            try:
+                cur.execute("SELECT ID FROM reader WHERE reader_email='{}'".format(email))
+                reader_id = cur.fetchone()[0]
+                cur.execute("UPDATE issue_details SET ratings={} WHERE ISBN={} AND reader_id={}".format(data['rate'], isbn, reader_id))
+                mysql.connection.commit()
+            except:
+                flash("Something went wrong")
+            return redirect('/previousReadings')
+    return redirect("/")
+    
+@app.route("/addnewfaculty",methods=['GET','POST'])
+def addnewfaculty(): 
+     if session['isAdmin']:
+        if request.method == 'GET':
+            return render_template("faculty_form.html", details=session["profile"])
+        else:
+            data = request.form
+            cur = mysql.connection.cursor()
+            cur.execute(
+                f"insert into reader(reader_name,reader_hash_password,reader_email,reader_address,phone_no,is_faculty,ID,unpaid_fines,books_issued) values('{data['faculty_name']}','{data['hashpassword']}','{data['email']}','{data['address']}','{data['number']}','1','','0','0')")
+            mysql.connection.commit()
+            flash("New Faculty Added!!!")
+        return redirect("/faculties") 
 
 
 @app.route("/addBook", methods=['GET', 'POST'])
@@ -465,26 +515,13 @@ def addBook():
         else:
             data = request.form
             cur = mysql.connection.cursor()
-            cur.execute(
-                f"insert into book(title,ISBN,book_language,publisher,publish_date,shelf_id) values('{data['title']}','{data['ISBN']}','{data['language']}','{data['publisher']}','{data['date']}','{data['shelf']}')")
+            cur.execute(f"INSERT INTO book(ISBN, title, book_language, publisher, publish_date, shelf_id) VALUES({data['isbn']}, '{data['title']}', '{data['language']}', '{data['publisher']}', '{data['date']}', {data['shelf']})")
+            data = data.to_dict(flat=False)
+            for tag in data['tags']:
+                cur.execute("INSERT INTO tags VALUES ({}, '{}')".format(data['isbn'][0], tag))
             mysql.connection.commit()
-
-            if data['tag1'] != '':
-                cur = mysql.connection.cursor()
-                cur.execute(
-                    f"insert into tags values('{data['ISBN']}','{data['tag1']}')")
-                mysql.connection.commit()
-            if data['tag2'] != '':
-                cur = mysql.connection.cursor()
-                cur.execute(
-                    f"insert into tags values('{data['ISBN']}','{data['tag2']}')")
-                mysql.connection.commit()
-            if data['tag3'] != '':
-                cur = mysql.connection.cursor()
-                cur.execute(
-                    f"insert into tags values('{data['ISBN']}','{data['tag3']}')")
-                mysql.connection.commit()
-            return render_template("addBook.html", details=session["profile"])
+            flash("New Book Added")
+            return redirect("/book")
     return redirect("/")
 
 
@@ -570,12 +607,34 @@ def user_History():
     cur = mysql.connection.cursor()
     cur.execute(f"SELECT ID FROM reader WHERE reader_email='{email}'")
     person = cur.fetchone()
-    print(person[0])
     cur.execute(
         f"SELECT ISBN, borrow_date , book_returned FROM issue_details WHERE reader_id='{person[0]}'")
     data = cur.fetchall()
 
     return render_template('userHistory.html', data=data, details=session["profile"], friendRequests=session['friendRequests'])
+
+
+
+@ app.route("/myfines")
+def myfines():
+    if "profile" in session:
+        email = session["profile"]["email"]
+        if session["isAdmin"] == True:
+            return redirect("/")
+    else:
+        return redirect("/")
+    # user and logged
+    # fetch ID from email of user
+    cur = mysql.connection.cursor()
+    cur.execute(f"SELECT ID FROM reader WHERE reader_email='{email}'")
+    person = cur.fetchone()
+    curr_date = date.today()
+    cur.execute(
+        f"SELECT ISBN, borrow_date , book_returned,return_date FROM issue_details WHERE reader_id='{person[0]}'")
+    data = cur.fetchall()
+
+    return render_template('myFines.html', data=data, date=curr_date)
+
 
 
 @ app.route("/tables")
