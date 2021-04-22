@@ -48,7 +48,8 @@
 			<!-- Topbar header - style you can find in pages.scss -->
 			<!-- ============================================================== -->
 			<header class="topbar" data-navbarbg="skin5">
-				<nav class="navbar top-navbar navbar-expand-md navbar-dark">
+				{% if details %}
+					<nav class="navbar top-navbar navbar-expand-md navbar-dark">
 					<div class="navbar-header" data-logobg="skin5">
 						<!-- This is for the sidebar toggle which is visible on mobile only -->
 						<a
@@ -197,40 +198,41 @@
 															></i
 														></span> -->
 														<div class="m-l-10">
-															<h5 class="m-b-0" style="color:darkblue">
-																FriendRequests :->
+															<h4 class="m-b-0" style="color:darkblue">
+																FriendRequests
 																<br>
 																<br>
-															</h5>
-															<span
+															</h4>
+															{% if friendRequests == () %}
+																<h5>No new friend requests</h5>
+															{% else %}
+																<span
 																class="mail-desc"
 																>
 																{% for i in friendRequests %}
 																<span>
 																	<span
-															class="btn btn-success btn-circle  "  style="background-color: #27A9E3;"
-															    ><i
-																class="ti-user"
-															   ></i
-														     ></span>
+															class="btn btn-success btn-circle  "  style="background-color: #27A9E3;">
+															<i class="ti-user"></i></span>
 
 																<b>	{{i[0]}}  </b>
 																<br>
 																{{i[1]}}
 																
 																<br>
-																<button type="button" class="btn btn-success"> <emp>Accept</emp></button>
-																<button type="button" class="btn btn-warning"><emp>Reject</emp></button>
+																<a href="/request/cnf/{{i[2]}}"><button type="button" class="btn btn-success"> <emp>Accept</emp></button></a> 
+																<a href="/request/del/{{i[2]}}"><button type="button" class="btn btn-warning"><emp>Reject</emp></button></a>
 
 																<hr>
-												                   
+															</span>
 																	
-															    </span>
 																{% endfor %}
 																<!-- Just a reminder
 																that event -->
 																</span
 															>
+															{% endif %}
+															
 														</div>
 													</div>
 												</a>
@@ -366,6 +368,10 @@
 						</ul>
 					</div>
 				</nav>
+				{% else %}
+					<h1>Please Register</h1>
+				{% endif %}
+				
 			</header>
 			<!-- ============================================================== -->
 			<!-- End Topbar header -->
@@ -427,11 +433,11 @@
 									</li>
 									<li class="sidebar-item">
 										<a
-											href="/booksWithTags"
+											href="/previousReadings"
 											class="sidebar-link"
 											><i class="mdi mdi-book"></i
 											><span class="hide-menu">
-												Books with tags
+												Previous Readings
 											</span></a
 										>
 									</li>
@@ -470,6 +476,15 @@
 								>
 							</li>
 							
+                            <li class="sidebar-item">
+								<a
+									class="sidebar-link waves-effect waves-dark sidebar-link"
+									href="/myfines"
+									aria-expanded="false"
+									><i class=" fas fa-history mr-1"></i
+									><span class="hide-menu">My Fines</span></a
+								>
+							</li>
 						</ul>
 					</nav>
 					<!-- End Sidebar navigation -->

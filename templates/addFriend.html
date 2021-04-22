@@ -11,7 +11,7 @@
 	<!-- ============================================================== -->
 	<!-- Left Sidebar - style you can find in sidebar.scss  -->
 	<!-- ============================================================== -->
-	
+
 	<!-- ============================================================== -->
 	<!-- End Left Sidebar - style you can find in sidebar.scss  -->
 	<!-- ============================================================== -->
@@ -57,19 +57,32 @@
 			<div class="row">
 				<div class="col-md-12">
 					<div class="card">
-						<form class="form-horizontal" action="/addFriend" method="POST">
+						<form
+							class="form-horizontal"
+							action="/addFriend"
+							method="POST"
+						>
 							<div class="card-body">
-
-								{%  if msg!="" %}
-								<div class="alert alert-warning alert-dismissible fade show" role="alert">
+								{% if msg!="" %}
+								<div
+									class="alert alert-warning alert-dismissible fade show"
+									role="alert"
+								>
 									<strong>Hello!!</strong> {{msg}}
-									<button type="button" class="close" data-dismiss="alert" aria-label="Close">
-									<span aria-hidden="true">&times;</span>
+									<button
+										type="button"
+										class="close"
+										data-dismiss="alert"
+										aria-label="Close"
+									>
+										<span aria-hidden="true">&times;</span>
 									</button>
 								</div>
-								{%  endif  %}
+								{% endif %}
 
-								<h4 class="card-title">Make new friend by Email Id</h4>
+								<h4 class="card-title">
+									Make new friend by Email Id
+								</h4>
 								<div class="form-group row">
 									<label
 										for="email"
@@ -83,15 +96,10 @@
 											id="email"
 											placeholder="Enter email id of your friend"
 											name="email"
-                                            required
+											required
 										/>
 									</div>
 								</div>
-
-
-
-
-
 							</div>
 							<div class="border-top">
 								<div class="card-body">
