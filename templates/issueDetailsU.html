@@ -38,6 +38,25 @@
 	<!-- Container fluid  -->
 	<!-- ============================================================== -->
 	<div class="container-fluid">
+		<div class="mx-auto text-center">
+			{% with messages = get_flashed_messages() %} {% if messages %} {%
+			for thisMessage in messages %}
+			<div
+				class="alert alert-success alert-dismissible fade show"
+				role="alert"
+			>
+				{{thisMessage}}
+				<button
+					type="button"
+					class="close"
+					data-dismiss="alert"
+					aria-label="Close"
+				>
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			{% endfor %} {% endif %} {% endwith %}
+		</div>
 		<!-- ============================================================== -->
 		<!-- Start Page Content -->
 		<!-- ============================================================== -->
@@ -45,7 +64,7 @@
 			<div class="col-12">
 				<div class="card">
 					<div class="card-body">
-						<h5 class="card-title">Basic Datatable</h5>
+						<h5 class="card-title">Your Previous Books</h5>
 						<div class="table-responsive text-center">
 							<table
 								id="zero_config"
@@ -53,18 +72,13 @@
 							>
 								<thead>
 									<tr>
-										<th style="font-weight: bold">
-											Reader ID
-										</th>
 										<th style="font-weight: bold">ISBN</th>
+										<th style="font-weight: bold">Title</th>
 										<th style="font-weight: bold">
 											Borrow Date
 										</th>
 										<th style="font-weight: bold">
-											Book Returned
-										</th>
-										<th style="font-weight: bold">
-											Ratings
+											Your Ratings
 										</th>
 									</tr>
 								</thead>
@@ -75,21 +89,52 @@
 										<td>{{data[1]}}</td>
 										<td>{{data[2]}}</td>
 										<td>
-											{% if data[3] == 0 %} NO {% else %}
-											YES {% endif %}
-										</td>
-										<td>
-											<form id = "ratings-form"class="rate" style="padding-left: 3.25cm;">
-												<input type="radio" id="star5" name="rate" value="5" onclick="submitForm()"/>
-												<label for="star5" title="text">5 stars</label>
-												<input type="radio" id="star4" name="rate" value="4" onclick="submitForm()"/>
-												<label for="star4" title="text">4 stars</label>
-												<input type="radio" id="star3" name="rate" value="3" checked onclick="submitForm()"/>
-												<label for="star3" title="text">3 stars</label>
-												<input type="radio" id="star2" name="rate" value="2" onclick="submitForm()"/>
-												<label for="star2" title="text">2 stars</label>
-												<input type="radio" id="star1" name="rate" value="1" onclick="submitForm()"/>
-												<label for="star1" title="text">1 star</label>
+											<form
+												id="ratings-form"
+												class="rate text-center mx-auto px-auto"
+												method="POST"
+												action="/ratings/{{data[0]}}"
+											>
+												<input type="radio"
+												onchange="this.form.submit()"
+												id="star5" name="rate" value="5"
+												{% if data[3] == 5 %} checked {%
+												endif %} />
+												<label for="star5" title="text"
+													>5 stars</label
+												>
+												<input type="radio"
+												onchange="this.form.submit()"
+												id="star4" name="rate" value="4"
+												{% if data[3] == 4 %} checked {%
+												endif %} />
+												<label for="star4" title="text"
+													>4 stars</label
+												>
+												<input type="radio"
+												onchange="this.form.submit()"
+												id="star3" name="rate" value="3"
+												{% if data[3] == 3 %} checked {%
+												endif %} />
+												<label for="star3" title="text"
+													>3 stars</label
+												>
+												<input type="radio"
+												onchange="this.form.submit()"
+												id="star2" name="rate" value="2"
+												{% if data[3] == 2 %} checked {%
+												endif %} />
+												<label for="star2" title="text"
+													>2 stars</label
+												>
+												<input type="radio"
+												onchange="this.form.submit()"
+												id="star1" name="rate" value="1"
+												{% if data[3] == 1 %} checked {%
+												endif %} />
+												<label for="star1" title="text"
+													>1 star</label
+												>
 											</form>
 										</td>
 									</tr>
@@ -137,9 +182,9 @@
 <!-- ============================================================== -->
 <script>
 	var form = $("#ratings-form");
-	function submitForm(){
-		form.submit()
+	function submitForm() {
+		form.submit();
+		alert("HELLO");
 	}
-
 </script>
 {% endblock sidebar_and_navbar %}

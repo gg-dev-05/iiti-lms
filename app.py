@@ -102,8 +102,6 @@ def home():
             session["isAdmin"] = False
             cur.execute(
                 "SELECT is_faculty from reader WHERE reader_email = '{}';".format(email))
-            print(
-                "SELECT is_faculty from reader WHERE reader_email = '{}';".format(email))
             result = cur.fetchone()
             if result == None:
                 return render_template("register.html", email=session['profile']['email'], name=session['profile']['name'])
@@ -119,7 +117,6 @@ def home():
                         'SELECT reader_name, reader_email, ID FROM friendrequests INNER JOIN reader ON friendrequests.reader_1 = reader.ID WHERE reader_2 = {};'.format(user_id))
                     friendRequests = cur.fetchall()
                     session['friendRequests'] = friendRequests
-                    print(session['friendRequests'])
                 # fines = calculate_fines(user_id)
                 # return render_template('userHome.html', details=session["profile"], friendRequests=session['friendRequests'], unpaid_fines=fines)
                 return render_template('userHome.html', details=session["profile"], friendRequests=session['friendRequests'])
@@ -147,7 +144,6 @@ def generate():
         mail_sent = []
         cur.execute(f"SELECT * FROM book WHERE ISBN='{ISBN}'")
         book = cur.fetchone()
-        print(book)
         if delta % 3 == 0:
             mail_sent.append(reader_id)
             cur.execute(
@@ -155,7 +151,6 @@ def generate():
             send_mail(
                 person_email[0], "Subject: Reminder for returning book\n\n Your book, {} is overdue.Kindly return it.".format(book[0]))
             flash("Mail sent to {}".format(person_email[0]))
-        print(mail_sent)
     return redirect('/')
 # Register new student
 
@@ -221,8 +216,6 @@ def friendDelete(ID):
     cur = mysql.connection.cursor()
     cur.execute(f"SELECT ID FROM reader WHERE reader_email='{email}'")
     Me = cur.fetchone()
-    # Only For Users
-    # print(ID)
 
     cur.execute(
         "DELETE FROM friends WHERE reader_2 ={} AND reader_1 = {} ;".format(ID, Me[0]))
@@ -470,16 +463,33 @@ def previousReadings():
         email = session["profile"]["email"]
         cur = mysql.connection.cursor()
         cur.execute('''
-        SELECT book.ISBN, title, avg_rating, borrow_date FROM issue_details
+        SELECT book.ISBN, title, borrow_date, ratings FROM issue_details
         INNER JOIN reader ON issue_details.reader_id = reader.ID
         INNER JOIN book ON issue_details.ISBN = book.ISBN
         WHERE
-        reader_email = "{}";
+        reader_email = "{}" AND book_returned=1 ;
         '''.format(email))
         details = cur.fetchall()
         return render_template("issueDetailsU.html", details=session["profile"], issueDetails=details, friendRequests=session['friendRequests'])
     return redirect("/")
 
+@app.route("/ratings/<isbn>", methods=['POST'])
+def update_ratings(isbn):
+    if "profile" in session:
+        if not session['isAdmin']:
+            email = session["profile"]["email"]
+            data = request.form;
+            cur = mysql.connection.cursor()
+            try:
+                cur.execute("SELECT ID FROM reader WHERE reader_email='{}'".format(email))
+                reader_id = cur.fetchone()[0]
+                cur.execute("UPDATE issue_details SET ratings={} WHERE ISBN={} AND reader_id={}".format(data['rate'], isbn, reader_id))
+                mysql.connection.commit()
+            except:
+                flash("Something went wrong")
+            return redirect('/previousReadings')
+    return redirect("/")
+    
 @app.route("/addnewfaculty",methods=['GET','POST'])
 def addnewfaculty(): 
      if session['isAdmin']:
@@ -595,7 +605,6 @@ def user_History():
     cur = mysql.connection.cursor()
     cur.execute(f"SELECT ID FROM reader WHERE reader_email='{email}'")
     person = cur.fetchone()
-    print(person[0])
     cur.execute(
         f"SELECT ISBN, borrow_date , book_returned FROM issue_details WHERE reader_id='{person[0]}'")
     data = cur.fetchall()
@@ -616,7 +625,6 @@ def myfines():
     cur = mysql.connection.cursor()
     cur.execute(f"SELECT ID FROM reader WHERE reader_email='{email}'")
     person = cur.fetchone()
-    print(person[0])
     curr_date = date.today()
     cur.execute(
         f"SELECT ISBN, borrow_date , book_returned,return_date FROM issue_details WHERE reader_id='{person[0]}'")
