@@ -12,7 +12,7 @@ from datetime import date
 
 app = Flask(__name__)
 
-env = "dev" if os.environ.get("ENV") != "" else ""
+env = "dev" if os.environ.get("ENV") != "PROD" else ""
 DATABASE_URL = ""
 if env == "dev":
     dev = yaml.load(open('db.yaml'), Loader=yaml.FullLoader)
