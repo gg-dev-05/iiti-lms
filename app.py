@@ -216,24 +216,27 @@ def addFriend():
     if data['email'] == email:
         return render_template("addFriend.html", msg="Enter e-mail address of your friend")
     cur = mysql.connection.cursor()
+
     cur.execute(
         "SELECT ID FROM reader WHERE reader_email='{}'".format(data['email']))
-    friend = cur.fetchall()
-    cur.execute("SELECT * FROM friends WHERE reader_1='{}' AND reader_2='{}'".format(email, data['email']))
-    print("HERE: ", cur.fetchone())
-    if cur.fetchone() != None:
-        return render_template('addFriend.html', msg="You are already friends with {}".format(data['email']), details=session["profile"])
-    if friend == ():
+    friend = cur.fetchone()
+    if friend == None:
         return render_template('addFriend.html', msg="Sorry no user exits with this email", details=session["profile"])
-    else:
-        friend = friend[0][0]
-
     cur.execute(f"SELECT ID FROM reader WHERE reader_email='{email}'")
     Me = cur.fetchone()[0]
-    cur.execute("INSERT INTO friendrequests VALUES ({}, {});".format(Me, friend))
-    mysql.connection.commit()
+    friend = friend[0]
+    cur.execute("SELECT * FROM friends WHERE reader_1='{}' AND reader_2='{}'".format(email, data['email']))
+    if cur.fetchone() != None:
+        return render_template('addFriend.html', msg="You are already friends with {}".format(data['email']), details=session["profile"])
+
+    try:
+        cur.execute(f"SELECT ID FROM reader WHERE reader_email='{email}'")
+        Me = cur.fetchone()[0]
+        cur.execute("INSERT INTO friendrequests VALUES ({}, {});".format(Me, friend))
+        mysql.connection.commit()
+    except:
+        return render_template('addFriend.html', msg="Already send request to {}, awaiting their response".format(data['email']), details=session["profile"])
     return render_template('addFriend.html', msg="Friend request sent to {}".format(data['email']), details=session["profile"])
-    # return render_template('addFriend.html')
 
 @app.route("/request/cnf/<ID>")
 def accept_request(ID):
@@ -534,7 +537,7 @@ def friends():
 
     cur = mysql.connection.cursor()
     cur.execute(
-        "SELECT reader_name,phone_no,books_issued,ID  FROM reader WHERE ID IN ( SELECT reader_2 FROM friends WHERE reader_1 IN (SELECT ID FROM reader WHERE reader_email='{}') )".format(email))
+        "SELECT reader_name,reader_email,phone_no,books_issued,ID  FROM reader WHERE ID IN ( SELECT reader_2 FROM friends WHERE reader_1 IN (SELECT ID FROM reader WHERE reader_email='{}') )".format(email))
     friendinfo = cur.fetchall()
 
     return render_template('allFriends.html', len=len(friendinfo), friendinfo=friendinfo, details=session["profile"])
