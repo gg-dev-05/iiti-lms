@@ -78,7 +78,20 @@
 											{% if data[3] == 0 %} NO {% else %}
 											YES {% endif %}
 										</td>
-										<td>{{data[4]}}</td>
+										<td>
+											<form id = "ratings-form"class="rate" style="padding-left: 3.25cm;">
+												<input type="radio" id="star5" name="rate" value="5" onclick="submitForm()"/>
+												<label for="star5" title="text">5 stars</label>
+												<input type="radio" id="star4" name="rate" value="4" onclick="submitForm()"/>
+												<label for="star4" title="text">4 stars</label>
+												<input type="radio" id="star3" name="rate" value="3" checked onclick="submitForm()"/>
+												<label for="star3" title="text">3 stars</label>
+												<input type="radio" id="star2" name="rate" value="2" onclick="submitForm()"/>
+												<label for="star2" title="text">2 stars</label>
+												<input type="radio" id="star1" name="rate" value="1" onclick="submitForm()"/>
+												<label for="star1" title="text">1 star</label>
+											</form>
+										</td>
 									</tr>
 									{% endfor %}
 								</tbody>
@@ -122,5 +135,11 @@
 <!-- ============================================================== -->
 <!-- All Jquery -->
 <!-- ============================================================== -->
+<script>
+	var form = $("#ratings-form");
+	function submitForm(){
+		form.submit()
+	}
 
+</script>
 {% endblock sidebar_and_navbar %}
