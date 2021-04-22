@@ -331,13 +331,14 @@ def holdByISBN(isbn):
         cur.execute(
             "SELECT ID, books_issued, unpaid_fines FROM reader WHERE reader_email = '{}'".format(email))
         [reader_id, books_issued, unpaid_fines] = cur.fetchone()
-        if session['isFaculty'] == False and books_issued > 3 or unpaid_fines > 1000:
-            if books_issued > 3:
-                flash(
-                    "You already have issued 3 books so now you cannot issue more", "info")
-            else:
-                flash("Please pay you unpaid fines first", "info")
-            return redirect("/")
+        if session['isFaculty'] == False:
+            if books_issued == 3 or unpaid_fines > 1000:
+                if books_issued == 3:
+                    flash(
+                        "You already have issued 3 books so now you cannot issue more", "info")
+                else:
+                    flash("Please pay your unpaid fines first", "info")
+                return redirect("/book")
         cur.execute(
             "UPDATE reader SET books_issued = books_issued+1 WHERE ID={}".format(reader_id))
         cur.execute(
@@ -360,13 +361,14 @@ def putOnHoldByISBN(isbn):
         cur.execute(
             "SELECT ID, books_issued, unpaid_fines FROM reader WHERE reader_email = '{}'".format(email))
         [reader_id, books_issued, unpaid_fines] = cur.fetchone()
-        if session['isFaculty'] == False and books_issued > 3 or unpaid_fines > 1000:
-            if books_issued > 3:
-                flash(
-                    "You already have issued 3 books.You cannot put the book on hold", "info")
-            else:
-                flash("Please pay you unpaid fines first", "info")
-            return redirect("/")
+        if session['isFaculty'] == False:
+            if books_issued == 3 or unpaid_fines > 1000:
+                if books_issued == 3:
+                    flash(
+                        "You already have issued 3 books so now you cannot issue more", "info")
+                else:
+                    flash("Please pay your unpaid fines first", "info")
+                return redirect("/book")
         cur.execute(
             "UPDATE book SET current_status = 'hold' WHERE ISBN={}".format(isbn))
         cur.execute(
@@ -399,6 +401,7 @@ def unholdByISBN(isbn):
         cur.execute(
             "UPDATE issue_details SET book_returned = 1 WHERE ISBN={}".format(isbn))
         mysql.connection.commit()
+        flash("You have successfully returned book to library", "info")
         return redirect("/book")
     return redirect("/")
 
