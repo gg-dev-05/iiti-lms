@@ -598,6 +598,28 @@ def user_History():
     return render_template('userHistory.html', data=data, details=session["profile"], friendRequests=session['friendRequests'])
 
 
+@ app.route("/myfines")
+def myfines():
+    if "profile" in session:
+        email = session["profile"]["email"]
+        if session["isAdmin"] == True:
+            return redirect("/")
+    else:
+        return redirect("/")
+    # user and logged
+    # fetch ID from email of user
+    cur = mysql.connection.cursor()
+    cur.execute(f"SELECT ID FROM reader WHERE reader_email='{email}'")
+    person = cur.fetchone()
+    print(person[0])
+    curr_date = date.today()
+    cur.execute(
+        f"SELECT ISBN, borrow_date , book_returned,return_date FROM issue_details WHERE reader_id='{person[0]}'")
+    data = cur.fetchall()
+
+    return render_template('myFines.html', data=data, date=curr_date)
+
+
 @ app.route("/tables")
 def addBooks():
     return render_template('tables.html', details=session["profile"])
