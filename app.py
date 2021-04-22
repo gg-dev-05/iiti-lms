@@ -90,7 +90,7 @@ def home():
                     friendRequests = cur.fetchall()
                     session['friendRequests'] = friendRequests
                     print(session['friendRequests'])
-                return render_template('userHome.html', details=session["profile"], friendRequests=friendRequests)
+                return render_template('userHome.html', details=session["profile"], friendRequests=session['friendRequests'])
 
     else:
         return render_template('Login.html')
@@ -147,18 +147,19 @@ def newStudent():
 
 @app.route("/<memberType>")
 def members(memberType):
-    if memberType == 'students':
-        cur = mysql.connection.cursor()
-        cur.execute(
-            "SELECT reader_name, reader_email, reader_address, phone_no, books_issued, unpaid_fines,ID FROM reader WHERE is_faculty = 0;")
-        students = cur.fetchall()
-        return render_template("member.html", people=students, memberType=memberType, details=session["profile"])
-    if memberType == 'faculties':
-        cur = mysql.connection.cursor()
-        cur.execute(
-            "SELECT reader_name, reader_email, reader_address, phone_no, books_issued, unpaid_fines,ID FROM reader WHERE is_faculty = 1;")
-        faculties = cur.fetchall()
-        return render_template("member.html", people=faculties,memberType=memberType, details=session["profile"])
+    if session['isAdmin']:
+        if memberType == 'students':
+            cur = mysql.connection.cursor()
+            cur.execute(
+                "SELECT reader_name, reader_email, reader_address, phone_no, books_issued, unpaid_fines,ID FROM reader WHERE is_faculty = 0;")
+            students = cur.fetchall()
+            return render_template("member.html", people=students, memberType=memberType, details=session["profile"])
+        if memberType == 'faculties':
+            cur = mysql.connection.cursor()
+            cur.execute(
+                "SELECT reader_name, reader_email, reader_address, phone_no, books_issued, unpaid_fines,ID FROM reader WHERE is_faculty = 1;")
+            faculties = cur.fetchall()
+            return render_template("member.html", people=faculties,memberType=memberType, details=session["profile"])
     return redirect("/")
 
 
@@ -210,24 +211,24 @@ def addFriend():
     if session["isAdmin"] == True:
         redirect("/")
     if request.method == 'GET':
-        return render_template('addFriend.html',msg="", details=session["profile"])
+        return render_template('addFriend.html',msg="", details=session["profile"], friendRequests=session['friendRequests'])
 
     data = request.form
     if data['email'] == email:
-        return render_template("addFriend.html", msg="Enter e-mail address of your friend", details=session["profile"])
+        return render_template("addFriend.html", msg="Enter e-mail address of your friend", details=session["profile"], friendRequests=session['friendRequests'])
     cur = mysql.connection.cursor()
 
     cur.execute(
         "SELECT ID FROM reader WHERE reader_email='{}'".format(data['email']))
     friend = cur.fetchone()
     if friend == None:
-        return render_template('addFriend.html', msg="Sorry no user exits with this email", details=session["profile"])
+        return render_template('addFriend.html', msg="Sorry no user exits with this email", details=session["profile"], friendRequests=session['friendRequests'])
     cur.execute(f"SELECT ID FROM reader WHERE reader_email='{email}'")
     Me = cur.fetchone()[0]
     friend = friend[0]
     cur.execute("SELECT * FROM friends WHERE reader_1='{}' AND reader_2='{}'".format(email, data['email']))
     if cur.fetchone() != None:
-        return render_template('addFriend.html', msg="You are already friends with {}".format(data['email']), details=session["profile"])
+        return render_template('addFriend.html', msg="You are already friends with {}".format(data['email']), details=session["profile"], friendRequests=session['friendRequests'])
 
     try:
         cur.execute(f"SELECT ID FROM reader WHERE reader_email='{email}'")
@@ -235,8 +236,8 @@ def addFriend():
         cur.execute("INSERT INTO friendrequests VALUES ({}, {});".format(Me, friend))
         mysql.connection.commit()
     except:
-        return render_template('addFriend.html', msg="Already send request to {}, awaiting their response".format(data['email']), details=session["profile"])
-    return render_template('addFriend.html', msg="Friend request sent to {}".format(data['email']), details=session["profile"])
+        return render_template('addFriend.html', msg="Already send request to {}, awaiting their response".format(data['email']), details=session["profile"], friendRequests=session['friendRequests'])
+    return render_template('addFriend.html', msg="Friend request sent to {}".format(data['email']), details=session["profile"], friendRequests=session['friendRequests'])
 
 @app.route("/request/cnf/<ID>")
 def accept_request(ID):
@@ -283,7 +284,7 @@ def book():
             if session["isAdmin"] == True:
                 return render_template("adminSearchBook.html", books=books, details=session["profile"])
             if session["isAdmin"] == False:
-                return render_template("userSearchBook.html", books=books, details=session["profile"])
+                return render_template("userSearchBook.html", books=books, details=session["profile"], friendRequests=session['friendRequests'])
                 
     if request.method == 'POST':
         data = request.form
@@ -304,7 +305,7 @@ def book():
             if session["isAdmin"] == True:
                 return render_template("adminSearchBook.html", books=books, details=session["profile"])
             if session["isAdmin"] == False:
-                return render_template("userSearchBook.html", books=books, details=session["profile"])
+                return render_template("userSearchBook.html", books=books, details=session["profile"], friendRequests=session['friendRequests'])
     return redirect("/")
 
 
@@ -428,38 +429,40 @@ def previousReadings():
         reader_email = "{}";
         '''.format(email))
         details = cur.fetchall()
-        return render_template("issueDetailsU.html", details=session["profile"], issueDetails=details)
+        return render_template("issueDetailsU.html", details=session["profile"], issueDetails=details, friendRequests=session['friendRequests'])
     return redirect("/")
 
 
 @app.route("/addBook", methods=['GET', 'POST'])
 def addBook():
-    if request.method == 'GET':
-        return render_template("addBook.html", details=session["profile"])
-    else:
-        data = request.form
-        cur = mysql.connection.cursor()
-        cur.execute(
-            f"insert into book(title,ISBN,book_language,publisher,publish_date,shelf_id) values('{data['title']}','{data['ISBN']}','{data['language']}','{data['publisher']}','{data['date']}','{data['shelf']}')")
-        mysql.connection.commit()
+    if session['isAdmin']:
+        if request.method == 'GET':
+            return render_template("addBook.html", details=session["profile"])
+        else:
+            data = request.form
+            cur = mysql.connection.cursor()
+            cur.execute(
+                f"insert into book(title,ISBN,book_language,publisher,publish_date,shelf_id) values('{data['title']}','{data['ISBN']}','{data['language']}','{data['publisher']}','{data['date']}','{data['shelf']}')")
+            mysql.connection.commit()
 
-        if data['tag1'] != '':
-            cur = mysql.connection.cursor()
-            cur.execute(
-                f"insert into tags values('{data['ISBN']}','{data['tag1']}')")
-            mysql.connection.commit()
-        if data['tag2'] != '':
-            cur = mysql.connection.cursor()
-            cur.execute(
-                f"insert into tags values('{data['ISBN']}','{data['tag2']}')")
-            mysql.connection.commit()
-        if data['tag3'] != '':
-            cur = mysql.connection.cursor()
-            cur.execute(
-                f"insert into tags values('{data['ISBN']}','{data['tag3']}')")
-            mysql.connection.commit()
-        return render_template("addBook.html", details=session["profile"])
-    
+            if data['tag1'] != '':
+                cur = mysql.connection.cursor()
+                cur.execute(
+                    f"insert into tags values('{data['ISBN']}','{data['tag1']}')")
+                mysql.connection.commit()
+            if data['tag2'] != '':
+                cur = mysql.connection.cursor()
+                cur.execute(
+                    f"insert into tags values('{data['ISBN']}','{data['tag2']}')")
+                mysql.connection.commit()
+            if data['tag3'] != '':
+                cur = mysql.connection.cursor()
+                cur.execute(
+                    f"insert into tags values('{data['ISBN']}','{data['tag3']}')")
+                mysql.connection.commit()
+            return render_template("addBook.html", details=session["profile"])
+    return redirect("/")
+
 @app.route("/myBooks")
 def myBooks():
     if "profile" in session:
@@ -472,7 +475,7 @@ def myBooks():
     cur.execute(
         f"SELECT ISBN,title,avg_rating,book_language,publisher,publish_date,current_status FROM book WHERE ISBN in( SELECT ISBN FROM issue_details WHERE reader_id='{person[0]}' and book_returned=0)")
     books = cur.fetchall()
-    return render_template('myBooks.html', books=books, details=session["profile"])
+    return render_template('myBooks.html', books=books, details=session["profile"], friendRequests=session['friendRequests'])
 
 
 
@@ -488,17 +491,6 @@ def shelf():
     return redirect("/")
 
 
-@app.route("/demo")
-def demo():
-    if "profile" in session:
-        email = session["profile"]["email"]
-        name = session["profile"]["name"]
-    else:
-        return "Not signed in <a href='/login'>LOGIN</a>>"
-    # Only If he/she is a student
-    return render_template("register.html", email=email, name=name, details=session["profile"])
-
-
 @app.route("/recommendedBooks")
 def user_BookRecommedation():
 
@@ -512,14 +504,8 @@ def user_BookRecommedation():
     cur.execute(
         f"select * from book where ISBN in(select ISBN from tags where tag_name in(select tag_name from tags where ISBN in (select ISBN from issue_details where reader_id = '{person[0]}'))) order by avg_rating DESC")
     books = cur.fetchall()
-    # cur = mysql.connection.cursor()
-    # cur.execute(
-    #     f"select tag_name from tags where ISBN in (select ISBN from issue_details where reader_id='{person[0]}'")
-    # tags = cur.fetchall()
-    # print(tags)
-    print(books)
     zeroes = 1 if len(books) == 0 else 0
-    return render_template('user_BookRecommedation.html', books=books, zeroes=zeroes, details=session["profile"])
+    return render_template('user_BookRecommedation.html', books=books, zeroes=zeroes, details=session["profile"], friendRequests=session['friendRequests'])
 
 
 
@@ -540,7 +526,7 @@ def friends():
         "SELECT reader_name,reader_email,phone_no,books_issued,ID  FROM reader WHERE ID IN ( SELECT reader_2 FROM friends WHERE reader_1 IN (SELECT ID FROM reader WHERE reader_email='{}') )".format(email))
     friendinfo = cur.fetchall()
 
-    return render_template('allFriends.html', len=len(friendinfo), friendinfo=friendinfo, details=session["profile"])
+    return render_template('allFriends.html', len=len(friendinfo), friendinfo=friendinfo, details=session["profile"], friendRequests=session['friendRequests'])
 
 
 @ app.route("/feedback")
@@ -566,13 +552,10 @@ def user_History():
         f"SELECT ISBN, borrow_date , book_returned FROM issue_details WHERE reader_id='{person[0]}'")
     data = cur.fetchall()
 
-    return render_template('userHistory.html',data = data, details=session["profile"])
+    return render_template('userHistory.html',data = data, details=session["profile"], friendRequests=session['friendRequests'])
 
 
 
-@ app.route("/test")
-def updateBooks():
-    return render_template('updateBooks.html', details=session["profile"])
 
 
 @ app.route("/tables")
