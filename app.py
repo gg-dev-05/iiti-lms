@@ -120,8 +120,9 @@ def home():
                     friendRequests = cur.fetchall()
                     session['friendRequests'] = friendRequests
                     print(session['friendRequests'])
-                fines = calculate_fines(user_id)
-                return render_template('userHome.html', details=session["profile"], friendRequests=session['friendRequests'], unpaid_fines=fines)
+                # fines = calculate_fines(user_id)
+                # return render_template('userHome.html', details=session["profile"], friendRequests=session['friendRequests'], unpaid_fines=fines)
+                return render_template('userHome.html', details=session["profile"], friendRequests=session['friendRequests'])
 
     else:
         return render_template('Login.html')
