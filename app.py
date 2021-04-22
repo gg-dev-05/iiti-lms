@@ -2,7 +2,9 @@ from flask import flash, Flask, render_template, redirect, url_for, session, req
 from flask_mysqldb import MySQL
 import yaml
 from flask_mail import Mail
-import smtplib, ssl, re
+import smtplib
+import ssl
+import re
 from functions.dbConfig import database_config
 from authlib.integrations.flask_client import OAuth
 import os
@@ -31,16 +33,20 @@ app.config['MYSQL_DB'] = db
 
 port = 465  # For SSL
 smtp_server = "smtp.gmail.com"
-sender_email = os.environ.get("MAIL_USERNAME") if (env != 'dev') else dev['MAIL_USERNAME']  
-password = os.environ.get("MAIL_PASSWORD") if (env != 'dev') else dev['MAIL_PASSWORD']  
+sender_email = os.environ.get("MAIL_USERNAME") if (
+    env != 'dev') else dev['MAIL_USERNAME']
+password = os.environ.get("MAIL_PASSWORD") if (
+    env != 'dev') else dev['MAIL_PASSWORD']
 
 # Session config
-app.secret_key = os.environ.get("client_secret") if(env != 'dev') else dev['client_secret']
+app.secret_key = os.environ.get("client_secret") if(
+    env != 'dev') else dev['client_secret']
 app.config['SESSION_COOKIE_NAME'] = 'google-login-session'
 
 mysql = MySQL(app)
 
-clientSecret = os.environ.get("client_secret") if (env != 'dev') else dev['client_secret']
+clientSecret = os.environ.get("client_secret") if (
+    env != 'dev') else dev['client_secret']
 clientId = os.environ.get("client_id") if (env != 'dev') else dev['client_id']
 
 oauth = OAuth(app)
@@ -85,9 +91,11 @@ def home():
                     session["isFaculty"] = True
                 else:
                     session["isFaculty"] = False
-                    cur.execute("SELECT ID FROM reader WHERE reader_email = '{}'".format(email))
+                    cur.execute(
+                        "SELECT ID FROM reader WHERE reader_email = '{}'".format(email))
                     user_id = cur.fetchone()[0]
-                    cur.execute('SELECT reader_name, reader_email FROM friendrequests INNER JOIN reader ON friendrequests.reader_1 = reader.ID WHERE reader_2 = {};'.format(user_id))
+                    cur.execute(
+                        'SELECT reader_name, reader_email FROM friendrequests INNER JOIN reader ON friendrequests.reader_1 = reader.ID WHERE reader_2 = {};'.format(user_id))
                     friendRequests = cur.fetchall()
                     session['friendRequests'] = friendRequests
                     print(session['friendRequests'])
@@ -116,12 +124,14 @@ def generate():
         delta = (last_reminder_sent_date-today).days
         mail_sent = []
         cur.execute(f"SELECT * FROM book WHERE ISBN='{ISBN}'")
-        book=cur.fetchone()
+        book = cur.fetchone()
         print(book)
         if abs(delta) % 1 == 0:
             mail_sent.append(reader_id)
-            cur.execute(f"update reminders set last_reminder_sent_date='{today}' where ISBN='{ISBN}'")
-            send_mail(person_email[0], "Subject: Reminder for returning book\n\n Your book, {} is overdue.Kindly return it.".format(book[0]))
+            cur.execute(
+                f"update reminders set last_reminder_sent_date='{today}' where ISBN='{ISBN}'")
+            send_mail(
+                person_email[0], "Subject: Reminder for returning book\n\n Your book, {} is overdue.Kindly return it.".format(book[0]))
             flash("Mail sent to {}".format(person_email[0]))
         print(mail_sent)
     return redirect('/')
@@ -136,6 +146,7 @@ def send_mail(receiver_email, message):
     with smtplib.SMTP_SSL(smtp_server, port, context=context) as server:
         server.login(sender_email, password)
         server.sendmail(sender_email, receiver_email, message)
+
 
 @app.route("/new", methods=["POST"])
 def newStudent():
@@ -208,7 +219,6 @@ def allBooks():
     return render_template("allBooksU.html", books=books, details=session["profile"])
 
 
-
 @app.route("/addFriend", methods=['GET', 'POST'])
 def addFriend():
     if "profile" in session:
@@ -218,7 +228,7 @@ def addFriend():
     if session["isAdmin"] == True:
         redirect("/")
     if request.method == 'GET':
-        return render_template('addFriend.html',msg="", details=session["profile"])
+        return render_template('addFriend.html', msg="", details=session["profile"])
 
     data = request.form
     if data['email'] == email:
@@ -266,7 +276,7 @@ def book():
                 return render_template("adminSearchBook.html", books=books, query=query, details=session["profile"])
             if session["isAdmin"] == False:
                 return render_template("userSearchBook.html", books=books, details=session["profile"])
-                
+
     if request.method == 'POST':
         data = request.form
         query = data['book']
@@ -373,10 +383,11 @@ def unholdByISBN(isbn):
         [current_status] = cur.fetchone()
         # if current_status=="hold":
         #     redirect("/isbn/hold/<isbn>")
+        today = date.today()
         cur.execute(
             "UPDATE book SET current_status = 'available' WHERE ISBN={}".format(isbn))
         cur.execute(
-            "UPDATE issue_details SET book_returned = 1 WHERE ISBN={}".format(isbn))
+            "UPDATE issue_details SET book_returned = 1 , return_date='{}' WHERE ISBN={}".format(today, isbn))
         mysql.connection.commit()
         return redirect("/book")
     return redirect("/")
@@ -419,7 +430,6 @@ def addBook():
         return render_template("addBook.html", details=session["profile"])
 
 
-
 @app.route("/myBooks")
 def myBooks():
     if "profile" in session:
@@ -435,7 +445,6 @@ def myBooks():
     return render_template('myBooks.html', books=books, details=session["profile"])
 
 
-
 @app.route("/shelf")
 def shelf():
     if session["isAdmin"] == True:
@@ -444,7 +453,7 @@ def shelf():
             "SELECT shelf_id, capacity FROM shelf;")
         shelfs = cur.fetchall()
 
-        return render_template('shelf.html', shelfs = shelfs, details=session["profile"])
+        return render_template('shelf.html', shelfs=shelfs, details=session["profile"])
     return redirect("/")
 
 
@@ -480,7 +489,6 @@ def user_BookRecommedation():
     print(books)
     zeroes = 1 if len(books) == 0 else 0
     return render_template('user_BookRecommedation.html', books=books, zeroes=zeroes, details=session["profile"])
-
 
 
 @ app.route("/booksWithTags")
@@ -526,8 +534,7 @@ def user_History():
         f"SELECT ISBN, borrow_date , book_returned FROM issue_details WHERE reader_id='{person[0]}'")
     data = cur.fetchall()
 
-    return render_template('userHistory.html',data = data, details=session["profile"])
-
+    return render_template('userHistory.html', data=data, details=session["profile"])
 
 
 @ app.route("/test")
