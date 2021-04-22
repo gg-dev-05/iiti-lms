@@ -629,10 +629,11 @@ def myfines():
     cur.execute(f"SELECT ID FROM reader WHERE reader_email='{email}'")
     person = cur.fetchone()
     curr_date = date.today()
+    
     cur.execute(
         f"SELECT ISBN, borrow_date , book_returned,return_date FROM issue_details WHERE reader_id='{person[0]}'")
     data = cur.fetchall()
-
+    print(curr_date, data)
     return render_template('myFines.html', data=data, date=curr_date)
 
 
