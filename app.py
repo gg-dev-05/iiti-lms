@@ -256,6 +256,7 @@ def accept_request(ID):
         return redirect("/friends")
     return redirect("/")
 
+
 @app.route("/request/del/<ID>")
 def delete_request(ID):
     if "profile" in session:
@@ -431,6 +432,20 @@ def previousReadings():
         details = cur.fetchall()
         return render_template("issueDetailsU.html", details=session["profile"], issueDetails=details, friendRequests=session['friendRequests'])
     return redirect("/")
+
+@app.route("/addnewfaculty",methods=['GET','POST'])
+def addnewfaculty(): 
+     if session['isAdmin']:
+        if request.method == 'GET':
+            return render_template("faculty_form.html", details=session["profile"])
+        else:
+            data = request.form
+            cur = mysql.connection.cursor()
+            cur.execute(
+                f"insert into reader(reader_name,reader_hash_password,reader_email,reader_address,phone_no,is_faculty,ID,unpaid_fines,books_issued) values('{data['faculty_name']}','{data['hashpassword']}','{data['email']}','{data['address']}','{data['number']}','1','','0','0')")
+            mysql.connection.commit()
+            flash("New Faculty Added!!!")
+        return redirect("/faculties") 
 
 
 @app.route("/addBook", methods=['GET', 'POST'])
