@@ -276,8 +276,8 @@ def book():
             'SELECT ISBN, title, shelf_id, current_status, avg_rating, book_language, publisher, publish_date FROM book')
         books = cur.fetchall()
         if "isAdmin" in session:
+            flash("Showing all books")
             if session["isAdmin"] == True:
-                flash("Showing all books")
                 return render_template("adminSearchBook.html", books=books, details=session["profile"])
             if session["isAdmin"] == False:
                 return render_template("userSearchBook.html", books=books, details=session["profile"])
@@ -296,10 +296,9 @@ def book():
             '''.format(query, query, query)
         )
         books = cur.fetchall()
-        print("is admin: ", session['isAdmin'])
+        flash(Markup("Showing all results for:  <b>{}</b>".format(query)))
         if "isAdmin" in session:
             if session["isAdmin"] == True:
-                flash(Markup("Showing all books LIKE <b>{}</b>".format(query)))
                 return render_template("adminSearchBook.html", books=books, details=session["profile"])
             if session["isAdmin"] == False:
                 return render_template("userSearchBook.html", books=books, details=session["profile"])
