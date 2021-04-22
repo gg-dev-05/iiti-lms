@@ -144,6 +144,7 @@ def generate():
         mail_sent = []
         cur.execute(f"SELECT * FROM book WHERE ISBN='{ISBN}'")
         book = cur.fetchone()
+
         if delta % 3 == 0:
             mail_sent.append(reader_id)
             cur.execute(
@@ -433,10 +434,11 @@ def unholdByISBN(isbn):
         [current_status] = cur.fetchone()
         # if current_status=="hold":
         #     redirect("/isbn/hold/<isbn>")
+        today = date.today()
         cur.execute(
             "UPDATE book SET current_status = 'available' WHERE ISBN={}".format(isbn))
         cur.execute(
-            "UPDATE issue_details SET book_returned = 1 WHERE ISBN={}".format(isbn))
+            "UPDATE issue_details SET book_returned = 1 , return_date='{}' WHERE ISBN={}".format(today, isbn))
         mysql.connection.commit()
         flash("You have successfully returned book to library", "info")
         return redirect("/book")
@@ -612,6 +614,7 @@ def user_History():
     return render_template('userHistory.html', data=data, details=session["profile"], friendRequests=session['friendRequests'])
 
 
+
 @ app.route("/myfines")
 def myfines():
     if "profile" in session:
@@ -631,6 +634,7 @@ def myfines():
     data = cur.fetchall()
 
     return render_template('myFines.html', data=data, date=curr_date)
+
 
 
 @ app.route("/tables")
