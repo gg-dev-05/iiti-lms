@@ -145,7 +145,7 @@ def generate():
         cur.execute(f"SELECT * FROM book WHERE ISBN='{ISBN}'")
         book = cur.fetchone()
 
-        if delta % 3 == 0:
+        if delta % 1 == 0:
             mail_sent.append(reader_id)
             cur.execute(
                 f"update reminders set last_reminder_sent_date='{today}' where ISBN='{ISBN}'")
