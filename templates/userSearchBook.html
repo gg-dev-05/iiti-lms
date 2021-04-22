@@ -48,6 +48,23 @@
 						<h5 class="card-title">
 							All Books for query : '{{query}}'
 						</h5>
+						{% with messages = get_flashed_messages() %} {% if
+						messages %} {% for thisMessage in messages %}
+						<div
+							class="alert alert-success alert-dismissible fade show text-center"
+							role="alert"
+						>
+							{{thisMessage}}
+							<button
+								type="button"
+								class="close"
+								data-dismiss="alert"
+								aria-label="Close"
+							>
+								<span aria-hidden="true">&times;</span>
+							</button>
+						</div>
+						{% endfor %} {% endif %} {% endwith %}
 						<div class="table-responsive text-center">
 							<table
 								id="zero_config"
@@ -97,8 +114,13 @@
 										</td>
 										{% elif book[3] == 'soldout'%}
 										<td>
-											<a href="/isbn/putOnhold/{{book[0]}}"
-												><i class="fa fa-pause" aria-hidden="true"></i></a>
+											<a
+												href="/isbn/putOnhold/{{book[0]}}"
+												><i
+													class="fa fa-pause"
+													aria-hidden="true"
+												></i
+											></a>
 										</td>
 										{% else %}
 										<td>

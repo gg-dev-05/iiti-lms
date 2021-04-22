@@ -12,18 +12,12 @@
 	<div class="page-breadcrumb">
 		<div class="row">
 			<div class="col-12 d-flex no-block align-items-center">
-				<h4 class="page-title">Students</h4>
+				<h4 class="page-title">All Books</h4>
 				<div class="ml-auto text-right">
 					<nav aria-label="breadcrumb">
 						<ol class="breadcrumb">
 							<li class="breadcrumb-item">
-								<a href="#">Home</a>
-							</li>
-							<li
-								class="breadcrumb-item active"
-								aria-current="page"
-							>
-								Library
+								<a href="/">Home</a>
 							</li>
 						</ol>
 					</nav>
@@ -45,9 +39,23 @@
 			<div class="col-12">
 				<div class="card">
 					<div class="card-body">
-						<h5 class="card-title">
-							All Books for query : '{{query}}'
-						</h5>
+						{% with messages = get_flashed_messages() %} {% if
+						messages %} {% for thisMessage in messages %}
+						<div
+							class="alert alert-success alert-dismissible fade show text-center"
+							role="alert"
+						>
+							{{thisMessage}}
+							<button
+								type="button"
+								class="close"
+								data-dismiss="alert"
+								aria-label="Close"
+							>
+								<span aria-hidden="true">&times;</span>
+							</button>
+						</div>
+						{% endfor %} {% endif %} {% endwith %}
 						<div class="table-responsive text-center">
 							<table
 								id="zero_config"

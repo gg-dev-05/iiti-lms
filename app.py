@@ -1,4 +1,4 @@
-from flask import flash, Flask, render_template, redirect, url_for, session, request
+from flask import flash, Flask, render_template, redirect, url_for, session, request, Markup
 from flask_mysqldb import MySQL
 import yaml
 from flask_mail import Mail
@@ -198,15 +198,6 @@ def friendDelete(ID):
     return redirect("/friends")
 
 
-@app.route('/books')
-def allBooks():
-    cur = mysql.connection.cursor()
-    cur.execute(
-        "SELECT ISBN, title, shelf_id, current_status, avg_rating, book_language, publisher, publish_date FROM book;")
-    books = cur.fetchall()
-    if session['isAdmin']:
-        return render_template("allBooksA.html", books=books, details=session["profile"])
-    return render_template("allBooksU.html", books=books, details=session["profile"])
 
 
 
@@ -286,7 +277,8 @@ def book():
         books = cur.fetchall()
         if "isAdmin" in session:
             if session["isAdmin"] == True:
-                return render_template("adminSearchBook.html", books=books, query=query, details=session["profile"])
+                flash("Showing all books")
+                return render_template("adminSearchBook.html", books=books, details=session["profile"])
             if session["isAdmin"] == False:
                 return render_template("userSearchBook.html", books=books, details=session["profile"])
                 
@@ -304,9 +296,11 @@ def book():
             '''.format(query, query, query)
         )
         books = cur.fetchall()
+        print("is admin: ", session['isAdmin'])
         if "isAdmin" in session:
             if session["isAdmin"] == True:
-                return render_template("adminSearchBook.html", books=books, query=query, details=session["profile"])
+                flash(Markup("Showing all books LIKE <b>{}</b>".format(query)))
+                return render_template("adminSearchBook.html", books=books, details=session["profile"])
             if session["isAdmin"] == False:
                 return render_template("userSearchBook.html", books=books, details=session["profile"])
     return redirect("/")
@@ -317,8 +311,9 @@ def deleteByISBN(isbn):
     if session['isAdmin']:
         cur = mysql.connection.cursor()
         cur.execute("DELETE FROM book WHERE ISBN = {}".format(isbn))
+        flash("Book successfully deleted")
         mysql.connection.commit()
-        return redirect("/books")
+        return redirect("/book")
     return redirect("/")
 
 
