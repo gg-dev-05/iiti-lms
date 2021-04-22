@@ -214,7 +214,7 @@ def addFriend():
 
     data = request.form
     if data['email'] == email:
-        return render_template("addFriend.html", msg="Enter e-mail address of your friend")
+        return render_template("addFriend.html", msg="Enter e-mail address of your friend", details=session["profile"])
     cur = mysql.connection.cursor()
 
     cur.execute(
