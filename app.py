@@ -604,10 +604,10 @@ def authorize():
     # make the session permanant so it keeps existing after browser gets closed
     session.permanent = True
     if token != '':
-        message = 'You were successfully logged in'
+        message = Markup('<b>Login</b> successfull')
     else:
         message = 'You Please Try Again'
-    flash("You were successfully logged in", "info")
+    flash(message)
     return redirect('/')
 
 
@@ -615,7 +615,7 @@ def authorize():
 def logout():
     for key in list(session.keys()):
         session.pop(key)
-    flash("You have been logged out", "info")
+    flash(Markup("You were successfully <b>logged out</b>"))
     return redirect("/")
 
 
