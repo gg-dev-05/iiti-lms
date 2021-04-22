@@ -61,7 +61,6 @@ google = oauth.register(
 
 @app.route("/")
 def home():
-
     if "profile" in session:
         email = session["profile"]["email"]
         cur = mysql.connection.cursor()
@@ -153,13 +152,13 @@ def members(memberType):
         cur.execute(
             "SELECT reader_name, reader_email, reader_address, phone_no, books_issued, unpaid_fines,ID FROM reader WHERE is_faculty = 0;")
         students = cur.fetchall()
-        return render_template("students.html", students=students, details=session["profile"])
+        return render_template("member.html", people=students, memberType=memberType, details=session["profile"])
     if memberType == 'faculties':
         cur = mysql.connection.cursor()
         cur.execute(
             "SELECT reader_name, reader_email, reader_address, phone_no, books_issued, unpaid_fines,ID FROM reader WHERE is_faculty = 1;")
         faculties = cur.fetchall()
-        return render_template("faculties.html", faculties=faculties, details=session["profile"])
+        return render_template("member.html", people=faculties,memberType=memberType, details=session["profile"])
     return redirect("/")
 
 
@@ -168,6 +167,7 @@ def members1(memberType, ID):
     if session['isAdmin']:
         if memberType == 'faculties' or memberType == 'students':
             cur = mysql.connection.cursor()
+            flash("Successfully deleted")
             cur.execute("DELETE FROM reader WHERE ID ={};".format(ID))
             mysql.connection.commit()
             return redirect("/{}".format(memberType))
