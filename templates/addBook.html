@@ -1,17 +1,31 @@
 {% extends 'admin.html' %} {% block sidebar_and_navbar %}
 
-<div id="main-wrapper">
-	<!-- ============================================================== -->
-	<!-- Topbar header - style you can find in pages.scss -->
-	<!-- ============================================================== -->
+<link
+	rel="stylesheet"
+	type="text/css"
+	href="static/assets/libs/select2/dist/css/select2.min.css"
+/>
+<link
+	rel="stylesheet"
+	type="text/css"
+	href="static/assets/libs/jquery-minicolors/jquery.minicolors.css"
+/>
+<link
+	rel="stylesheet"
+	type="text/css"
+	href="static/assets/libs/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css"
+/>
+<link
+	rel="stylesheet"
+	type="text/css"
+	href="static/assets/libs/quill/dist/quill.snow.css"
+/>
+<link href="static/dist/css/style.min.css" rel="stylesheet" />
 
-	<!-- ============================================================== -->
-	<!-- End Topbar header -->
-	<!-- ============================================================== -->
-	<!-- ============================================================== -->
-	<!-- Left Sidebar - style you can find in sidebar.scss  -->
-	<!-- ============================================================== -->
-	
+<!-- ============================================================== -->
+<!-- Main wrapper - style you can find in pages.scss -->
+<!-- ============================================================== -->
+<div id="main-wrapper">
 	<!-- ============================================================== -->
 	<!-- End Left Sidebar - style you can find in sidebar.scss  -->
 	<!-- ============================================================== -->
@@ -25,18 +39,12 @@
 		<div class="page-breadcrumb">
 			<div class="row">
 				<div class="col-12 d-flex no-block align-items-center">
-					<h4 class="page-title">Form Basic</h4>
+					<h4 class="page-title">Add New Book</h4>
 					<div class="ml-auto text-right">
 						<nav aria-label="breadcrumb">
 							<ol class="breadcrumb">
 								<li class="breadcrumb-item">
 									<a href="#">Home</a>
-								</li>
-								<li
-									class="breadcrumb-item active"
-									aria-current="page"
-								>
-									Library
 								</li>
 							</ol>
 						</nav>
@@ -57,154 +65,98 @@
 			<div class="row">
 				<div class="col-md-12">
 					<div class="card">
-						<form class="form-horizontal" action="/addBook" method="POST">
+						<form action="/addBook" method="POST">
 							<div class="card-body">
-								<h4 class="card-title">Details of New Book</h4>
+								<h5 class="card-title">Book</h5>
 								<div class="form-group row">
-									<label
-										for="ISBN"
-										class="col-sm-3 text-right control-label col-form-label"
+									<label for="isbn" class="col-md-3 m-t-15"
 										>ISBN</label
 									>
 									<div class="col-sm-9">
 										<input
 											type="number"
 											class="form-control"
-											id="ISBN"
-											placeholder="ISBN"
-											name="ISBN"
+											id="isbn"
+											name="isbn"
+											placeholder="Enter ISBN"
+											required
 										/>
 									</div>
 								</div>
 								<div class="form-group row">
-									<label
-										for="lname"
-										class="col-sm-3 text-right control-label col-form-label"
+									<label for="title" class="col-md-3 m-t-15"
 										>Title</label
 									>
 									<div class="col-sm-9">
 										<input
 											type="text"
 											class="form-control"
-											id="lname"
-											placeholder="Title of the book"
+											id="title"
 											name="title"
+											placeholder="Enter title"
+											required
 										/>
 									</div>
 								</div>
 								<div class="form-group row">
 									<label
-										for="lname"
-										class="col-sm-3 text-right control-label col-form-label"
+										for="language"
+										class="col-md-3 m-t-15"
 										>Language</label
 									>
 									<div class="col-sm-9">
 										<input
 											type="text"
 											class="form-control"
-											id="lname"
-											placeholder="Language of the book"
+											id="language"
 											name="language"
+											placeholder="Enter language"
+											required
 										/>
 									</div>
 								</div>
 								<div class="form-group row">
 									<label
-										for="email1"
-										class="col-sm-3 text-right control-label col-form-label"
+										for="publisher"
+										class="col-md-3 m-t-15"
 										>Publisher</label
 									>
 									<div class="col-sm-9">
 										<input
 											type="text"
 											class="form-control"
-											id="email1"
-											placeholder="publisher"
+											id="publisher"
 											name="publisher"
+											placeholder="Enter publisher"
+											required
 										/>
 									</div>
 								</div>
 								<div class="form-group row">
-									<label
-										for="cono1"
-										class="col-sm-3 text-right control-label col-form-label"
+									<label for="date" class="col-md-3 m-t-15"
 										>Publish Date</label
 									>
 									<div class="col-sm-9">
 										<input
 											type="date"
 											class="form-control"
-											id="cono1"
-											placeholder="publishing date"
+											id="date"
 											name="date"
+											placeholder="Enter date"
+											required
 										/>
 									</div>
 								</div>
 								<div class="form-group row">
-									<!-- <label for="cars">Choose a car:</label> -->
-
-								
-									<label
-										for="tag1"
-										class="col-sm-3 text-right control-label col-form-label"
-										>Tag1</label
-									>
-									<div class="col-sm-9">
-										<!-- <select name="tag1" id="tag1" class="form-control" >
-											<option value="Maths">Maths</option>
-											<option value="Physics">Physics</option>
-											<option value="Chemistry">Chemistry</option>
-											<option value="English">English</option>
-											</select> -->
-										<textarea
-											class="form-control"
-											name="tag1"
-											placeholder="A suitable genre"
-										></textarea>
-									</div>
-								</div>
-								<div class="form-group row">
-									<label
-										for="tag2"
-										class="col-sm-3 text-right control-label col-form-label"
-										>Tag2</label
-									>
-									<div class="col-sm-9">
-										<textarea
-											class="form-control"
-											name="tag2"
-											placeholder="A suitable genre"
-										></textarea>
-									</div>
-								</div>
-								<div class="form-group row">
-									<label
-										for="tag3"
-										class="col-sm-3 text-right control-label col-form-label"
-										>Tag3</label
-									>
-									<div class="col-sm-9">
-										<textarea
-											class="form-control"
-											name="tag3"
-											placeholder="A suitable genre"
-										></textarea>
-									</div>
-								</div>
-								<div class="form-group row">
-									<label
-										for="shelf"
-										class="col-sm-3 text-right control-label col-form-label"
+									<label class="col-md-3 m-t-15"
 										>Shelf ID</label
 									>
-									<div class="col-sm-9">
-										<!-- <textarea
-											class="form-control"
+									<div class="col-md-9">
+										<select
+											class="select2 form-control custom-select"
+											style="width: 100%; height: 36px"
 											name="shelf"
-											placeholder="Shelf id of library"
-										></textarea> -->
-										<select name="shelf" id="shelf" class="form-control" class="form-control" >
-											
+										>
 											<option value="1">1</option>
 											<option value="2">2</option>
 											<option value="3">3</option>
@@ -215,8 +167,57 @@
 											<option value="8">8</option>
 											<option value="9">9</option>
 											<option value="10">10</option>
-											</select>
-
+										</select>
+									</div>
+								</div>
+								<div class="form-group row">
+									<label class="col-md-3 m-t-15">Tags</label>
+									<div class="col-md-9">
+										<select
+											class="select2 form-control m-t-15"
+											multiple="multiple"
+											style="height: 36px; width: 100%"
+											name="tags"
+										>
+											<option value="Music">Music</option>
+											<option value="Comedy">
+												Comedy
+											</option>
+											<option value="Crime">Crime</option>
+											<option value="Classic">
+												Classic
+											</option>
+											<option value="Fantasy">
+												Fantasy
+											</option>
+											<option value="Horror">
+												Horror
+											</option>
+											<option value="Action">
+												Action
+											</option>
+											<option value="Adventure">
+												Adventure
+											</option>
+											<option value="Detective">
+												Detective
+											</option>
+											<option value="Western">
+												Western
+											</option>
+											<option value="Thriller">
+												Thriller
+											</option>
+											<option value="Poetry">
+												Poetry
+											</option>
+											<option value="Biography">
+												Biography
+											</option>
+											<option value="Picture Book">
+												Picture Book
+											</option>
+										</select>
 									</div>
 								</div>
 							</div>
@@ -233,35 +234,107 @@
 						</form>
 					</div>
 				</div>
-			</div>
-			<!-- editor -->
+				<!-- editor -->
 
+				<!-- ============================================================== -->
+				<!-- End PAge Content -->
+				<!-- ============================================================== -->
+				<!-- ============================================================== -->
+				<!-- Right sidebar -->
+				<!-- ============================================================== -->
+				<!-- .right-sidebar -->
+				<!-- ============================================================== -->
+				<!-- End Right sidebar -->
+				<!-- ============================================================== -->
+			</div>
 			<!-- ============================================================== -->
-			<!-- End PAge Content -->
+			<!-- End Container fluid  -->
 			<!-- ============================================================== -->
 			<!-- ============================================================== -->
-			<!-- Right sidebar -->
+			<!-- footer -->
 			<!-- ============================================================== -->
-			<!-- .right-sidebar -->
+			<footer class="footer text-center">
+				All Rights Reserved by Matrix-admin. Designed and Developed by
+				<a href="https://wrappixel.com">WrapPixel</a>.
+			</footer>
 			<!-- ============================================================== -->
-			<!-- End Right sidebar -->
+			<!-- End footer -->
 			<!-- ============================================================== -->
 		</div>
 		<!-- ============================================================== -->
-		<!-- End Container fluid  -->
-		<!-- ============================================================== -->
-		<!-- ============================================================== -->
-		<!-- footer -->
-		<!-- ============================================================== -->
-		<footer class="footer text-center">
-			All Rights Reserved by IITI - LMS.
-		</footer>
-		<!-- ============================================================== -->
-		<!-- End footer -->
+		<!-- End Page wrapper  -->
 		<!-- ============================================================== -->
 	</div>
 	<!-- ============================================================== -->
-	<!-- End Page wrapper  -->
+	<!-- End Wrapper -->
 	<!-- ============================================================== -->
+	<!-- ============================================================== -->
+	<!-- All Jquery -->
+	<!-- ============================================================== -->
+	<script src="static/assets/libs/jquery/dist/jquery.min.js"></script>
+	<!-- Bootstrap tether Core JavaScript -->
+	<script src="static/assets/libs/popper.js/dist/umd/popper.min.js"></script>
+	<script src="static/assets/libs/bootstrap/dist/js/bootstrap.min.js"></script>
+	<!-- slimscrollbar scrollbar JavaScript -->
+	<script src="static/assets/libs/perfect-scrollbar/dist/perfect-scrollbar.jquery.min.js"></script>
+	<script src="static/assets/extra-libs/sparkline/sparkline.js"></script>
+	<!--Wave Effects -->
+	<script src="static/dist/js/waves.js"></script>
+	<!--Menu sidebar -->
+	<script src="static/dist/js/sidebarmenu.js"></script>
+	<!--Custom JavaScript -->
+	<script src="static/dist/js/custom.min.js"></script>
+	<!-- This Page JS -->
+	<script src="static/assets/libs/inputmask/dist/min/jquery.inputmask.bundle.min.js"></script>
+	<script src="static/dist/js/pages/mask/mask.init.js"></script>
+	<script src="static/assets/libs/select2/dist/js/select2.full.min.js"></script>
+	<script src="static/assets/libs/select2/dist/js/select2.min.js"></script>
+	<script src="static/assets/libs/jquery-asColor/dist/jquery-asColor.min.js"></script>
+	<script src="static/assets/libs/jquery-asGradient/dist/jquery-asGradient.js"></script>
+	<script src="static/assets/libs/jquery-asColorPicker/dist/jquery-asColorPicker.min.js"></script>
+	<script src="static/assets/libs/jquery-minicolors/jquery.minicolors.min.js"></script>
+	<script src="static/assets/libs/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js"></script>
+	<script src="static/assets/libs/quill/dist/quill.min.js"></script>
+	<script>
+		//***********************************//
+		// For select 2
+		//***********************************//
+		$(".select2").select2();
+
+		/*colorpicker*/
+		$(".demo").each(function () {
+			//
+			// Dear reader, it's actually very easy to initialize MiniColors. For example:
+			//
+			//  $(selector).minicolors();
+			//
+			// The way I've done it below is just for the demo, so don't get confused
+			// by it. Also, data- attributes aren't supported at this time...they're
+			// only used for this demo.
+			//
+			$(this).minicolors({
+				control: $(this).attr("data-control") || "hue",
+				position: $(this).attr("data-position") || "bottom left",
+
+				change: function (value, opacity) {
+					if (!value) return;
+					if (opacity) value += ", " + opacity;
+					if (typeof console === "object") {
+						console.log(value);
+					}
+				},
+				theme: "bootstrap",
+			});
+		});
+		/*datwpicker*/
+		jQuery(".mydatepicker").datepicker();
+		jQuery("#datepicker-autoclose").datepicker({
+			autoclose: true,
+			todayHighlight: true,
+		});
+		var quill = new Quill("#editor", {
+			theme: "snow",
+		});
+	</script>
+	{% endblock sidebar_and_navbar %}
 </div>
-{% endblock sidebar_and_navbar %}
