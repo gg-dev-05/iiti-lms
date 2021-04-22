@@ -74,6 +74,7 @@
 							<thead>
 								<tr>
 									<th scope="col">Name</th>
+									<th scope="col">Email</th>
 									<th scope="col">Phone_Number</th>
 									<th scope="col">Books issued</th>
 									<th style="font-weight: bold">
@@ -82,11 +83,13 @@
 								</tr>
 							</thead>
 							<tbody>
-								{% for reader_name,phone_no,books_issued,ID in
-								friendinfo %}
+								{% for
+								reader_name,reader_email,phone_no,books_issued,ID
+								in friendinfo %}
 
 								<tr>
 									<td>{{ reader_name }}</td>
+									<td>{{ reader_email }}</td>
 									<td>{{ phone_no }}</td>
 									<td>{{ books_issued }}</td>
 									<td>

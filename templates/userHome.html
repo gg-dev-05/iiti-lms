@@ -13,25 +13,6 @@
 	<!-- Bread crumb and right sidebar toggle -->
 	<!-- ============================================================== -->
 	<div class="page-breadcrumb">
-		<div class="align-items-center">
-			{% with messages = get_flashed_messages() %} {% if messages %} {%
-			for thisMessage in messages %}
-			<div
-				class="alert alert-success alert-dismissible fade show text-center"
-				role="alert"
-			>
-				{{thisMessage}}
-				<button
-					type="button"
-					class="close"
-					data-dismiss="alert"
-					aria-label="Close"
-				>
-					<span aria-hidden="true">&times;</span>
-				</button>
-			</div>
-			{% endfor %} {% endif %} {% endwith %}
-		</div>
 		<div class="row">
 			<div class="col-12 d-flex no-block align-items-center">
 				<h4 class="page-title" style="color: white">
@@ -92,7 +73,7 @@
 					<div class="card card-hover">
 						<div class="box bg-success text-center">
 							<h1 class="font-light text-white">
-								<i class=" fas fa-users"></i>
+								<i class="fas fa-users"></i>
 							</h1>
 							<h6 class="text-white">
 								<a
@@ -135,6 +116,25 @@
 					</div>
 				</div>
 			</div> -->
+		</div>
+		<div class="align-items-center">
+			{% with messages = get_flashed_messages() %} {% if messages %} {%
+			for thisMessage in messages %}
+			<div
+				class="alert alert-success alert-dismissible fade show text-center"
+				role="alert"
+			>
+				{{thisMessage}}
+				<button
+					type="button"
+					class="close"
+					data-dismiss="alert"
+					aria-label="Close"
+				>
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			{% endfor %} {% endif %} {% endwith %}
 		</div>
 	</div>
 	<!-- ============================================================== -->
