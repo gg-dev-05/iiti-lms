@@ -71,7 +71,8 @@
 									{% if value[2]==1 %}
 									<td>Returned</td>
 									<td>{{value[3]}}</td>
-									{% if (value[3]-value[1]).days>=10 %}
+									{% if value[3] != None and value[1] != None
+									(value[3]-value[1]).days>=10 %}
 									<td>{{(value[3]-value[1]).days*2}}</td>
 									{%else %}
 									<td>0</td>
