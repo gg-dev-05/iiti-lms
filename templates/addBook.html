@@ -59,6 +59,23 @@
 		<!-- Container fluid  -->
 		<!-- ============================================================== -->
 		<div class="container-fluid">
+			{% with messages = get_flashed_messages() %} {% if messages %} {% for
+				thisMessage in messages %}
+				<div
+					class="alert alert-warning alert-dismissible fade show text-center"
+					role="alert"
+				>
+					{{thisMessage}}
+					<button
+						type="button"
+						class="close"
+						data-dismiss="alert"
+						aria-label="Close"
+					>
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				{% endfor %} {% endif %} {% endwith %}
 			<!-- ============================================================== -->
 			<!-- Start Page Content -->
 			<!-- ============================================================== -->
@@ -74,7 +91,7 @@
 									>
 									<div class="col-sm-9">
 										<input
-											type="text"
+											type="number"
 											class="form-control"
 											id="isbn"
 											name="isbn"
@@ -138,7 +155,7 @@
 									>
 									<div class="col-sm-9">
 										<input
-											type="text"
+											type="date"
 											class="form-control"
 											id="date"
 											name="date"
@@ -154,8 +171,9 @@
 									<div class="col-md-9">
 										<select
 											class="select2 form-control custom-select"
-											style="width: 100%; height: 36px"
+											style="width: 100%; height: 36px; outline-width: 0px;"
 											name="shelf"
+											required
 										>
 											<option value="1">1</option>
 											<option value="2">2</option>
@@ -176,8 +194,9 @@
 										<select
 											class="select2 form-control m-t-15"
 											multiple="multiple"
-											style="height: 36px; width: 100%"
+											style="height: 36px; width: 100%; outline-width: 0px;"
 											name="tags"
+											required
 										>
 											<option value="Music">Music</option>
 											<option value="Comedy">

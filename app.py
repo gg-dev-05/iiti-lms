@@ -252,8 +252,18 @@ def addFriend():
     cur.execute(f"SELECT ID FROM reader WHERE reader_email='{email}'")
     Me = cur.fetchone()[0]
     friend = friend[0]
+    # if person is librarian
+    cur.execute(f"SELECT librarian_name FROM librarian WHERE librarian_email='{data['email']}'")
+    isLibrarian = cur.fetchone()
+    print("system checking")
+    print(isLibrarian)
+    print(data['email'])
+    FlashEmail = data['email']
+    if isLibrarian:
+        flash("Sorry, " + FlashEmail + " is a Librarian","info")
+        return redirect("/addFriend")
     cur.execute(
-        "SELECT * FROM friends WHERE reader_1='{}' AND reader_2='{}'".format(email, data['email']))
+        "SELECT * FROM friends WHERE reader_1='{}' AND reader_2='{}'".format(email, data['email']))    
     if cur.fetchone() != None:
         return render_template('addFriend.html', msg="You are already friends with {}".format(data['email']), details=session["profile"], friendRequests=session['friendRequests'])
 
@@ -515,13 +525,20 @@ def addBook():
         else:
             data = request.form
             cur = mysql.connection.cursor()
-            cur.execute(f"INSERT INTO book(ISBN, title, book_language, publisher, publish_date, shelf_id) VALUES({data['isbn']}, '{data['title']}', '{data['language']}', '{data['publisher']}', '{data['date']}', {data['shelf']})")
-            data = data.to_dict(flat=False)
-            for tag in data['tags']:
-                cur.execute("INSERT INTO tags VALUES ({}, '{}')".format(data['isbn'][0], tag))
-            mysql.connection.commit()
-            flash("New Book Added")
-            return redirect("/book")
+            # print(data['isbn'])
+            cur.execute(f"SELECT title FROM book WHERE ISBN='{data['isbn']}'")
+            count =  cur.fetchall()
+            if count==():
+                cur.execute(f"INSERT INTO book(ISBN, title, book_language, publisher, publish_date, shelf_id) VALUES({data['isbn']}, '{data['title']}', '{data['language']}', '{data['publisher']}', '{data['date']}', {data['shelf']})")
+                data = data.to_dict(flat=False)
+                for tag in data['tags']:
+                    cur.execute("INSERT INTO tags VALUES ({}, '{}')".format(data['isbn'][0], tag))
+                mysql.connection.commit()
+                flash("New Book Added")
+                return redirect("/book")
+            else:
+                flash("Please check, a book already exist with same ISBN in our library","info")
+                return redirect("/addBook")    
     return redirect("/")
 
 
