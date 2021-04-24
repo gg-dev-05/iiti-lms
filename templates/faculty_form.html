@@ -51,6 +51,23 @@
 		<!-- Container fluid  -->
 		<!-- ============================================================== -->
 		<div class="container-fluid">
+			{% with messages = get_flashed_messages() %} {% if messages %} {% for
+				thisMessage in messages %}
+				<div
+					class="alert alert-warning alert-dismissible fade show text-center"
+					role="alert"
+				>
+					{{thisMessage}}
+					<button
+						type="button"
+						class="close"
+						data-dismiss="alert"
+						aria-label="Close"
+					>
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				{% endfor %} {% endif %} {% endwith %}
 			<!-- ============================================================== -->
 			<!-- Start Page Content -->
 			<!-- ============================================================== -->
@@ -73,6 +90,7 @@
 											id="Librarian_ID"
 											placeholder="name"
 											name="faculty_name"
+											required
 										/>
 									</div>
 								</div>
@@ -84,11 +102,12 @@
 									>
 									<div class="col-sm-9">
 										<input
-											type="text"
+											type="password"
 											class="form-control"
 											id="lname"
 											placeholder="password"
 											name="hashpassword"
+											required
 										/>
 									</div>
 								</div>
@@ -100,11 +119,12 @@
 									>
 									<div class="col-sm-9">
 										<input
-											type="text"
+											type="email"
 											class="form-control"
 											id="lname"
 											placeholder="Hash_Password"
 											name="email"
+											required
 										/>
 									</div>
 								</div>
@@ -121,6 +141,7 @@
 											id="email1"
 											placeholder="Email"
 											name="address"
+											required
 										/>
 									</div>
 								</div>
@@ -138,6 +159,7 @@
 											id="email1"
 											placeholder="phone number"
 											name="number"
+											required
 										/>
 									</div>
 								</div>

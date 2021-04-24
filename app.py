@@ -510,8 +510,15 @@ def addnewfaculty():
         else:
             data = request.form
             cur = mysql.connection.cursor()
+            # Email = {data['email']}
+            cur.execute(f"SELECT reader_name FROM reader WHERE reader_email='{data['email']}'")
+            Person = cur.fetchall()
+            if Person:
+                flash("Sorry, a reader already exist with email:  {}".format(data['email']),"info")
+                # flash("  Person[0])
+                return redirect("/addnewfaculty")
             cur.execute(
-                f"insert into reader(reader_name,reader_hash_password,reader_email,reader_address,phone_no,is_faculty,ID,unpaid_fines,books_issued) values('{data['faculty_name']}','{data['hashpassword']}','{data['email']}','{data['address']}','{data['number']}','1','','0','0')")
+                f"insert into reader(reader_name,reader_hash_password,reader_email,reader_address,phone_no,is_faculty,ID,unpaid_fines,books_issued) values('{data['faculty_name']}','{data['hashpassword']}','{data['email']}','{data['address']}','{data['number']}','1','','0','0')")    
             mysql.connection.commit()
             flash("New Faculty Added!!!")
         return redirect("/faculties") 
@@ -526,19 +533,22 @@ def addBook():
             data = request.form
             cur = mysql.connection.cursor()
             # print(data['isbn'])
-            cur.execute(f"SELECT title FROM book WHERE ISBN='{data['isbn']}'")
-            count =  cur.fetchall()
-            if count==():
-                cur.execute(f"INSERT INTO book(ISBN, title, book_language, publisher, publish_date, shelf_id) VALUES({data['isbn']}, '{data['title']}', '{data['language']}', '{data['publisher']}', '{data['date']}', {data['shelf']})")
-                data = data.to_dict(flat=False)
-                for tag in data['tags']:
-                    cur.execute("INSERT INTO tags VALUES ({}, '{}')".format(data['isbn'][0], tag))
-                mysql.connection.commit()
-                flash("New Book Added")
-                return redirect("/book")
-            else:
-                flash("Please check, a book already exist with same ISBN in our library","info")
-                return redirect("/addBook")    
+            # cur.execute(f"SELECT title FROM book WHERE ISBN='{data['isbn']}'")
+            # count =  cur.fetchall()
+            # Improving Complexity 
+            if True:    
+                try:
+                    cur.execute(f"INSERT INTO book(ISBN, title, book_language, publisher, publish_date, shelf_id) VALUES({data['isbn']}, '{data['title']}', '{data['language']}', '{data['publisher']}', '{data['date']}', {data['shelf']})")
+                    data = data.to_dict(flat=False)
+                    for tag in data['tags']:
+                        cur.execute("INSERT INTO tags VALUES ({}, '{}')".format(data['isbn'][0], tag))
+                    mysql.connection.commit()
+                    flash("New Book Added")
+                    return redirect("/book")
+                except:
+                    flash("Please check, a book already exist with same ISBN in our library","info")
+                    return redirect("/addBook")
+                return redirect("/")     
     return redirect("/")
 
 
