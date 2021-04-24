@@ -252,8 +252,18 @@ def addFriend():
     cur.execute(f"SELECT ID FROM reader WHERE reader_email='{email}'")
     Me = cur.fetchone()[0]
     friend = friend[0]
+    # if person is librarian
+    cur.execute(f"SELECT librarian_name FROM librarian WHERE librarian_email='{data['email']}'")
+    isLibrarian = cur.fetchone()
+    print("system checking")
+    print(isLibrarian)
+    print(data['email'])
+    FlashEmail = data['email']
+    if isLibrarian:
+        flash("Sorry, " + FlashEmail + " is a Librarian","info")
+        return redirect("/addFriend")
     cur.execute(
-        "SELECT * FROM friends WHERE reader_1='{}' AND reader_2='{}'".format(email, data['email']))
+        "SELECT * FROM friends WHERE reader_1='{}' AND reader_2='{}'".format(email, data['email']))    
     if cur.fetchone() != None:
         return render_template('addFriend.html', msg="You are already friends with {}".format(data['email']), details=session["profile"], friendRequests=session['friendRequests'])
 
@@ -500,8 +510,15 @@ def addnewfaculty():
         else:
             data = request.form
             cur = mysql.connection.cursor()
+            # Email = {data['email']}
+            cur.execute(f"SELECT reader_name FROM reader WHERE reader_email='{data['email']}'")
+            Person = cur.fetchall()
+            if Person:
+                flash("Sorry, a reader already exist with email:  {}".format(data['email']),"info")
+                # flash("  Person[0])
+                return redirect("/addnewfaculty")
             cur.execute(
-                f"insert into reader(reader_name,reader_hash_password,reader_email,reader_address,phone_no,is_faculty,ID,unpaid_fines,books_issued) values('{data['faculty_name']}','{data['hashpassword']}','{data['email']}','{data['address']}','{data['number']}','1','','0','0')")
+                f"insert into reader(reader_name,reader_hash_password,reader_email,reader_address,phone_no,is_faculty,ID,unpaid_fines,books_issued) values('{data['faculty_name']}','{data['hashpassword']}','{data['email']}','{data['address']}','{data['number']}','1','','0','0')")    
             mysql.connection.commit()
             flash("New Faculty Added!!!")
         return redirect("/faculties") 
@@ -515,13 +532,23 @@ def addBook():
         else:
             data = request.form
             cur = mysql.connection.cursor()
-            cur.execute(f"INSERT INTO book(ISBN, title, book_language, publisher, publish_date, shelf_id) VALUES({data['isbn']}, '{data['title']}', '{data['language']}', '{data['publisher']}', '{data['date']}', {data['shelf']})")
-            data = data.to_dict(flat=False)
-            for tag in data['tags']:
-                cur.execute("INSERT INTO tags VALUES ({}, '{}')".format(data['isbn'][0], tag))
-            mysql.connection.commit()
-            flash("New Book Added")
-            return redirect("/book")
+            # print(data['isbn'])
+            # cur.execute(f"SELECT title FROM book WHERE ISBN='{data['isbn']}'")
+            # count =  cur.fetchall()
+            # Improving Complexity 
+            if True:    
+                try:
+                    cur.execute(f"INSERT INTO book(ISBN, title, book_language, publisher, publish_date, shelf_id) VALUES({data['isbn']}, '{data['title']}', '{data['language']}', '{data['publisher']}', '{data['date']}', {data['shelf']})")
+                    data = data.to_dict(flat=False)
+                    for tag in data['tags']:
+                        cur.execute("INSERT INTO tags VALUES ({}, '{}')".format(data['isbn'][0], tag))
+                    mysql.connection.commit()
+                    flash("New Book Added")
+                    return redirect("/book")
+                except:
+                    flash("Please check, a book already exist with same ISBN in our library","info")
+                    return redirect("/addBook")
+                return redirect("/")     
     return redirect("/")
 
 
