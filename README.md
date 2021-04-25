@@ -32,9 +32,10 @@ Visit us: <a href="https://iitilms.herokuapp.com/">Visit Us!!</a>
 <p align="center">
 		HTML • CSS (<a href="https://getbootstrap.com/">Bootstrap</a>) • JS (<a href="https://jquery.com/">JQuery</a>) • <a 			href="https://jinja.palletsprojects.com/en/2.11.x/">Jinja</a>
 </p>
-<p align="center">Template from <a href="https://themewagon.com/">ThemeWagon</a></p
+<p align="center">Template from <a href="https://themewagon.com/">ThemeWagon</a></p>
 
-<p align="center"><b>BACKEND</b></p>
+
+<p align="center"><b>FRONTEND</b></p>
 <p align="center">
 		<a href="https://flask.palletsprojects.com/en/1.1.x/">FLASK</a> • <a href="https://github.com/alexferl/flask-mysqldb">Flask-MySQL</a> •
 	<a href="https://www.heroku.com">Heroku</a>
