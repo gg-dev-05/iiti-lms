@@ -35,7 +35,7 @@ Visit us: <a href="https://iitilms.herokuapp.com/">Visit Us!!</a>
 <p align="center">Template from <a href="https://themewagon.com/">ThemeWagon</a></p>
 
 
-<p align="center"><b>FRONTEND</b></p>
+<p align="center"><b>BACKEND</b></p>
 <p align="center">
 		<a href="https://flask.palletsprojects.com/en/1.1.x/">FLASK</a> • <a href="https://github.com/alexferl/flask-mysqldb">Flask-MySQL</a> •
 	<a href="https://www.heroku.com">Heroku</a>
