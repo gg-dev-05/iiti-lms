@@ -1,4 +1,4 @@
-<h1 align="center"><samp>IITI-LMS</samp></h1>
+<h1 align="center"><samp>「 IITI-LMS 」</samp></h1>
 <h4 align="center">A Library management system build for  <a href="https://www.iiti.ac.in/" target="_blank">IITI</a> community.</h4>
 <p align="center">
   <a href="#features">Features</a> •
