@@ -10,43 +10,47 @@
 
 
 <p align="center">
-A project under the course <b>CSE</b>, we created this application under the guidance of <a href="https://sites.google.com/view/nagendrak/">Name</a> and Name.
+This is a project under the course <b>CS-257</b>, we created this application under the guidance of <a href="https://sites.google.com/view/nagendrak/">Dr.Nagendra Kumar</a> and Ankit Jain sir.
 </p>
 
-## AIM
 
-* <em>This website provide an efficient way of communication between the users and librarian.</em>
-* <em>Aim for our application is to eradicate the problem of students as because of the current pandemic situation students are unable to apply for clubs.
-		So we have tried to make this processes completely online.</em>
-* <em>The club head has full control over the information he wants to show on his club page.</em>
+## Features
+
+
+* <em> IITI-LMS is designed to have a user friendly interface, where the readers can easily find the books in which they are interested.
+* <em> The librarian (admin) have full control over all the books.
+* <em> Add friends 
+* <em> A recommendation system which recommends books on the readers previous readings and what their friends are reading.
+* <em> Hold books 
+* <em> Notify user of late fines using email
 
 
 ## Links
-We have hosted the website on heroku: <a href="https://iitilms.herokuapp.com/">Visit Us!!</a>  
-Demo Video : <a href="https://drive.google.com/file/d/1SFoFgWY0zGZmcvaYm_TApySEPZwFAgGi/view?usp=sharing">LINK</a>
-
+Visit us: <a href="https://iitilms.herokuapp.com/">Visit Us!!</a>  
 
 ## Tech Stack
 
-<ul>	
-	<ul>
-		<b>FRONTEND</b>
-		<ul>
-			<li>HTML</li>
-			<li>CSS (Bootstrap 4) </li>
-			<li>JS(JQuery)</li>
-		</ul>
-	</ul>
-	<ul>
-		<b>BACKEND</b>
-		<ul>
-			<li>FLASK (Python)</li>
-			<li>Flask-MySQL</li>
-		</ul>
-	</ul>
-</ul>
 
-## Contributers
+<p align="center"><b>FRONTEND</b></p>
+<p align="center">
+		HTML • CSS (<a href="https://getbootstrap.com/">Bootstrap</a>) • JS (<a href="https://jquery.com/">JQuery</a>) • <a 			href="https://jinja.palletsprojects.com/en/2.11.x/">Jinja</a>
+</p>
+
+
+<p align="center"><b>BACKEND</b></p>
+<p align="center">
+		<a href="https://flask.palletsprojects.com/en/1.1.x/">FLASK</a> • <a href="https://github.com/alexferl/flask-mysqldb">Flask-MySQL</a> •
+	<a href="https://www.heroku.com">Heroku</a>
+</p>
+
+<p align="center">
+	<a href="https://github.com/gg-dev-05/iiti-lms/network/dependencies">
+		List of All dependencies
+	</a>
+</p>
+
+## Contributors
+
 <p align="center">
 <a href="https://github.com/gg-dev-05">
 	<img src="https://github.com/gg-dev-05.png" width="50px">
