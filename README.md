@@ -2,10 +2,10 @@
 <p align="center"><a href="https://iitilms.herokuapp.com/"><img src="https://raw.githubusercontent.com/gg-dev-05/iiti-lms/master/static/assets/images/logo-text.png?token=ARLKUTPDHBEXL2E2T7VHRC3ARWC2U" alt="CLUBSIITI" width="200"></a></p>
 <h4 align="center">A Library management system build for  <a href="https://www.iiti.ac.in/" target="_blank">IITI</a> community.</h4>
 <p align="center">
-  <a href="#aim">AIM</a> •
+  <a href="#features">Features</a> •
   <a href="#links">Links</a> •
   <a href="#tech-stack">Tech Stack</a> •
-  <a href="#Contributers">Contributers</a>
+  <a href="#contributors">Contributors</a>
 </p>
 
 
@@ -15,8 +15,6 @@ This is a project under the course <b>CS-257</b>, we created this application un
 
 
 ## Features
-
-
 * <em> IITI-LMS is designed to have a user friendly interface, where the readers can easily find the books in which they are interested.
 * <em> The librarian (admin) have full control over all the books.
 * <em> Add friends 
