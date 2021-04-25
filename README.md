@@ -20,7 +20,7 @@ This is a project under the course <b>CS-257</b>, we created this application un
 * <em> Add friends 
 * <em> A recommendation system which recommends books on the readers previous readings and what their friends are reading.
 * <em> Hold books 
-* <em> Notify user of late fines using email
+* <em> Notify user of late fines by sending email using <a href="https://pythonhosted.org/Flask-Mail/">Flask-Mail</a>
 
 
 ## Links
